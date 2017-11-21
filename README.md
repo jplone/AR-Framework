@@ -3,8 +3,9 @@ Augmented Reality framework to visualize scientific data with longitude and lati
 
 ### Dependency
 
-In order to use our framework in your project, please add the following dependency to your `gradle.build` file:
+In order to use our framework in your project, please add the following dependency to your `build.gradle` files:
 
+In Project `build.gradle` file:
 ```javascript
 allprojects {
     repositories {
@@ -14,6 +15,7 @@ allprojects {
 }
 ```
 
+In Module `build.gradle` file:
 ```javascript
 dependencies {
     compile 'com.github.jplone:AR-Framework:v0.1'
@@ -26,6 +28,7 @@ You can take a look at the accompanying ARDemo app to see how to use the framewo
 
 Alternatively, we have handled a lot of the niggles with permission and OpenGL context handling in our framework, so you can just simply add our ARFragment to your activity to get started:
 
+Here's a sample code on how to create a new instance of the Fragment and add it to your Activity:
 ```java
   // setting up fragment
   FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -36,6 +39,15 @@ Alternatively, we have handled a lot of the niggles with permission and OpenGL c
   ft.commit();
 ```
 
+You will need to have a FrameLayout or LinearLayout inside your activity's layout configuration (XML file) in order to "contain" the Fragment. For example, you should be able to put this in your `layout.xml` file:
+
+```
+  <FrameLayout
+    android:id="@+id/ar_view_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+```
+
 We have built a powerful render job pipeline and Landmark class that you can use to get started on displaying information:
 
 ```java
@@ -44,7 +56,7 @@ We have built a powerful render job pipeline and Landmark class that you can use
 
   // set up ARLandmark for New York city
   // parameters are: name, type, latitude, longitude, elevation
-  ARLandmark arLandmarkNY = new ARLandmark("New York", "City", 40.730610, -73.935242f, 33.0f);
+  ARLandmark arLandmarkNY = new ARLandmark("New York", "City", 40.730610f, -73.935242f, 100.0f);
   
   // add the landmark to the queue to be displayed
   arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, arLandmarkNY));
