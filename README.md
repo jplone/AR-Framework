@@ -54,12 +54,12 @@ We have built a powerful render job pipeline and Landmark class that you can use
   // get the default icon we have included in the framework
   int ara_icon = edu.calstatela.jplone.arframework.R.drawable.ara_icon;
 
-  // set up ARLandmark for New York city
+  // set up ARLandmark for Cal State LA
   // parameters are: name, type, latitude, longitude, elevation
-  ARLandmark arLandmarkNY = new ARLandmark("New York", "City", 40.730610f, -73.935242f, 100.0f);
+  ARLandmark arLandmarkCS = new ARLandmark("Cal State LA", "City", 34.066223f, -118.166367f, 100.0f);
   
   // add the landmark to the queue to be displayed
-  arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, arLandmarkNY));
+  arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, arLandmarkCS));
 ```
 
 ### Documentation
