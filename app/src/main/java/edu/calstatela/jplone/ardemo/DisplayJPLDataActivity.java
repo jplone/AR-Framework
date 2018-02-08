@@ -129,9 +129,9 @@ public class DisplayJPLDataActivity extends AppCompatActivity {
 
             // Create an SSLContext that uses our TrustManager
             //final SSLContext context = SSLContext.getInstance("TLS");
-            final SSLContext context = SSLContext.getInstance("SSLv3");
+            final SSLContext context = SSLContext.getInstance("TLSv1.2");
             //context.init(null, tmf.getTrustManagers(), null);
-            context.init(null, new TrustManager[]{new AdditionalKeyStoresSSLSocketFactory.AdditionalKeyStoresTrustManager(keyStore)}, null);
+            context.init(null, new TrustManager[]{new AdditionalKeyStoresTrustManager(keyStore)}, null);
 
             //final SSLSocketFactory ssf = new AdditionalKeyStoresSSLSocketFactory(keyStore);
             final SSLSocketFactory socketFactory = new SSLSocketFactory() {
@@ -149,11 +149,11 @@ public class DisplayJPLDataActivity extends AppCompatActivity {
                 public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
                     SSLSocket ssl_socket = (SSLSocket) context.getSocketFactory().createSocket(socket, host, port, autoClose);
                     //String[] protocols = {"TLSv1"};//, "TLSv1"};//, "TLSv1.1", "TLSv1.2"};
-                    String[] ciphers = {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"};
+                    String[] ciphers = {"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"};
                     //ssl_socket.setEnabledProtocols(protocols);
                     ssl_socket.setEnabledCipherSuites(ciphers);
 
-                    for(String protocol : ssl_socket.getEnabledProtocols()) {
+                    for(String protocol : ssl_socket.getEnabledCipherSuites()) {
                         Log.d("SSLFactory", protocol);
                     }
 
