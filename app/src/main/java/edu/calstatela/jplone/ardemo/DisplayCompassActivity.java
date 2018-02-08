@@ -12,7 +12,7 @@ import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
  * Created by bill on 11/14/17.
  */
 
-public class DisplayCompassActivity extends AppCompatActivity {
+public class     DisplayCompassActivity extends AppCompatActivity {
     ARFragment arFragment;
 
     @Override

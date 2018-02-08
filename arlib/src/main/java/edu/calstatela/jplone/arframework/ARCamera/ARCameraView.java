@@ -108,8 +108,6 @@ public class ARCameraView extends SurfaceView implements SurfaceHolder.Callback 
     }
 }
 
-
-
 //  Issues:
 //      + Need to add ability for this view to scale to different sizes (the fixSize() function)
 //      + Need to address using various cameras (not just Camera[0])

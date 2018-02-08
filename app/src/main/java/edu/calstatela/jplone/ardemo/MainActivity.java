@@ -13,28 +13,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button mSensorListButton = (Button) findViewById(R.id.btn_sensor_list);
-        Button mSensorReadingsButton = (Button) findViewById(R.id.btn_sensor_readings);
         Button mMapButton = (Button) findViewById(R.id.btn_map);
-        Button mCamera1Button = (Button) findViewById(R.id.btn_camera1);
-        Button mOpenGL1Button = (Button) findViewById(R.id.btn_opengl1);
-        Button mARViewButton = (Button) findViewById(R.id.btn_arview);
-
-        mSensorListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(MainActivity.this, SensorListActivity.class);
-                //startActivity(intent);
-            }
-        });
-
-        mSensorReadingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(MainActivity.this, SensorReadingsActivity.class);
-                //startActivity(intent);
-            }
-        });
+        Button mARLandmarkButton = (Button) findViewById(R.id.btn_arlandmark);
+        Button mARCompassButton = (Button) findViewById(R.id.btn_arcompass);
+        Button mJPLDataButton = (Button) findViewById(R.id.btn_jpldata);
 
         mMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,15 +26,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mCamera1Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(MainActivity.this, CameraActivity.class);
-                //startActivity(intent);
-            }
-        });
-
-        mOpenGL1Button.setOnClickListener(new View.OnClickListener() {
+        mARLandmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DisplayLandmarkActivity.class);
@@ -60,10 +34,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mARViewButton.setOnClickListener(new View.OnClickListener() {
+        mARCompassButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DisplayCompassActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mJPLDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, DisplayJPLDataActivity.class);
                 startActivity(intent);
             }
         });

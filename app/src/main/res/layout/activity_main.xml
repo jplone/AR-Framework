@@ -11,37 +11,25 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sensor List"
-        android:id="@+id/btn_sensor_list" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sensor Readings"
-        android:id="@+id/btn_sensor_readings" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Display Map"
         android:id="@+id/btn_map" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Camera2"
-        android:id="@+id/btn_camera1" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Display AR Landmarks"
-        android:id="@+id/btn_opengl1" />
+        android:id="@+id/btn_arlandmark" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Display AR Compass"
-        android:id="@+id/btn_arview" />
+        android:id="@+id/btn_arcompass" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Display JPL Data"
+        android:id="@+id/btn_jpldata" />
 
 </LinearLayout>
