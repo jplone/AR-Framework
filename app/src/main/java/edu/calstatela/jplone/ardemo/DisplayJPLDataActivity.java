@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -71,6 +72,7 @@ public class DisplayJPLDataActivity extends AppCompatActivity implements Network
     private Context appContext;
     private TextView txtData;
     private String query_url;
+    private String encodedAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,10 @@ public class DisplayJPLDataActivity extends AppCompatActivity implements Network
         setContentView(R.layout.activity_display_data);
 
         appContext = this;
+        SharedPreferences sp = this.getPreferences(appContext.MODE_PRIVATE);
+        encodedAuth = sp.getString("EncodedAuthorization", null);
+        query_url = sp.getString("QueryURL", null);
+
         Button mUrlButton = (Button) findViewById(R.id.btn_url);
         Button mLoadButton = (Button) findViewById(R.id.btn_load);
         Button mLoginButton = (Button) findViewById(R.id.btn_login);
@@ -108,6 +114,13 @@ public class DisplayJPLDataActivity extends AppCompatActivity implements Network
     private void displayData(String txt) {
         Log.d("JPLData", "Displaying: " + txt);
         txtData.setText(txt);
+
+        if(txt != null) { // that means authentication was a success so let's save the info
+            SharedPreferences.Editor editor = this.getPreferences(appContext.MODE_PRIVATE).edit();
+            editor.putString("EncodedAuthorization", encodedAuth);
+            editor.putString("QueryURL", query_url);
+            editor.commit();
+        }
     }
 
     public void performUrlSet() {
@@ -116,14 +129,22 @@ public class DisplayJPLDataActivity extends AppCompatActivity implements Network
     }
 
     public void performLogin() {
-        LoginDialog ld = new LoginDialog();
-        ld.show(getFragmentManager(), "LoginDialogFragment");
+        if(encodedAuth != null)
+            authenticate(encodedAuth);
+        else {
+            LoginDialog ld = new LoginDialog();
+            ld.show(getFragmentManager(), "LoginDialogFragment");
+        }
     }
 
     @Override
     public void onSubmit(String... params) {
         if(params[0].equals("login")) {
-            authenticate(params[1], params[2]);
+            String authString = params[1] + ":" + params[2];
+            byte[] authEncBytes = Base64.encode(authString.getBytes(), 0);
+            encodedAuth = new String(authEncBytes);
+
+            authenticate(encodedAuth);
         }
         else if(params[0].equals("url")) {
             this.query_url = params[1];
@@ -157,10 +178,10 @@ public class DisplayJPLDataActivity extends AppCompatActivity implements Network
         }
     }
 
-    private void authenticate(String username, String password) {
+    private void authenticate(String encAuth) {
         // Tell the URLConnection to use a SocketFactory from our SSLContext
         NetworkTask at = new NetworkTask(this, null);
-        at.execute(query_url, username, password);
+        at.execute(query_url, encAuth);
     }
 
     private void authenticate(Uri uri) {
@@ -268,12 +289,8 @@ public class DisplayJPLDataActivity extends AppCompatActivity implements Network
                 if(socketFactory != null)
                     urlConnection.setSSLSocketFactory(socketFactory);
                 else {
-                    String authString = params[1] + ":" + params[2];
-                    byte[] authEncBytes = Base64.encode(authString.getBytes(), 0);
-                    urlConnection.setRequestProperty("Authorization", "Basic " + new String(authEncBytes));
+                    urlConnection.setRequestProperty("Authorization", "Basic " + params[1]);
                 }
-                //urlConnection.setSSLSocketFactory(context.getSocketFactory());
-                //InputStream in = urlConnection.getInputStream();
                 urlConnection.connect();
                 Log.d("Connection", urlConnection.getCipherSuite());
 
