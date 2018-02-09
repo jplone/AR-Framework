@@ -1,20 +1,31 @@
 package edu.calstatela.jplone.ardemo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
@@ -23,6 +34,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -31,8 +43,10 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
@@ -43,60 +57,110 @@ import javax.net.ssl.X509TrustManager;
  * Created by bill on 2/6/18.
  */
 
-public class DisplayJPLDataActivity extends AppCompatActivity {
+interface NetworkCallback {
+    void onResult(String result);
+}
+
+interface TextInputDialogCallback {
+    void onSubmit(String... params);
+    void onCancel();
+}
+
+public class DisplayJPLDataActivity extends AppCompatActivity implements NetworkCallback, TextInputDialogCallback {
     private static final int READ_REQUEST_CODE = 42;
     private Context appContext;
+    private TextView txtData;
+    private String query_url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_display_data);
 
         appContext = this;
-        performFileSearch();
+        Button mUrlButton = (Button) findViewById(R.id.btn_url);
+        Button mLoadButton = (Button) findViewById(R.id.btn_load);
+        Button mLoginButton = (Button) findViewById(R.id.btn_login);
+        txtData = (TextView) findViewById(R.id.txt_data);
+
+        mUrlButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performUrlSet();
+            }
+        });
+
+        mLoadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performFileLoad();
+            }
+        });
+
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performLogin();
+            }
+        });
+    }
+
+    private void displayData(String txt) {
+        Log.d("JPLData", "Displaying: " + txt);
+        txtData.setText(txt);
+    }
+
+    public void performUrlSet() {
+        UrlDialog ud = new UrlDialog();
+        ud.show(getFragmentManager(), "UrlDialogFragment");
+    }
+
+    public void performLogin() {
+        LoginDialog ld = new LoginDialog();
+        ld.show(getFragmentManager(), "LoginDialogFragment");
+    }
+
+    @Override
+    public void onSubmit(String... params) {
+        if(params[0].equals("login")) {
+            authenticate(params[1], params[2]);
+        }
+        else if(params[0].equals("url")) {
+            this.query_url = params[1];
+        }
+    }
+
+    @Override
+    public void onCancel() {
+
     }
 
     /**
      * Fires an intent to spin up the "file chooser" UI and select an image.
      */
-    public void performFileSearch() {
-
-        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
-        // browser.
+    public void performFileLoad() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-
-        // Filter to only show results that can be "opened", such as a
-        // file (as opposed to a list of contacts or timezones)
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        // Filter to show only images, using the image MIME data type.
-        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
-        // To search for all documents available via installed storage providers,
-        // it would be "*/*".
         intent.setType("*/*");
 
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent resultData) {
-
-        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
-        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
-        // response to some other intent, and the code below shouldn't run at all.
-
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         if (requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // The document selected by the user won't be returned in the intent.
-            // Instead, a URI to that document will be contained in the return intent
-            // provided to this method as a parameter.
-            // Pull that URI using resultData.getData().
-            Uri uri = null;
             if (resultData != null) {
-                uri = resultData.getData();
+                Uri uri = resultData.getData();
                 Log.i("JPLDataActivity", "Uri: " + uri.toString());
                 authenticate(uri);
             }
         }
+    }
+
+    private void authenticate(String username, String password) {
+        // Tell the URLConnection to use a SocketFactory from our SSLContext
+        NetworkTask at = new NetworkTask(this, null);
+        at.execute(query_url, username, password);
     }
 
     private void authenticate(Uri uri) {
@@ -116,24 +180,16 @@ public class DisplayJPLDataActivity extends AppCompatActivity {
                 caInput.close();
             }
 
-            // Create a KeyStore containing our trusted CAs
-            String keyStoreType = KeyStore.getDefaultType();
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
-
-            // Create a TrustManager that trusts the CAs in our KeyStore
-            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            tmf.init(keyStore);
+            // Create a KeyStore containing our trusted CAs\
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(null, null);
+            ks.setCertificateEntry("ca", ca);
 
             // Create an SSLContext that uses our TrustManager
             //final SSLContext context = SSLContext.getInstance("TLS");
-            final SSLContext context = SSLContext.getInstance("TLSv1.2");
-            //context.init(null, tmf.getTrustManagers(), null);
-            context.init(null, new TrustManager[]{new AdditionalKeyStoresTrustManager(keyStore)}, null);
+            final SSLContext context = SSLContext.getInstance("TLS");
+            context.init(null, new TrustManager[]{new AdditionalKeyStoresTrustManager(ks)}, new SecureRandom());
 
-            //final SSLSocketFactory ssf = new AdditionalKeyStoresSSLSocketFactory(keyStore);
             final SSLSocketFactory socketFactory = new SSLSocketFactory() {
                 @Override
                 public String[] getDefaultCipherSuites() {
@@ -149,13 +205,14 @@ public class DisplayJPLDataActivity extends AppCompatActivity {
                 public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
                     SSLSocket ssl_socket = (SSLSocket) context.getSocketFactory().createSocket(socket, host, port, autoClose);
                     //String[] protocols = {"TLSv1"};//, "TLSv1"};//, "TLSv1.1", "TLSv1.2"};
-                    String[] ciphers = {"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"};
+                    //String[] ciphers = {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA384"};
                     //ssl_socket.setEnabledProtocols(protocols);
-                    ssl_socket.setEnabledCipherSuites(ciphers);
+                    //ssl_socket.setEnabledCipherSuites(ciphers);
 
+                    /*
                     for(String protocol : ssl_socket.getEnabledCipherSuites()) {
                         Log.d("SSLFactory", protocol);
-                    }
+                    }*/
 
                     return ssl_socket;
                 }
@@ -182,39 +239,81 @@ public class DisplayJPLDataActivity extends AppCompatActivity {
             };
 
             // Tell the URLConnection to use a SocketFactory from our SSLContext
-            AsyncTask<Void, Void, String> at = new AsyncTask<Void, Void, String>() {
-                @Override
-                protected String doInBackground(Void... things) {
-                    try {
-                        URL url = new URL("https://h20hub.jpl.nasa.gov/hydrology/rest/well/master_site_id/");
-                        HttpsURLConnection urlConnection =
-                                (HttpsURLConnection) url.openConnection();
-                        urlConnection.setSSLSocketFactory(socketFactory);
-                        //urlConnection.setSSLSocketFactory(context.getSocketFactory());
-                        //InputStream in = urlConnection.getInputStream();
-                        urlConnection.connect();
-                        Log.d("Connection", urlConnection.getCipherSuite());
-                        Log.d("Connection", urlConnection.getServerCertificates().toString());
-                        InputStream in = urlConnection.getInputStream();
-                    }
-                    catch(Exception e) {
-                        Log.d("JPLDataAsyncTask", "Exception!");
-                        Log.d("JPLDataAsyncTask",  e.toString() + ": " + e.getMessage());
-                    }
-
-                    return null;
-                }
-            };
-
-            Void v = null;
-            at.execute(v);
-
-            //copyInputStreamToOutputStream(in, System.out);
+            NetworkTask at = new NetworkTask(this, socketFactory);
+            at.execute(query_url);
         }
         catch (Exception e) {
             Log.d("JPLDataActivity", "exception occurred!");
             Log.d("JPLDataActivity", e.toString() + ": " + e.getMessage());
         }
+    }
+
+    public static class NetworkTask extends AsyncTask<String, Void, String> {
+        private SSLSocketFactory socketFactory;
+        private NetworkCallback callback;
+
+        public NetworkTask(NetworkCallback callback, SSLSocketFactory socketFactory) {
+            this.callback = callback;
+            this.socketFactory = socketFactory;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            if(params.length == 0) // if there is no socket factory being passed in
+                return null;
+            try {
+                URL url = new URL(params[0]);
+                HttpsURLConnection urlConnection =
+                        (HttpsURLConnection) url.openConnection();
+                if(socketFactory != null)
+                    urlConnection.setSSLSocketFactory(socketFactory);
+                else {
+                    String authString = params[1] + ":" + params[2];
+                    byte[] authEncBytes = Base64.encode(authString.getBytes(), 0);
+                    urlConnection.setRequestProperty("Authorization", "Basic " + new String(authEncBytes));
+                }
+                //urlConnection.setSSLSocketFactory(context.getSocketFactory());
+                //InputStream in = urlConnection.getInputStream();
+                urlConnection.connect();
+                Log.d("Connection", urlConnection.getCipherSuite());
+
+                for(Certificate c : urlConnection.getServerCertificates()) {
+                    Log.d("Connection", c.toString());
+                }
+
+                String response = urlConnection.getResponseMessage();
+                Log.d("Connection", response);
+
+                if(response.equals("OK")) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    String result = "";
+                    String line;
+                    int count = 0;
+                    while((line = br.readLine()) != null && count < 100) {
+                        result += line + "\n";
+                        count++;
+                    }
+                    return result;
+                }
+
+                return null;
+            }
+            catch(Exception e) {
+                Log.d("JPLDataAsyncTask", "Exception!");
+                Log.d("JPLDataAsyncTask",  e.toString() + ": " + e.getMessage());
+            }
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            callback.onResult(result);
+        }
+    }
+
+    @Override
+    public void onResult(String result) {
+        displayData(result);
     }
 
     /**
@@ -284,6 +383,88 @@ public class DisplayJPLDataActivity extends AppCompatActivity {
             for( X509TrustManager tm : x509TrustManagers )
                 list.addAll(Arrays.asList(tm.getAcceptedIssuers()));
             return list.toArray(new X509Certificate[list.size()]);
+        }
+    }
+
+    public static class LoginDialog extends DialogFragment {
+        private TextInputDialogCallback callback;
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View view = inflater.inflate(R.layout.dialog_login, null);
+            final TextView txtUser = (TextView) view.findViewById(R.id.txt_user);
+            final TextView txtPass = (TextView) view.findViewById(R.id.txt_pass);
+
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(view)
+                    .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            String username = txtUser.getText().toString();
+                            String password = txtPass.getText().toString();
+                            callback.onSubmit(new String[]{"login", username, password});
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            callback.onCancel();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+
+            try {
+                callback = (TextInputDialogCallback) activity;
+            }
+            catch (ClassCastException e) {
+                throw new ClassCastException(activity.toString() + " must implement LoginDialogCallback");
+            }
+        }
+    }
+
+    public static class UrlDialog extends DialogFragment {
+        private TextInputDialogCallback callback;
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View view = inflater.inflate(R.layout.dialog_url, null);
+            final TextView txtUrl = (TextView) view.findViewById(R.id.txt_url);
+
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(view)
+                    .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            String url = txtUrl.getText().toString();
+                            callback.onSubmit(new String[]{"url", url});
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            callback.onCancel();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+
+            try {
+                callback = (TextInputDialogCallback) activity;
+            }
+            catch (ClassCastException e) {
+                throw new ClassCastException(activity.toString() + " must implement LoginDialogCallback");
+            }
         }
     }
 }
