@@ -43,6 +43,7 @@ public class ARView extends FrameLayout {
     private boolean initialized;
     private ArrayList<ARGLRenderJob> renderList;
     private boolean hasGPS;
+    private DirectGLRenderer renderer;
 
     public ARView(Context context, boolean hasGPS) {
         super(context);
@@ -70,11 +71,13 @@ public class ARView extends FrameLayout {
         arCameraView = new ARCameraView(arContext);
         addView(arCameraView);
 
+        renderer = new DirectGLRenderer();
+
         glSurfaceView = new GLSurfaceView(arContext);
         glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         glSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setRenderer(new DirectGLRenderer());
+        glSurfaceView.setRenderer(renderer);
         glSurfaceView.setDebugFlags(GLSurfaceView.DEBUG_LOG_GL_CALLS);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         //glSurfaceView.setPreserveEGLContextOnPause(true);
@@ -100,7 +103,14 @@ public class ARView extends FrameLayout {
     }
 
     public void addJob(ARGLRenderJob job) {
-        renderList.add(job);
+        if(!renderer.started())
+            renderList.add(job);
+        {
+            if(hasGPS)
+                renderer.add((ARGLSizedBillboard) job.execute(latLonAlt));
+            else
+                renderer.add((ARGLSizedBillboard) job.execute());
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,6 +159,15 @@ public class ARView extends FrameLayout {
 
     class DirectGLRenderer implements GLSurfaceView.Renderer {
         ArrayList<ARGLSizedBillboard> glSizedBillboards;
+        boolean surfaceCreated = false;
+
+        public boolean started() {
+            return surfaceCreated;
+        }
+
+        public void add(ARGLSizedBillboard b) {
+            glSizedBillboards.add(b);
+        }
 
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -166,6 +185,7 @@ public class ARView extends FrameLayout {
             }
 
             Log.d("DirectGLRenderer", "initialized with " + glSizedBillboards.size() + " billboards!");
+            surfaceCreated = true;
         }
 
         @Override
