@@ -24,6 +24,16 @@ public class ARGLPosition {
         rotate(angle, rx, ry, rz);
     }
 
+    public boolean compare(ARGLPosition pos) {
+        boolean equal = true;
+
+        for(int i=0; i<16; i++)
+            if(this.matrix[i] != pos.matrix[i])
+                equal = false;
+
+        return equal;
+    }
+
     public void translate(float x, float y, float z) {
         Matrix.translateM(matrix, 0, x, y, z);
     }

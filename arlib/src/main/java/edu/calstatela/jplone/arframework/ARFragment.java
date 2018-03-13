@@ -30,7 +30,8 @@ public class ARFragment extends Fragment {
     private static final int ARFRAGMENT_PERMISSION_REQUEST_CODE = 0x1234;
     private Context arContext;
     private ARView arView;
-    private ArrayList<ARGLRenderJob> deferredRenderList;
+    private ArrayList<ARGLRenderJob> deferredRenderAddList;
+    private ArrayList<ARGLRenderJob> deferredRenderDelList;
     private boolean useGPS;
     private ARLocationSensor arLocationSensor;
     private Fragment arFragmentInstance;
@@ -38,14 +39,16 @@ public class ARFragment extends Fragment {
     public ARFragment() {
         super();
         arFragmentInstance = this;
-        deferredRenderList = new ArrayList<ARGLRenderJob>();
+        deferredRenderAddList = new ArrayList<ARGLRenderJob>();
+        deferredRenderDelList = new ArrayList<ARGLRenderJob>();
         this.useGPS = false;
     }
 
     public ARFragment(boolean useGPS) {
         super();
         arFragmentInstance = this;
-        deferredRenderList = new ArrayList<ARGLRenderJob>();
+        deferredRenderAddList = new ArrayList<ARGLRenderJob>();
+        deferredRenderDelList = new ArrayList<ARGLRenderJob>();
         this.useGPS = useGPS;
     }
 
@@ -63,10 +66,11 @@ public class ARFragment extends Fragment {
         arView = new ARView(arContext, useGPS);
 
         // if there are things in the deferred renderer list, copy them
-        arView.mirrorRenderList(deferredRenderList);
+        arView.mirrorRenderAddList(deferredRenderAddList);
+        arView.mirrorRenderDelList(deferredRenderDelList);
 
         // then clear the list (garbage collect it)
-        deferredRenderList.clear();
+        deferredRenderAddList.clear();
 
         // set up GPS
         if(useGPS)
@@ -122,7 +126,15 @@ public class ARFragment extends Fragment {
         if(arView != null)
             arView.addJob(job);
         else
-            deferredRenderList.add(job);
+            deferredRenderAddList.add(job);
+    }
+
+    public void removeJob(ARGLRenderJob job) {
+        // if arView hasn't started then there is nothing to delete
+        if(arView != null)
+            arView.removeJob(job);
+        else
+            deferredRenderDelList.add(job);
     }
 
     public void updateLatLonAlt(float[] latLonAlt) {

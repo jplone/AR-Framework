@@ -5,7 +5,9 @@ import android.opengl.Matrix;
 import android.util.Log;
 
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 import edu.calstatela.jplone.arframework.ARData.ARLandmark;
 import edu.calstatela.jplone.arframework.ARGL.Billboard.ARGLBillboard;
@@ -84,6 +86,39 @@ public class ARGLRenderJob {
         }
 
         return ret;
+    }
+
+    public boolean compare(ARGLRenderJob job) {
+        boolean equal = true;
+
+        switch(type) {
+            case TYPE_BILLBOARD:
+                String self_title = (String) this.params.get("title");
+                String self_text = (String) this.params.get("text");
+                ARGLPosition self_position = (ARGLPosition) this.params.get("position");
+
+                String job_title = (String) job.params.get("title");
+                String job_text = (String) job.params.get("text");
+                ARGLPosition job_position = (ARGLPosition) job.params.get("position");
+
+                if(!self_title.equals(job_title))
+                    equal = false;
+                if(!self_text.equals(job_text))
+                    equal = false;
+                if(!self_position.compare(job_position))
+                    equal = false;
+                break;
+
+            case TYPE_BILLBOARD_LANDMARK:
+                ARLandmark self_current = (ARLandmark) this.params.get("landmark");
+                ARLandmark job_current = (ARLandmark) job.params.get("landmark");
+
+                if(!self_current.compare(job_current))
+                    equal = false;
+                break;
+        }
+
+        return equal;
     }
 
     public ARGLRenderJob clone() {

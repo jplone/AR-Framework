@@ -41,7 +41,8 @@ public class ARView extends FrameLayout {
     private ARGLCamera glCamera;
     private boolean activated;
     private boolean initialized;
-    private ArrayList<ARGLRenderJob> renderList;
+    private ArrayList<ARGLRenderJob> renderAddList;
+    private ArrayList<ARGLRenderJob> renderDelList;
     private boolean hasGPS;
     private DirectGLRenderer renderer;
 
@@ -49,7 +50,8 @@ public class ARView extends FrameLayout {
         super(context);
 
         arContext = context;
-        renderList = new ArrayList<ARGLRenderJob>();
+        renderAddList = new ArrayList<ARGLRenderJob>();
+        renderDelList = new ArrayList<ARGLRenderJob>();
 
         glCamera = new ARGLCamera();
 
@@ -97,20 +99,22 @@ public class ARView extends FrameLayout {
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void mirrorRenderList(ArrayList<ARGLRenderJob> list) {
-        renderList = (ArrayList<ARGLRenderJob>) list.clone();
-        Log.d(TAG, "copied " + renderList.size() + " objects into renderList");
+    public void mirrorRenderAddList(ArrayList<ARGLRenderJob> list) {
+        renderAddList = (ArrayList<ARGLRenderJob>) list.clone();
+        Log.d(TAG, "copied " + renderAddList.size() + " objects into renderAddList");
+    }
+
+    public void mirrorRenderDelList(ArrayList<ARGLRenderJob> list) {
+        renderDelList = (ArrayList<ARGLRenderJob>) list.clone();
+        Log.d(TAG, "copied " + renderDelList.size() + " objects into renderDelList");
     }
 
     public void addJob(ARGLRenderJob job) {
-        if(!renderer.started())
-            renderList.add(job);
-        {
-            if(hasGPS)
-                renderer.add((ARGLSizedBillboard) job.execute(latLonAlt));
-            else
-                renderer.add((ARGLSizedBillboard) job.execute());
-        }
+        renderAddList.add(job);
+    }
+
+    public void removeJob(ARGLRenderJob job) {
+        renderDelList.add(job);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,14 +163,53 @@ public class ARView extends FrameLayout {
 
     class DirectGLRenderer implements GLSurfaceView.Renderer {
         ArrayList<ARGLSizedBillboard> glSizedBillboards;
+        ArrayList<ARGLRenderJob> glRenderJobs;
         boolean surfaceCreated = false;
 
         public boolean started() {
             return surfaceCreated;
         }
 
-        public void add(ARGLSizedBillboard b) {
-            glSizedBillboards.add(b);
+        private void add(ARGLRenderJob job) {
+            glRenderJobs.add(job);
+
+            if(hasGPS)
+                glSizedBillboards.add((ARGLSizedBillboard) job.execute(latLonAlt));
+            else
+                glSizedBillboards.add((ARGLSizedBillboard) job.execute());
+        }
+
+        private void delete(ARGLRenderJob job) {
+            int index = -1;
+
+            for(int i=0; i<glRenderJobs.size(); i++) {
+                ARGLRenderJob j = glRenderJobs.get(i);
+                // do something?
+                if(j.compare(job))
+                    index = i;
+            }
+
+            if(index < 0)
+                return;
+
+            glRenderJobs.remove(index);
+            glSizedBillboards.remove(index);
+        }
+
+        private void prepareAddList() {
+            while(!renderAddList.isEmpty()) {
+                ARGLRenderJob j = (ARGLRenderJob) renderAddList.get(0);
+                renderAddList.remove(0);
+                add(j);
+            }
+        }
+
+        private void prepareDelList() {
+            while(!renderDelList.isEmpty()) {
+                ARGLRenderJob j = (ARGLRenderJob) renderDelList.get(0);
+                renderDelList.remove(0);
+                delete(j);
+            }
         }
 
         @Override
@@ -174,17 +217,10 @@ public class ARView extends FrameLayout {
             GLES20.glClearColor(0, 0, 0, 0);
 
             glSizedBillboards = new ArrayList<ARGLSizedBillboard>();
+            glRenderJobs = new ArrayList<ARGLRenderJob>();
 
             ARGLBillboardMaker.init(arContext);
 
-            for(int i=0; i<renderList.size(); i++) {
-                if(hasGPS)
-                    glSizedBillboards.add((ARGLSizedBillboard) renderList.get(i).execute(latLonAlt));
-                else
-                    glSizedBillboards.add((ARGLSizedBillboard) renderList.get(i).execute());
-            }
-
-            Log.d("DirectGLRenderer", "initialized with " + glSizedBillboards.size() + " billboards!");
             surfaceCreated = true;
         }
 
@@ -203,6 +239,12 @@ public class ARView extends FrameLayout {
             glCamera.updateViewMatrix();
 
             float[] scratch = new float[16];
+
+            // add what needs to be rendered
+            prepareAddList();
+
+            // delete what we don't need to render anymore
+            prepareDelList();
 
             for(ARGLSizedBillboard billboard : glSizedBillboards) {
                 Matrix.multiplyMM(scratch, 0, glCamera.getViewProjectionMatrix(), 0, billboard.getMatrix(), 0);
