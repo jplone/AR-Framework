@@ -1,6 +1,7 @@
 package edu.calstatela.jplone.arframework.Utils;
 
 import android.hardware.SensorManager;
+import android.util.Log;
 
 /**
  * Created by bill on 11/2/17.
@@ -70,8 +71,10 @@ public class ARMath {
 
         // Convert radians to degrees
         float yaw = (float)(orientation[0] * 180 / Math.PI);
-        //float pitch = orientation[1] * -57;
-        //float roll = orientation[2] * -57;
+        float pitch = orientation[1] * -57;
+        float roll = orientation[2] * -57;
+
+        //Log.d("ARView", "Angles: (" + yaw + ", " + pitch + ", " + roll + ")");
 
         return yaw;
     }
