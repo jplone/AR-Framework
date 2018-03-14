@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
 import edu.calstatela.jplone.arframework.ARSensors.ARLocationSensor;
+import edu.calstatela.jplone.arframework.Utils.AREvent;
 import edu.calstatela.jplone.arframework.Utils.ARMath;
 import edu.calstatela.jplone.arframework.Utils.ARPermissions;
 
@@ -135,6 +136,11 @@ public class ARFragment extends Fragment {
             arView.removeJob(job);
         else
             deferredRenderDelList.add(job);
+    }
+
+    public void setCallback(AREvent.Callback callback) {
+        if(arView != null)
+            arView.setCallback(callback);
     }
 
     public void updateLatLonAlt(float[] latLonAlt) {

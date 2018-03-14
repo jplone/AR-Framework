@@ -7,6 +7,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
 import edu.calstatela.jplone.arframework.ARGL.Utils.ARGLBillboardMaker;
 import edu.calstatela.jplone.arframework.ARSensors.ARLocationSensor;
 import edu.calstatela.jplone.arframework.ARSensors.ARMotionSensor;
+import edu.calstatela.jplone.arframework.Utils.AREvent;
 import edu.calstatela.jplone.arframework.Utils.ARMath;
 
 /**
@@ -35,6 +37,7 @@ public class ARView extends FrameLayout {
 
     // sensors
     private ARMotionSensor arMotionSensor;
+    private AREvent.Callback arCallback;
 
     private TextView arTxtView;
     private Context arContext;
@@ -49,6 +52,7 @@ public class ARView extends FrameLayout {
     public ARView(Context context, boolean hasGPS) {
         super(context);
 
+        arCallback = null;
         arContext = context;
         renderAddList = new ArrayList<ARGLRenderJob>();
         renderDelList = new ArrayList<ARGLRenderJob>();
@@ -95,7 +99,7 @@ public class ARView extends FrameLayout {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
-    //      Asynchronoous Render List Handlers
+    //      Asynchronous Render List Handlers
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -153,6 +157,10 @@ public class ARView extends FrameLayout {
             glSurfaceView.onPause();
             activated = false;
         }
+    }
+
+    public void setCallback(AREvent.Callback arCallback) {
+        this.arCallback = arCallback;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -282,6 +290,9 @@ public class ARView extends FrameLayout {
             float[] adjustMatrix = new float[16];
             Matrix.setRotateM(adjustMatrix, 0, 90, -1, 0, 0);
             Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
+
+            if(arCallback != null)
+                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], angle));
         }
 
         private void landscapeMatrixFromRotation(float[] matrix, float[] rotation){
@@ -300,6 +311,9 @@ public class ARView extends FrameLayout {
             Matrix.setRotateM(adjustMatrix, 0, 90, 0, 0, 1);
             Matrix.rotateM(adjustMatrix, 0, 90, -1, 0, 0);
             Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
+
+            if(arCallback != null)
+                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], angle));
         }
     };
 
