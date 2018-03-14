@@ -1,5 +1,7 @@
 package edu.calstatela.jplone.arframework.Utils;
 
+import android.hardware.SensorManager;
+
 /**
  * Created by bill on 11/2/17.
  */
@@ -49,6 +51,29 @@ public class ARMath {
 
     public static float degreesToRad(float degrees){
         return (float) (degrees / 360.0 * 2 * Math.PI);
+    }
+
+    public static float compassBearing(float[] rotationVector) {
+        float[] rotationMatrix = new float[9];
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, rotationVector);
+
+        final int worldAxisForDeviceAxisX = SensorManager.AXIS_X;
+        final int worldAxisForDeviceAxisY = SensorManager.AXIS_Z;
+
+        float[] adjustedRotationMatrix = new float[9];
+        SensorManager.remapCoordinateSystem(rotationMatrix, worldAxisForDeviceAxisX,
+                worldAxisForDeviceAxisY, adjustedRotationMatrix);
+
+        // Transform rotation matrix into azimuth/pitch/roll
+        float[] orientation = new float[3];
+        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
+
+        // Convert radians to degrees
+        float yaw = (float)(orientation[0] * 180 / Math.PI);
+        //float pitch = orientation[1] * -57;
+        //float roll = orientation[2] * -57;
+
+        return yaw;
     }
 
     public static float compassBearing(float[] gravityVec, float[] magnetVec, float[] cameraVec){

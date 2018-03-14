@@ -294,7 +294,7 @@ public class ARView extends FrameLayout {
             Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
 
             if(arCallback != null) {
-                double bearing = ARMath.radToDegrees(2 * (float)Math.atan2(-rVec[1], rVec[0]));
+                double bearing = ARMath.compassBearing(rotation);
                 arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
             }
         }
@@ -307,9 +307,7 @@ public class ARView extends FrameLayout {
             rVec[2] /= magnitude;
             float angle = ARMath.radToDegrees(2 * (float)Math.asin(magnitude));
 
-
             Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);
-
 
             float[] adjustMatrix = new float[16];
             Matrix.setRotateM(adjustMatrix, 0, 90, 0, 0, 1);
@@ -317,7 +315,7 @@ public class ARView extends FrameLayout {
             Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
 
             if(arCallback != null) {
-                double bearing = ARMath.radToDegrees(2 * (float)Math.atan2(-rVec[1], rVec[0]));
+                double bearing = ARMath.compassBearing(rotation);
                 arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
             }
         }
