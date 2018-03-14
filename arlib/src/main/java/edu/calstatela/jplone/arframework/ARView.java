@@ -3,6 +3,7 @@ package edu.calstatela.jplone.arframework;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -271,6 +272,7 @@ public class ARView extends FrameLayout {
         @Override
         public void onSensorEvent(SensorEvent event) {
             float[] matrix = new float[16];
+            //SensorManager.getRotationMatrixFromVector(matrix, event.values);
             portraitMatrixFromRotation(matrix, event.values);
 
             if(glCamera != null)
@@ -291,8 +293,10 @@ public class ARView extends FrameLayout {
             Matrix.setRotateM(adjustMatrix, 0, 90, -1, 0, 0);
             Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
 
-            if(arCallback != null)
-                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], angle));
+            if(arCallback != null) {
+                double bearing = ARMath.radToDegrees(2 * (float)Math.atan2(-rVec[1], rVec[0]));
+                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
+            }
         }
 
         private void landscapeMatrixFromRotation(float[] matrix, float[] rotation){
@@ -312,8 +316,10 @@ public class ARView extends FrameLayout {
             Matrix.rotateM(adjustMatrix, 0, 90, -1, 0, 0);
             Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
 
-            if(arCallback != null)
-                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], angle));
+            if(arCallback != null) {
+                double bearing = ARMath.radToDegrees(2 * (float)Math.atan2(-rVec[1], rVec[0]));
+                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
+            }
         }
     };
 
