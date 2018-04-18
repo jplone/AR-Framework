@@ -11,12 +11,6 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Display Map"
-        android:id="@+id/btn_map" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Display AR Landmarks"
         android:id="@+id/btn_arlandmark" />
 
@@ -25,11 +19,5 @@
         android:layout_height="wrap_content"
         android:text="Display AR Compass"
         android:id="@+id/btn_arcompass" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Display JPL Data"
-        android:id="@+id/btn_jpldata" />
 
 </LinearLayout>

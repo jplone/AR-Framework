@@ -30,7 +30,6 @@
 
         <activity android:name=".DisplayCompassActivity" />
         <activity android:name=".DisplayLandmarkActivity" />
-        <activity android:name=".DisplayJPLDataActivity" />
 
     </application>
 

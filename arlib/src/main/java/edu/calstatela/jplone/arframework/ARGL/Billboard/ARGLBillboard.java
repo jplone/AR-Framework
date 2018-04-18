@@ -76,7 +76,7 @@ public class ARGLBillboard {
     }
 
     public void setPosition(ARGLPosition position) {
-        Log.d("Billboard", "setPosition called");
+        //Log.d("Billboard", "setPosition called");
         Matrix.setIdentityM(mMatrix, 0);
         Matrix.multiplyMM(mMatrix, 0, mMatrix, 0, position.getMatrix(), 0);
     }

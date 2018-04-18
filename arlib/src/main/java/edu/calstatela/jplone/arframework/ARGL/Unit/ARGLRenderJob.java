@@ -66,21 +66,7 @@ public class ARGLRenderJob {
 
                 ARGLSizedBillboard billboard = ARGLBillboardMaker.make(scale, iconResourceId, current.title, current.description);
 
-                float distance = here.distance(current);
-                float angle = here.compassDirection(current);
-
-                float[] scratchMatrix = new float[16];
-
-                ARGLPosition position = new ARGLPosition(0, 0, -10 - distance * 0.00001f);
-                position.rotate(-angle, 0, 1 ,0);
-
-                float[] vec = {0, 0, 0, 1};
-                float[] resultVec = new float[4];
-                Matrix.multiplyMV(resultVec, 0, position.getMatrix(), 0, vec, 0);
-                Log.d("ARGLRenderJob", current.title + "  " + ARMath.vec2String(resultVec));
-
-                billboard.setPosition(position);
-
+                billboard.setLandmark(current);
                 ret = billboard;
                 break;
         }

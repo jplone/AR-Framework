@@ -18,8 +18,10 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import edu.calstatela.jplone.arframework.ARCamera.ARCameraView;
+import edu.calstatela.jplone.arframework.ARData.ARLandmark;
 import edu.calstatela.jplone.arframework.ARGL.ARGLCamera;
 import edu.calstatela.jplone.arframework.ARGL.Billboard.ARGLSizedBillboard;
+import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLPosition;
 import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
 import edu.calstatela.jplone.arframework.ARGL.Utils.ARGLBillboardMaker;
 import edu.calstatela.jplone.arframework.ARSensors.ARLocationSensor;
@@ -173,6 +175,7 @@ public class ARView extends FrameLayout {
     class DirectGLRenderer implements GLSurfaceView.Renderer {
         ArrayList<ARGLSizedBillboard> glSizedBillboards;
         ArrayList<ARGLRenderJob> glRenderJobs;
+        ARLandmark last;
         boolean surfaceCreated = false;
 
         public boolean started() {
@@ -221,6 +224,46 @@ public class ARView extends FrameLayout {
             }
         }
 
+        // update the locations of billboards that depend on GPS coordinates
+        private void updatePositions() {
+            if(latLonAlt == null) // no GPS
+                return;
+
+            ARLandmark here = new ARLandmark("", "", latLonAlt[0], latLonAlt[1], 100);
+
+            if(last != null && here.compare(last)) // only update if location is different
+                return;
+
+            boolean updated = false;
+
+            for(int i=0; i<glRenderJobs.size(); i++) {
+                ARGLSizedBillboard billboard = glSizedBillboards.get(i);
+                ARLandmark current = billboard.getLandmark();
+
+                if(current != null) {
+                    float distance = here.distance(current);
+                    float angle = here.compassDirection(current);
+
+                    ARGLPosition position = new ARGLPosition(0, 0, -10 - distance * 0.00001f);
+                    position.rotate(-angle, 0, 1, 0);
+
+                    /*
+                    float[] vec = {0, 0, 0, 1};
+                    float[] resultVec = new float[4];
+                    Matrix.multiplyMV(resultVec, 0, position.getMatrix(), 0, vec, 0);
+                    Log.d("ARGLRenderJob", current.title + "  " + ARMath.vec2String(resultVec));
+                    */
+
+                    billboard.setPosition(position);
+
+                    updated = true;
+                }
+            }
+
+            if(updated)
+                last = here;
+        }
+
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             GLES20.glClearColor(0, 0, 0, 0);
@@ -255,6 +298,9 @@ public class ARView extends FrameLayout {
             // delete what we don't need to render anymore
             prepareDelList();
 
+            // update billboard positions
+            updatePositions();
+
             for(ARGLSizedBillboard billboard : glSizedBillboards) {
                 Matrix.multiplyMM(scratch, 0, glCamera.getViewProjectionMatrix(), 0, billboard.getMatrix(), 0);
                 billboard.draw(scratch);
@@ -277,6 +323,11 @@ public class ARView extends FrameLayout {
 
             if(glCamera != null)
                 glCamera.setByMatrix(matrix);
+
+            if(arCallback != null) {
+                double bearing = ARMath.compassBearing(event.values);
+                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
+            }
         }
 
         private void portraitMatrixFromRotation(float[] matrix, float[] rotation){
@@ -292,11 +343,6 @@ public class ARView extends FrameLayout {
             float[] adjustMatrix = new float[16];
             Matrix.setRotateM(adjustMatrix, 0, 90, -1, 0, 0);
             Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
-
-            if(arCallback != null) {
-                double bearing = ARMath.compassBearing(rotation);
-                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
-            }
         }
 
         private void landscapeMatrixFromRotation(float[] matrix, float[] rotation){
@@ -313,11 +359,6 @@ public class ARView extends FrameLayout {
             Matrix.setRotateM(adjustMatrix, 0, 90, 0, 0, 1);
             Matrix.rotateM(adjustMatrix, 0, 90, -1, 0, 0);
             Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
-
-            if(arCallback != null) {
-                double bearing = ARMath.compassBearing(rotation);
-                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
-            }
         }
     };
 
