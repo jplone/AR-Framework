@@ -18,7 +18,7 @@ allprojects {
 In Module `build.gradle` file:
 ```javascript
 dependencies {
-    compile 'com.github.jplone:AR-Framework:v0.1'
+    compile 'com.github.jplone:AR-Framework:v0.1e'
 }
 ```
 
@@ -60,6 +60,18 @@ We have built a powerful render job pipeline and Landmark class that you can use
   
   // add the landmark to the queue to be displayed
   arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, arLandmarkCS));
+```
+
+Additionally, there are callbacks available so you will not have to set up the sensors again. Callbacks will return the current longitude and latitude, as well as the current bearing (yaw angle) of the user:
+
+```java
+  arFragment.setCallback(new AREvent.Callback() {
+    @Override
+    public void onAREvent(AREvent arEvent) {
+      //currentLocation = new LatLng(arEvent.latitude, arEvent.longitude);
+      //bearing = arEvent.bearing;
+    }
+  });
 ```
 
 ### Documentation
