@@ -42,7 +42,7 @@ public class ARGLBillboardMaker {
         Bitmap icon = ARGLTextureHelper.bitmapFromResource(openGLContext, iconResourceId);
         canvas.drawBitmap(icon, new Rect(0, 0, 512, 512), new Rect(20, 60, 100, 140), paint);
 
-        Log.d("BillboardMaker", "bitmap: " + icon.toString());
+        //Log.d("BillboardMaker", "bitmap: " + icon.toString());
 
         paint.setTextSize(30);
         paint.setFakeBoldText(true);

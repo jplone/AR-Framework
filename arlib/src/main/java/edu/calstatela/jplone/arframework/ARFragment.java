@@ -76,6 +76,7 @@ public class ARFragment extends Fragment {
 
         // then clear the list (garbage collect it)
         deferredRenderAddList.clear();
+        deferredRenderDelList.clear();
 
         // set up GPS
         if(useGPS)

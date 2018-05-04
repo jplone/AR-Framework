@@ -71,5 +71,12 @@ public class     DisplayCompassActivity extends AppCompatActivity {
                 Log.d("CompassActivity", "You touched the Western Billboard!");
             }
         }));
+
+        ARGLRenderJob job = ARGLRenderJob.makeBillboard(5, ara_icon, "Test", "Not a direction", mNorthPos, new ARGLSizedBillboard.Listener() {
+            @Override
+            public void interact(ARGLSizedBillboard billboard) {
+                Log.d("CompassActivitiy", "This should not exist!");
+            }
+        });
     }
 }

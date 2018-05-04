@@ -257,20 +257,10 @@ public class ARView extends FrameLayout {
         }
 
         private void delete(ARGLRenderJob job) {
-            int index = -1;
-
-            for(int i=0; i<glRenderJobs.size(); i++) {
-                ARGLRenderJob j = glRenderJobs.get(i);
-                // do something?
-                if(j.compare(job))
-                    index = i;
-            }
-
-            if(index < 0)
-                return;
-
-            glRenderJobs.remove(index);
+            int index = glRenderJobs.indexOf(job);
+            if(index < 0) return;
             glSizedBillboards.remove(index);
+            glRenderJobs.remove(index);
         }
 
         private void prepareAddList() {
@@ -282,11 +272,10 @@ public class ARView extends FrameLayout {
         }
 
         private void prepareDelList() {
-            while(!renderDelList.isEmpty()) {
-                ARGLRenderJob j = (ARGLRenderJob) renderDelList.get(0);
-                renderDelList.remove(0);
+            for(ARGLRenderJob j : renderDelList)
                 delete(j);
-            }
+
+            renderDelList.clear();
         }
 
         @Override
