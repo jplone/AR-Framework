@@ -47,4 +47,12 @@ public class ARGLPosition {
     public float[] getMatrix() {
         return matrix;
     }
+
+    public float[] getCenter() {
+        float[] point3D = new float[4];
+
+        Matrix.multiplyMV(point3D, 0, matrix, 0, new float[]{0, 0, 0, 1}, 0);
+
+        return point3D;
+    }
 }

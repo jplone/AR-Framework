@@ -1,18 +1,28 @@
 package edu.calstatela.jplone.arframework;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLU;
 import android.opengl.Matrix;
+import android.renderscript.RenderScript;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -51,6 +61,9 @@ public class ARView extends FrameLayout {
     private ArrayList<ARGLRenderJob> renderDelList;
     private boolean hasGPS;
     private DirectGLRenderer renderer;
+
+    private int s_width = 0;
+    private int s_height = 0;
 
     public ARView(Context context, boolean hasGPS) {
         super(context);
@@ -102,6 +115,52 @@ public class ARView extends FrameLayout {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
+    //      Measurement Handlers
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        // this gets the exact screen dimensions used by the view to do coordinate conversions later
+        s_width = MeasureSpec.getSize(widthMeasureSpec);
+        s_height = MeasureSpec.getSize(heightMeasureSpec);
+
+        //Log.d(TAG, "screen [" + s_width + " x " + s_height + "]");
+
+        setMeasuredDimension(s_width, s_height);
+
+        for(int i=0; i<this.getChildCount(); i++) {
+            View v = this.getChildAt(i);
+            v.measure(widthMeasureSpec, heightMeasureSpec);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Touch Event Handlers
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    boolean touching = false;
+    float touch_x;
+    float touch_y;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event != null) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                touching = true; // set the flag
+                touch_x = event.getX();
+                touch_y = event.getY();
+                //Log.d(TAG, "touched x=" + touch_x + " y=" + touch_y);
+            }
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
     //      Asynchronous Render List Handlers
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,19 +196,19 @@ public class ARView extends FrameLayout {
     public void start(Context context) {
         arContext = context;
 
+        if(activated) // don't activate twice
+            return;
+
         if(initialized) {
             Log.d(TAG, "reinitialized glSurface ");
             glSurfaceView.onResume();
         }
+        else initialize();
 
-        if(activated) // don't activate twice
-            return;
-
-        Log.d(TAG, "AR functionalities added and activated");
-        initialize();
         arMotionSensor.start();
 
         activated = true;
+        Log.d(TAG, "AR functionalities added and activated");
     }
 
     public void stop() {
@@ -174,7 +233,7 @@ public class ARView extends FrameLayout {
 
     class DirectGLRenderer implements GLSurfaceView.Renderer {
         ArrayList<ARGLSizedBillboard> glSizedBillboards;
-        ArrayList<ARGLRenderJob> glRenderJobs;
+        ArrayList<ARGLRenderJob> glRenderJobs = new ArrayList<ARGLRenderJob>();
         ARLandmark last;
         boolean surfaceCreated = false;
 
@@ -224,54 +283,21 @@ public class ARView extends FrameLayout {
             }
         }
 
-        // update the locations of billboards that depend on GPS coordinates
-        private void updatePositions() {
-            if(latLonAlt == null) // no GPS
-                return;
-
-            ARLandmark here = new ARLandmark("", "", latLonAlt[0], latLonAlt[1], 100);
-
-            if(last != null && here.compare(last)) // only update if location is different
-                return;
-
-            boolean updated = false;
-
-            for(int i=0; i<glRenderJobs.size(); i++) {
-                ARGLSizedBillboard billboard = glSizedBillboards.get(i);
-                ARLandmark current = billboard.getLandmark();
-
-                if(current != null) {
-                    float distance = here.distance(current);
-                    float angle = here.compassDirection(current);
-
-                    ARGLPosition position = new ARGLPosition(0, 0, -10 - distance * 0.00001f);
-                    position.rotate(-angle, 0, 1, 0);
-
-                    /*
-                    float[] vec = {0, 0, 0, 1};
-                    float[] resultVec = new float[4];
-                    Matrix.multiplyMV(resultVec, 0, position.getMatrix(), 0, vec, 0);
-                    Log.d("ARGLRenderJob", current.title + "  " + ARMath.vec2String(resultVec));
-                    */
-
-                    billboard.setPosition(position);
-
-                    updated = true;
-                }
-            }
-
-            if(updated)
-                last = here;
-        }
-
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             GLES20.glClearColor(0, 0, 0, 0);
 
             glSizedBillboards = new ArrayList<ARGLSizedBillboard>();
-            glRenderJobs = new ArrayList<ARGLRenderJob>();
 
             ARGLBillboardMaker.init(arContext);
+
+            // recreate the billboards
+            for(ARGLRenderJob job : glRenderJobs) {
+                if(hasGPS)
+                    glSizedBillboards.add((ARGLSizedBillboard) job.execute(latLonAlt));
+                else
+                    glSizedBillboards.add((ARGLSizedBillboard) job.execute());
+            }
 
             surfaceCreated = true;
         }
@@ -287,10 +313,7 @@ public class ARView extends FrameLayout {
         @Override
         public void onDrawFrame(GL10 gl) {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-
             glCamera.updateViewMatrix();
-
-            float[] scratch = new float[16];
 
             // add what needs to be rendered
             prepareAddList();
@@ -298,13 +321,92 @@ public class ARView extends FrameLayout {
             // delete what we don't need to render anymore
             prepareDelList();
 
-            // update billboard positions
-            updatePositions();
+            ARLandmark here = null;
+            float[] vpm = glCamera.getViewProjectionMatrix();
+            int min_dim = Math.min(s_width, s_height);
+            ARGLSizedBillboard touched_bb = null;
+            float touched_dist = 10000.0f;
+
+            Comparator< HashMap<String, Object> > billboardComparator = new Comparator<HashMap<String, Object>>() {
+                @Override
+                public int compare(HashMap<String, Object> bbSet0, HashMap<String, Object> bbSet1) {
+                    float dist0 = (Float) bbSet0.get("distance");
+                    float dist1 = (Float) bbSet1.get("distance");
+
+                    if(dist0 < dist1)
+                        return -1;
+                    else if(dist0 > dist1)
+                        return 1;
+                    return 0;
+                }
+            };
+
+            PriorityQueue< HashMap<String, Object> > renderQ = new PriorityQueue< HashMap<String, Object> >(glSizedBillboards.size(), billboardComparator);
+
+            if(latLonAlt != null)
+                here = new ARLandmark("", "", latLonAlt[0], latLonAlt[1], 100);
 
             for(ARGLSizedBillboard billboard : glSizedBillboards) {
-                Matrix.multiplyMM(scratch, 0, glCamera.getViewProjectionMatrix(), 0, billboard.getMatrix(), 0);
-                billboard.draw(scratch);
+                ARLandmark current = billboard.getLandmark();
+                ARGLPosition position = billboard.getPosition();
+                float distance = 0.0f;
+
+                // update billboard positions based on GPS location (if there are any changes)
+                if(current != null && here != null) {
+                    distance = here.distance(current);
+                    float angle = here.compassDirection(current);
+
+                    position = new ARGLPosition(0, 0, -10 - distance * 0.00001f, -angle, 0, 1, 0);
+                    billboard.setPosition(position);
+                }
+
+                // handle touch events
+                if(touching) {
+                    float[] center = position.getCenter();
+                    float[] point = ARMath.convert3Dto2D(s_width, s_height, center, vpm);
+                    float dist = (float) Math.sqrt(Math.pow(point[0] - touch_x, 2) + Math.pow(point[1] - touch_y, 2));
+
+                    float[] world_center = new float[4];
+                    Matrix.multiplyMV(world_center, 0, vpm, 0, center, 0);
+
+                    // range of the touch is about 17% of the shortest screen dimension
+                    // also we are guarding against touches that happen to an object that's behind you!
+                    if(dist / min_dim <= 0.17 && world_center[2] >= 0) {
+                        if(current == null)
+                            distance = dist;
+
+                        // if we are touching multiple objects, prioritize the closest one
+                        // todo: differentiate between physical distance and touch distance!
+                        if(touched_bb == null || distance < touched_dist) {
+                            touched_bb = billboard;
+                            touched_dist = dist;
+                        }
+                    }
+                }
+
+                // render the billboard
+                float[] mvp = new float[16];
+                Matrix.multiplyMM(mvp, 0, vpm, 0, billboard.getMatrix(), 0);
+
+                HashMap<String, Object> bbSet = new HashMap<String, Object>();
+                bbSet.put("distance", 0.0f);
+                bbSet.put("billboard", billboard);
+                bbSet.put("matrix", mvp);
+
+                renderQ.add(bbSet);
             }
+
+            while(!renderQ.isEmpty()) {
+                HashMap<String, Object> bbSet = renderQ.remove();
+                ARGLSizedBillboard billboard = (ARGLSizedBillboard) bbSet.get("billboard");
+                billboard.draw((float[]) bbSet.get("matrix"));
+            }
+
+            // call interaction with the chosen billboard
+            if(touched_bb != null)
+                touched_bb.interact();
+
+            touching = false; // the touch event will only be processed once regardless of whether there was a match or not
         }
     }
 

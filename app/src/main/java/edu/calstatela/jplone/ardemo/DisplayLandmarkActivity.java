@@ -1,12 +1,14 @@
 package edu.calstatela.jplone.ardemo;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import edu.calstatela.jplone.arframework.ARData.ARLandmark;
 import edu.calstatela.jplone.arframework.ARData.ARLandmarkTable;
 import edu.calstatela.jplone.arframework.ARFragment;
+import edu.calstatela.jplone.arframework.ARGL.Billboard.ARGLSizedBillboard;
 import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
 
 /**
@@ -44,7 +46,16 @@ public class DisplayLandmarkActivity extends AppCompatActivity {
 
         for(int i=0; i<arLandmarkTable.size(); i++) {
             ARLandmark current = arLandmarkTable.get(i);
-            arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, current));
+            final int index = i;
+
+            arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, current, new ARGLSizedBillboard.Listener() {
+                @Override
+                public void interact(ARGLSizedBillboard billboard) {
+                    Intent intent = new Intent(DisplayLandmarkActivity.this, DisplayDataActivity.class);
+                    intent.putExtra("billboard_id", index);
+                    startActivity(intent);
+                }
+            }));
         }
     }
 }

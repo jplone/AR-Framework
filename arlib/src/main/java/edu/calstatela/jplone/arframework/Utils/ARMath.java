@@ -1,6 +1,7 @@
 package edu.calstatela.jplone.arframework.Utils;
 
 import android.hardware.SensorManager;
+import android.opengl.Matrix;
 import android.util.Log;
 
 /**
@@ -52,6 +53,28 @@ public class ARMath {
 
     public static float degreesToRad(float degrees){
         return (float) (degrees / 360.0 * 2 * Math.PI);
+    }
+
+    public static float[] convert3Dto2D(float width, float height, float[] point3D, float[] vpm) {
+        float[] point2D = new float[]{0, 0, 1};
+
+        //point3D = normalize(point3D);
+        float[] out3D = new float[]{0, 0, 0, 1};
+
+        Matrix.multiplyMV(out3D, 0, vpm, 0, point3D, 0);
+
+        // transform world to clipping coordinates
+        float[] norm3D = normalize(out3D);
+        point2D[0] = (norm3D[0]+1) * width / 2;//vpm[0] * point3D[0] + vpm[1] * point3D[1] + vpm[2] * point3D[2] + vpm[3] * point3D[3];
+        point2D[1] = (1-norm3D[1]) * height / 2;//vpm[4] * point3D[0] + vpm[5] * point3D[1] + vpm[6] * point3D[2] + vpm[7] * point3D[3];
+
+        return point2D;
+    }
+
+    public static float[] convert2Dto3D(float width, float height, float[] point2D, float[] vpm) {
+        float[] point3D = new float[]{0, 0, 0, 1};
+
+        return point3D;
     }
 
     public static float compassBearing(float[] rotationVector) {

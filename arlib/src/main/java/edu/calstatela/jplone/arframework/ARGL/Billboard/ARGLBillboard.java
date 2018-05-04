@@ -2,6 +2,7 @@ package edu.calstatela.jplone.arframework.ARGL.Billboard;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
@@ -34,6 +35,8 @@ public class ARGLBillboard {
     private int mGLTextureId = 0;
 
     private float[] mMatrix = new float[16];
+
+    private ARGLPosition position = null;
 
     public static void init(Context context){
         if(initialized) // make sure this method is called only once
@@ -76,9 +79,14 @@ public class ARGLBillboard {
     }
 
     public void setPosition(ARGLPosition position) {
+        this.position = position;
         //Log.d("Billboard", "setPosition called");
         Matrix.setIdentityM(mMatrix, 0);
         Matrix.multiplyMM(mMatrix, 0, mMatrix, 0, position.getMatrix(), 0);
+    }
+
+    public ARGLPosition getPosition() {
+        return this.position;
     }
 
     public void draw(){
@@ -107,7 +115,6 @@ public class ARGLBillboard {
 
         int matrixUniform = GLES20.glGetUniformLocation(sGLProgramId, "u_Matrix");
         GLES20.glUniformMatrix4fv(matrixUniform, 1, false, matrix, 0);
-
 
         int vertexCount = rectangleVertexFloats.length / FLOATS_PER_VERTEX;
         GLES20.glVertexAttribPointer(positionAttribute, FLOATS_PER_VERTEX, GLES20.GL_FLOAT, false, FLOATS_PER_VERTEX * BYTES_PER_FLOAT, sVertexBuffer);
@@ -198,5 +205,4 @@ public class ARGLBillboard {
                     "{                                                                      \n" +
                     "   gl_FragColor = texture2D(u_Texture, v_TexCoord) + 0.3 * v_Color;    \n" +
                     "}                                                                      \n";
-
 }

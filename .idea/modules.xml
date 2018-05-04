@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AR-Framework.iml" filepath="$PROJECT_DIR$/AR-Framework.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ARDemo.iml" filepath="$PROJECT_DIR$/ARDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/arlib/arlib.iml" filepath="$PROJECT_DIR$/arlib/arlib.iml" />
     </modules>

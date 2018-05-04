@@ -43,10 +43,16 @@ public class ARGLRenderJob {
                 String title = (String) this.params.get("title");
                 String text = (String) this.params.get("text");
                 ARGLPosition position = (ARGLPosition) this.params.get("position");
+                ARGLSizedBillboard.Listener callback = (ARGLSizedBillboard.Listener) this.params.get("callback");
 
                 ARGLSizedBillboard billboard = ARGLBillboardMaker.make(scale, iconResourceId, title, text);
+
                 if(position != null)
                     billboard.setPosition(position);
+
+                if(callback != null)
+                    billboard.setCallback(callback);
+
                 ret = billboard;
                 break;
         }
@@ -63,8 +69,12 @@ public class ARGLRenderJob {
                 int scale = (Integer) this.params.get("scale");
                 int iconResourceId = (Integer) this.params.get("iconResId");
                 ARLandmark current = (ARLandmark) this.params.get("landmark");
+                ARGLSizedBillboard.Listener callback = (ARGLSizedBillboard.Listener) this.params.get("callback");
 
                 ARGLSizedBillboard billboard = ARGLBillboardMaker.make(scale, iconResourceId, current.title, current.description);
+
+                if(callback != null)
+                    billboard.setCallback(callback);
 
                 billboard.setLandmark(current);
                 ret = billboard;
@@ -112,22 +122,24 @@ public class ARGLRenderJob {
     }
 
     // static helper functions
-    public static ARGLRenderJob makeBillboard(int scale, int iconResourceId, String title, String text, ARGLPosition position) {
+    public static ARGLRenderJob makeBillboard(int scale, int iconResourceId, String title, String text, ARGLPosition position, ARGLSizedBillboard.Listener callback) {
         Hashtable<String, Object> bbParams = new Hashtable<String, Object>();
         bbParams.put("scale", new Integer(scale));
         bbParams.put("iconResId", new Integer(iconResourceId));
         bbParams.put("title", title);
         bbParams.put("text", text);
         bbParams.put("position", position);
+        bbParams.put("callback", callback);
 
         return new ARGLRenderJob(TYPE_BILLBOARD, bbParams);
     }
 
-    public static ARGLRenderJob makeBillboard(int scale, int iconResourceId, ARLandmark landmark) {
+    public static ARGLRenderJob makeBillboard(int scale, int iconResourceId, ARLandmark landmark, ARGLSizedBillboard.Listener callback) {
         Hashtable<String, Object> bbParams = new Hashtable<String, Object>();
         bbParams.put("scale", new Integer(scale));
         bbParams.put("iconResId", new Integer(iconResourceId));
         bbParams.put("landmark", landmark);
+        bbParams.put("callback", callback);
 
         return new ARGLRenderJob(TYPE_BILLBOARD_LANDMARK, bbParams);
     }
