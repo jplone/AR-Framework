@@ -11,13 +11,25 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Display AR Landmarks"
-        android:id="@+id/btn_arlandmark" />
+        android:text="Display Cal State LA"
+        android:id="@+id/btn_arcsula" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Display Cities"
+        android:id="@+id/btn_arcities" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Display AR Compass"
         android:id="@+id/btn_arcompass" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Display AR Shape"
+        android:id="@+id/btn_arshape" />
 
 </LinearLayout>

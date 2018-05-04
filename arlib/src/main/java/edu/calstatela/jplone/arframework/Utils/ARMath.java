@@ -11,6 +11,13 @@ import android.util.Log;
 public class ARMath {
     private static final String TAG = "ARMath";
 
+    public static final float[] IDENTITY_MATRIX = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+    };
+
     public static float[] crossProduct(float[] a, float[] b){
         float[] c = new float[3];
 
@@ -19,6 +26,16 @@ public class ARMath {
         c[2] = a[0] * b[1] - a[1] * b[0];
 
         return c;
+    }
+
+    public static void crossProduct(float[] result, float[] a, float[] b){
+
+        result[0] = a[1] * b[2] - a[2] * b[1];
+        result[1] = a[2] * b[0] - a[0] * b[2];
+        result[2] = a[0] * b[1] - a[1] * b[0];
+
+        if(result.length == 4)
+            result[3] = a[3];
     }
 
     public static float dotProduct(float[] a, float[] b){
@@ -45,6 +62,13 @@ public class ARMath {
         temp[2] = vec[2] / mag;
 
         return temp;
+    }
+
+    public static void normalizeInPlace(float[] vec){
+        float mag = magnitude(vec);
+        vec[0] = vec[0] / mag;
+        vec[1] = vec[1] / mag;
+        vec[2] = vec[2] / mag;
     }
 
     public static float radToDegrees(float radians){
@@ -151,6 +175,16 @@ public class ARMath {
     public static void copyVec(float[] src, float[] dest, int n){
         for(int i = 0; i < n; i++)
             dest[i] = src[i];
+    }
+
+    public static float metersPerDegreeLat = 111111;
+    public static float metersPerDegreeLon = 111111;
+    private static float[] referenceLLA = {34, -117, 0};
+
+    public static void latLonAltToXYZ(float[] latLonAlt, float[] xyz){
+        xyz[0] = (latLonAlt[1] - referenceLLA[1]) * metersPerDegreeLon;
+        xyz[1] = latLonAlt[2] - referenceLLA[2];
+        xyz[2] = (referenceLLA[0] - latLonAlt[0]) * metersPerDegreeLat;
     }
 
     public static float landscapeTiltAngle(float[] gravityVec, float[] phoneUpVec){

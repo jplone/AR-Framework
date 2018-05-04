@@ -21,6 +21,7 @@ import edu.calstatela.jplone.arframework.ARSensors.ARLocationSensor;
 import edu.calstatela.jplone.arframework.Utils.AREvent;
 import edu.calstatela.jplone.arframework.Utils.ARMath;
 import edu.calstatela.jplone.arframework.Utils.ARPermissions;
+import edu.calstatela.jplone.arframework.Utils.ARRenderCallback;
 
 /**
  * Created by bill on 11/2/17.
@@ -36,6 +37,9 @@ public class ARFragment extends Fragment {
     private boolean useGPS;
     private ARLocationSensor arLocationSensor;
     private Fragment arFragmentInstance;
+
+    private AREvent.Callback arCallback;
+    private ARRenderCallback renderCallback;
 
     public ARFragment() {
         super();
@@ -76,6 +80,16 @@ public class ARFragment extends Fragment {
         // set up GPS
         if(useGPS)
             arLocationSensor = new ARLocationSensor(arContext, mGPSListener);
+
+        if(arCallback != null) {
+            arView.setCallback(arCallback);
+            arCallback = null;
+        }
+
+        if(renderCallback != null) {
+            arView.setRenderCallback(renderCallback);
+            renderCallback = null;
+        }
 
         return arView;
     }
@@ -141,6 +155,15 @@ public class ARFragment extends Fragment {
     public void setCallback(AREvent.Callback callback) {
         if(arView != null)
             arView.setCallback(callback);
+        else
+            this.arCallback = callback;
+    }
+
+    public void setRenderCallback(ARRenderCallback renderCallback) {
+        if(arView != null)
+            arView.setRenderCallback(renderCallback);
+        else
+            this.renderCallback = renderCallback;
     }
 
     public void updateLatLonAlt(float[] latLonAlt) {

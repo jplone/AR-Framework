@@ -10,31 +10,52 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import edu.calstatela.jplone.arframework.ARGL.Billboard.ARGLSizedBillboard;
+import edu.calstatela.jplone.arframework.ARGL.Drawable.ARGLDrawable;
 import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLPosition;
 import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
 import edu.calstatela.jplone.arframework.ARGL.Utils.ARGLBillboardMaker;
 import edu.calstatela.jplone.arframework.ARGL.Utils.ARGLTextureHelper;
+import edu.calstatela.jplone.arframework.Utils.ARMath;
 
 /**
  * Created by bill on 11/2/17.
  */
 
 public class ARGLScene {
-    private ArrayList<ARGLRenderJob> renderList;
+    protected ArrayList<ARGLEntity> mEntityList = new ArrayList<>();
 
-    public ARGLScene() {
-        renderList = new ArrayList<ARGLRenderJob>();
+    public void add(ARGLEntity entity){
+        mEntityList.add(entity);
     }
 
-    public void init(Context context) {
-        ARGLBillboardMaker.init(context);
+    public void draw(float[] projectionMatrix, float[] viewMatrix){
+        for(ARGLEntity e : mEntityList){
+            e.draw(projectionMatrix, viewMatrix, e.getModelMatrix());
+        }
     }
 
-    public void destroy() {
-        ARGLBillboardMaker.destroy();
+    public boolean isEmpty(){
+        return mEntityList.isEmpty();
     }
 
-    public void addJob(ARGLRenderJob job) {
-        renderList.add(job);
+
+    public ARGLEntity addDrawable(ARGLDrawable drawable, float[] scale, float[] xyz, float angle){
+        ARGLEntity entity = new ARGLEntity();
+        entity.setDrawable(drawable);
+        entity.setScale(scale[0], scale[1], scale[2]);
+        entity.setPosition(xyz[0], xyz[1], xyz[2]);
+        entity.setRotation(angle);
+        add(entity);
+        return entity;
+    }
+
+    public void addMountain(ARGLDrawable drawable, float[] latLonAlt){
+        ARGLEntity entity = new ARGLEntity();
+        entity.setDrawable(drawable);
+        float[] xyz = new float[3];
+        ARMath.latLonAltToXYZ(latLonAlt, xyz);
+        entity.setScale(xyz[1] / 2, xyz[1], xyz[1] / 2);
+        entity.setPosition(xyz[0], 0, xyz[2]);
+        add(entity);
     }
 }

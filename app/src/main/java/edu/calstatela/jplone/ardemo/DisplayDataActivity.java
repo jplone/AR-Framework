@@ -17,8 +17,13 @@ public class DisplayDataActivity extends AppCompatActivity {
         // hide the action bar (gets fullscreen)
         getSupportActionBar().hide();
 
+        String type = getIntent().getStringExtra("type");
+
         ARLandmarkTable table = new ARLandmarkTable();
-        table.loadCities();
+        if(type.equals("cities"))
+            table.loadCities();
+        else
+            table.loadCalstateLA();
 
         int billboard_id = getIntent().getIntExtra("billboard_id", -1);
 

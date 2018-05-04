@@ -2,6 +2,7 @@ package edu.calstatela.jplone.arframework.ARGL;
 
 import android.opengl.Matrix;
 
+import edu.calstatela.jplone.arframework.ARGL.Drawable.ARGLDrawable;
 import edu.calstatela.jplone.arframework.Utils.ARMath;
 
 /**
@@ -9,34 +10,62 @@ import edu.calstatela.jplone.arframework.Utils.ARMath;
  */
 
 public class ARGLEntity {
-    private ARGLMesh mModel = null;
-    private float[] mModelMatrix = new float[16];
-    private float[] mMVPMatrix = new float[16];
-    private float[] mColor = {0, 1, 0, 1};
+    private float scaleX = 1, scaleY = 1, scaleZ = 1;
+    private float posX, posY, posZ;
+    private float rotationAngle;
+    private float[] modelMatrix = new float[16];
+    private ARGLDrawable drawable = null;
 
-    public ARGLEntity(){
-        Matrix.setIdentityM(mModelMatrix, 0);
+    private boolean matrixIsClean = false;
+
+    public void setScale(float scaleX, float scaleY, float scaleZ){
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.scaleZ = scaleZ;
+        matrixIsClean = false;
     }
 
-    public void setModel(ARGLMesh model){
-        mModel = model;
+    public void setPosition(float x, float y, float z){
+        posX = x;
+        posY = y;
+        posZ = z;
+        matrixIsClean = false;
     }
 
-    public void setModelMatrix(float[] matrix){
-        ARMath.copyVec(matrix, mModelMatrix, 16);
+    public void setPositionLatLonAlt(float[] latLonAlt){
+        float[] xyz = new float[3];
+        ARMath.latLonAltToXYZ(latLonAlt, xyz);
+        setPosition(xyz[0], xyz[1], xyz[2]);
+        matrixIsClean = false;
+    }
+
+    public void setRotation(float angle){
+        rotationAngle = angle;
+        matrixIsClean = false;
+    }
+
+    private void updateModelMatrix(){
+        // FIX THIS!!!
+        // Why does this matrix order work? It should be scale, rotate, translate. Scale is acting funny too
+        Matrix.scaleM(modelMatrix, 0, ARMath.IDENTITY_MATRIX, 0, scaleX, scaleY, scaleZ);
+        Matrix.translateM(modelMatrix, 0, posX, posY, posZ);
+        Matrix.rotateM(modelMatrix, 0, rotationAngle, 0, 1, 0);
+        matrixIsClean = true;
     }
 
     public float[] getModelMatrix(){
-        return mModelMatrix;
+        if(!matrixIsClean)
+            updateModelMatrix();
+
+        return modelMatrix;
     }
 
-    public void setColor(float[] color){
-        mColor = color;
+    public void setDrawable(ARGLDrawable d){
+        drawable = d;
     }
 
-    public void draw(float[] VPMatrix){
-        Matrix.multiplyMM(mMVPMatrix, 0, VPMatrix, 0, mModelMatrix, 0);
-        mModel.setColor(mColor);
-        mModel.draw(mMVPMatrix);
+    public void draw(float[] projection, float[] view, float[] model){
+        if(drawable == null) return;
+        drawable.draw(projection, view, model);
     }
 }

@@ -18,11 +18,14 @@ import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
 public class DisplayLandmarkActivity extends AppCompatActivity {
     ARFragment arFragment;
     ARLandmarkTable arLandmarkTable;
+    String type = "csula";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_ar);
+
+        type = getIntent().getStringExtra("type");
 
         // hide the action bar (gets fullscreen)
         getSupportActionBar().hide();
@@ -35,14 +38,19 @@ public class DisplayLandmarkActivity extends AppCompatActivity {
 
         ft.commit();
 
+        // setting up data table
+        arLandmarkTable = new ARLandmarkTable();
+        if(type.equals("cities"))
+            arLandmarkTable.loadCities();
+        else
+            arLandmarkTable.loadCalstateLA();
+
         // build the compass and add them to AR fragment to be displayed
         buildLandmarks();
     }
 
     void buildLandmarks() {
         int ara_icon = edu.calstatela.jplone.arframework.R.drawable.ara_icon;
-        arLandmarkTable = new ARLandmarkTable();
-        arLandmarkTable.loadCities();
 
         for(int i=0; i<arLandmarkTable.size(); i++) {
             ARLandmark current = arLandmarkTable.get(i);
@@ -52,6 +60,7 @@ public class DisplayLandmarkActivity extends AppCompatActivity {
                 @Override
                 public void interact(ARGLSizedBillboard billboard) {
                     Intent intent = new Intent(DisplayLandmarkActivity.this, DisplayDataActivity.class);
+                    intent.putExtra("type", type);
                     intent.putExtra("billboard_id", index);
                     startActivity(intent);
                 }

@@ -28,6 +28,7 @@
         <activity android:name=".DisplayCompassActivity" />
         <activity android:name=".DisplayLandmarkActivity" />
         <activity android:name=".DisplayDataActivity" />
+        <activity android:name=".DisplayShapeActivity"></activity>
     </application>
 
 </manifest>

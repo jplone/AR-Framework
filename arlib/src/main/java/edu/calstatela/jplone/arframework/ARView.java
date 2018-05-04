@@ -38,6 +38,7 @@ import edu.calstatela.jplone.arframework.ARSensors.ARLocationSensor;
 import edu.calstatela.jplone.arframework.ARSensors.ARMotionSensor;
 import edu.calstatela.jplone.arframework.Utils.AREvent;
 import edu.calstatela.jplone.arframework.Utils.ARMath;
+import edu.calstatela.jplone.arframework.Utils.ARRenderCallback;
 
 /**
  * Created by bill on 11/7/17.
@@ -64,6 +65,7 @@ public class ARView extends FrameLayout {
 
     private int s_width = 0;
     private int s_height = 0;
+    private ARRenderCallback renderCallback = null;
 
     public ARView(Context context, boolean hasGPS) {
         super(context);
@@ -224,6 +226,10 @@ public class ARView extends FrameLayout {
     public void setCallback(AREvent.Callback arCallback) {
         this.arCallback = arCallback;
     }
+    public void setRenderCallback(ARRenderCallback renderCallback) {
+        Log.d(TAG, "setting callback for render!");
+        this.renderCallback = renderCallback;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -300,6 +306,9 @@ public class ARView extends FrameLayout {
             }
 
             surfaceCreated = true;
+
+            if(renderCallback != null)
+                renderCallback.onGLInit();
         }
 
         @Override
@@ -308,11 +317,15 @@ public class ARView extends FrameLayout {
 
             GLES20.glViewport(0, 0, width, height);
             glCamera.setPerspective(60.0f, aspect_ratio, 0.1f, 1000.0f);
+
+            if(renderCallback != null)
+                renderCallback.onGLResize(width, height);
         }
 
         @Override
         public void onDrawFrame(GL10 gl) {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
             glCamera.updateViewMatrix();
 
             // add what needs to be rendered
@@ -327,21 +340,21 @@ public class ARView extends FrameLayout {
             ARGLSizedBillboard touched_bb = null;
             float touched_dist = 10000.0f;
 
-            Comparator< HashMap<String, Object> > billboardComparator = new Comparator<HashMap<String, Object>>() {
-                @Override
-                public int compare(HashMap<String, Object> bbSet0, HashMap<String, Object> bbSet1) {
-                    float dist0 = (Float) bbSet0.get("distance");
-                    float dist1 = (Float) bbSet1.get("distance");
+            PriorityQueue< HashMap<String, Object> > renderQ = null;
+            if(glSizedBillboards != null && glSizedBillboards.size() > 0)
+                renderQ = new PriorityQueue< HashMap<String, Object> >(glSizedBillboards.size(), new Comparator<HashMap<String, Object>>() {
+                    @Override
+                    public int compare(HashMap<String, Object> bbSet0, HashMap<String, Object> bbSet1) {
+                        float dist0 = (Float) bbSet0.get("distance");
+                        float dist1 = (Float) bbSet1.get("distance");
 
-                    if(dist0 < dist1)
-                        return -1;
-                    else if(dist0 > dist1)
-                        return 1;
-                    return 0;
-                }
-            };
-
-            PriorityQueue< HashMap<String, Object> > renderQ = new PriorityQueue< HashMap<String, Object> >(glSizedBillboards.size(), billboardComparator);
+                        if(dist0 < dist1)
+                            return -1;
+                        else if(dist0 > dist1)
+                            return 1;
+                        return 0;
+                    }
+                });
 
             if(latLonAlt != null)
                 here = new ARLandmark("", "", latLonAlt[0], latLonAlt[1], 100);
@@ -396,10 +409,12 @@ public class ARView extends FrameLayout {
                 renderQ.add(bbSet);
             }
 
-            while(!renderQ.isEmpty()) {
-                HashMap<String, Object> bbSet = renderQ.remove();
-                ARGLSizedBillboard billboard = (ARGLSizedBillboard) bbSet.get("billboard");
-                billboard.draw((float[]) bbSet.get("matrix"));
+            if(renderQ != null) {
+                while (!renderQ.isEmpty()) {
+                    HashMap<String, Object> bbSet = renderQ.remove();
+                    ARGLSizedBillboard billboard = (ARGLSizedBillboard) bbSet.get("billboard");
+                    billboard.draw((float[]) bbSet.get("matrix"));
+                }
             }
 
             // call interaction with the chosen billboard
@@ -407,6 +422,9 @@ public class ARView extends FrameLayout {
                 touched_bb.interact();
 
             touching = false; // the touch event will only be processed once regardless of whether there was a match or not
+
+            if(renderCallback != null)
+                renderCallback.onGLDraw(glCamera.getProjectionMatrix(), glCamera.getViewMatrix());
         }
     }
 
@@ -428,7 +446,9 @@ public class ARView extends FrameLayout {
 
             if(arCallback != null) {
                 double bearing = ARMath.compassBearing(event.values);
-                arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
+                if(latLonAlt != null)
+                    arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
+                arCallback.onAREvent(new AREvent(event.values));
             }
         }
 

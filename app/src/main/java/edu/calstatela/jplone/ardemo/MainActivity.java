@@ -13,13 +13,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button mARLandmarkButton = (Button) findViewById(R.id.btn_arlandmark);
+        Button mARCSULAButton = (Button) findViewById(R.id.btn_arcsula);
+        Button mARCitiesButton = (Button) findViewById(R.id.btn_arcities);
         Button mARCompassButton = (Button) findViewById(R.id.btn_arcompass);
+        Button mARShapeButton = (Button) findViewById(R.id.btn_arshape);
 
-        mARLandmarkButton.setOnClickListener(new View.OnClickListener() {
+        mARCSULAButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DisplayLandmarkActivity.class);
+                intent.putExtra("type", "csula");
+                startActivity(intent);
+            }
+        });
+
+        mARCitiesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DisplayLandmarkActivity.class);
+                intent.putExtra("type", "cities");
                 startActivity(intent);
             }
         });
@@ -28,6 +40,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DisplayCompassActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mARShapeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DisplayShapeActivity.class);
                 startActivity(intent);
             }
         });
