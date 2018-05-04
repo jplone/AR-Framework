@@ -121,6 +121,10 @@ public class ARGLRenderJob {
         return new ARGLRenderJob(type, params);
     }
 
+    public Dictionary<String, Object> getParams() {
+        return this.params;
+    }
+
     // static helper functions
     public static ARGLRenderJob makeBillboard(int scale, int iconResourceId, String title, String text, ARGLPosition position, ARGLSizedBillboard.Listener callback) {
         Hashtable<String, Object> bbParams = new Hashtable<String, Object>();
