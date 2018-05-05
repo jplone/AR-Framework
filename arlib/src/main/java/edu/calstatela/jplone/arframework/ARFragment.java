@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
 import edu.calstatela.jplone.arframework.ARSensors.ARLocationSensor;
@@ -32,8 +33,8 @@ public class ARFragment extends Fragment {
     private static final int ARFRAGMENT_PERMISSION_REQUEST_CODE = 0x1234;
     private Context arContext;
     private ARView arView;
-    private ArrayList<ARGLRenderJob> deferredRenderAddList;
-    private ArrayList<ARGLRenderJob> deferredRenderDelList;
+    private Vector<ARGLRenderJob> deferredRenderAddList;
+    private Vector<ARGLRenderJob> deferredRenderDelList;
     private boolean useGPS;
     private ARLocationSensor arLocationSensor;
     private Fragment arFragmentInstance;
@@ -44,16 +45,16 @@ public class ARFragment extends Fragment {
     public ARFragment() {
         super();
         arFragmentInstance = this;
-        deferredRenderAddList = new ArrayList<ARGLRenderJob>();
-        deferredRenderDelList = new ArrayList<ARGLRenderJob>();
+        deferredRenderAddList = new Vector<ARGLRenderJob>();
+        deferredRenderDelList = new Vector<ARGLRenderJob>();
         this.useGPS = false;
     }
 
     public ARFragment(boolean useGPS) {
         super();
         arFragmentInstance = this;
-        deferredRenderAddList = new ArrayList<ARGLRenderJob>();
-        deferredRenderDelList = new ArrayList<ARGLRenderJob>();
+        deferredRenderAddList = new Vector<ARGLRenderJob>();
+        deferredRenderDelList = new Vector<ARGLRenderJob>();
         this.useGPS = useGPS;
     }
 

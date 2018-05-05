@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
+import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -58,8 +59,8 @@ public class ARView extends FrameLayout {
     private ARGLCamera glCamera;
     private boolean activated;
     private boolean initialized;
-    private ArrayList<ARGLRenderJob> renderAddList;
-    private ArrayList<ARGLRenderJob> renderDelList;
+    private Vector<ARGLRenderJob> renderAddList;
+    private Vector<ARGLRenderJob> renderDelList;
     private boolean hasGPS;
     private DirectGLRenderer renderer;
 
@@ -72,8 +73,8 @@ public class ARView extends FrameLayout {
 
         arCallback = null;
         arContext = context;
-        renderAddList = new ArrayList<ARGLRenderJob>();
-        renderDelList = new ArrayList<ARGLRenderJob>();
+        renderAddList = new Vector<ARGLRenderJob>();
+        renderDelList = new Vector<ARGLRenderJob>();
 
         glCamera = new ARGLCamera();
 
@@ -167,13 +168,13 @@ public class ARView extends FrameLayout {
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void mirrorRenderAddList(ArrayList<ARGLRenderJob> list) {
-        renderAddList = (ArrayList<ARGLRenderJob>) list.clone();
+    public void mirrorRenderAddList(Vector<ARGLRenderJob> list) {
+        renderAddList = (Vector<ARGLRenderJob>) list.clone();
         Log.d(TAG, "copied " + renderAddList.size() + " objects into renderAddList");
     }
 
-    public void mirrorRenderDelList(ArrayList<ARGLRenderJob> list) {
-        renderDelList = (ArrayList<ARGLRenderJob>) list.clone();
+    public void mirrorRenderDelList(Vector<ARGLRenderJob> list) {
+        renderDelList = (Vector<ARGLRenderJob>) list.clone();
         Log.d(TAG, "copied " + renderDelList.size() + " objects into renderDelList");
     }
 
