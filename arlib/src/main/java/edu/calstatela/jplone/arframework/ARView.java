@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
-import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -59,8 +58,12 @@ public class ARView extends FrameLayout {
     private ARGLCamera glCamera;
     private boolean activated;
     private boolean initialized;
-    private Vector<ARGLRenderJob> renderAddList;
-    private Vector<ARGLRenderJob> renderDelList;
+    private boolean renderAdding = false;
+    private boolean renderDelete = false;
+    private ArrayList<ARGLRenderJob> renderAddList;
+    private ArrayList<ARGLRenderJob> deferredRenderAdd = new ArrayList<ARGLRenderJob>();
+    private ArrayList<ARGLRenderJob> renderDelList;
+    private ArrayList<ARGLRenderJob> deferredRenderDel = new ArrayList<ARGLRenderJob>();
     private boolean hasGPS;
     private DirectGLRenderer renderer;
 
@@ -73,8 +76,8 @@ public class ARView extends FrameLayout {
 
         arCallback = null;
         arContext = context;
-        renderAddList = new Vector<ARGLRenderJob>();
-        renderDelList = new Vector<ARGLRenderJob>();
+        renderAddList = new ArrayList<ARGLRenderJob>();
+        renderDelList = new ArrayList<ARGLRenderJob>();
 
         glCamera = new ARGLCamera();
 
@@ -168,22 +171,38 @@ public class ARView extends FrameLayout {
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public void mirrorRenderAddList(Vector<ARGLRenderJob> list) {
-        renderAddList = (Vector<ARGLRenderJob>) list.clone();
+    public void mirrorRenderAddList(ArrayList<ARGLRenderJob> list) {
+        renderAddList = (ArrayList<ARGLRenderJob>) list.clone();
         Log.d(TAG, "copied " + renderAddList.size() + " objects into renderAddList");
     }
 
-    public void mirrorRenderDelList(Vector<ARGLRenderJob> list) {
-        renderDelList = (Vector<ARGLRenderJob>) list.clone();
+    public void mirrorRenderDelList(ArrayList<ARGLRenderJob> list) {
+        renderDelList = (ArrayList<ARGLRenderJob>) list.clone();
         Log.d(TAG, "copied " + renderDelList.size() + " objects into renderDelList");
     }
 
     public void addJob(ARGLRenderJob job) {
-        renderAddList.add(job);
+        if(!renderAdding) { // if the renderer is working on the delete list, then defer delete jobs until later
+            if(deferredRenderAdd.size() > 0) {
+                renderAddList = (ArrayList<ARGLRenderJob>) deferredRenderAdd.clone();
+                deferredRenderAdd.clear();
+            }
+            renderAddList.add(job);
+        }
+        else
+            deferredRenderAdd.add(job);
     }
 
     public void removeJob(ARGLRenderJob job) {
-        renderDelList.add(job);
+        if(!renderDelete) { // if the renderer is working on the delete list, then defer delete jobs until later
+            if(deferredRenderDel.size() > 0) {
+                renderDelList = (ArrayList<ARGLRenderJob>) deferredRenderDel.clone();
+                deferredRenderDel.clear();
+            }
+            renderDelList.add(job);
+        }
+        else
+            deferredRenderDel.add(job);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,18 +284,23 @@ public class ARView extends FrameLayout {
         }
 
         private void prepareAddList() {
-            while(!renderAddList.isEmpty()) {
-                ARGLRenderJob j = (ARGLRenderJob) renderAddList.get(0);
-                renderAddList.remove(0);
+            renderAdding = true;
+
+            for(ARGLRenderJob j : renderAddList)
                 add(j);
-            }
+            renderAddList.clear();
+
+            renderAdding = false;
         }
 
         private void prepareDelList() {
+            renderDelete = true;
+
             for(ARGLRenderJob j : renderDelList)
                 delete(j);
-
             renderDelList.clear();
+
+            renderDelete = false;
         }
 
         @Override
