@@ -182,9 +182,10 @@ public class ARView extends FrameLayout {
     }
 
     public void addJob(ARGLRenderJob job) {
-        if(!renderAdding) { // if the renderer is working on the delete list, then defer delete jobs until later
+        if(!renderAdding) { // if the renderer is working on the delete list, then defer add jobs until later
             if(deferredRenderAdd.size() > 0) {
-                renderAddList = (ArrayList<ARGLRenderJob>) deferredRenderAdd.clone();
+                for(ARGLRenderJob j : deferredRenderAdd)
+                    renderAddList.add(j);
                 deferredRenderAdd.clear();
             }
             renderAddList.add(job);
@@ -196,7 +197,8 @@ public class ARView extends FrameLayout {
     public void removeJob(ARGLRenderJob job) {
         if(!renderDelete) { // if the renderer is working on the delete list, then defer delete jobs until later
             if(deferredRenderDel.size() > 0) {
-                renderDelList = (ArrayList<ARGLRenderJob>) deferredRenderDel.clone();
+                for(ARGLRenderJob j : deferredRenderDel)
+                    renderDelList.add(j);
                 deferredRenderDel.clear();
             }
             renderDelList.add(job);
