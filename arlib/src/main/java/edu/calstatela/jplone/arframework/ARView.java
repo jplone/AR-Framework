@@ -182,27 +182,15 @@ public class ARView extends FrameLayout {
     }
 
     public void addJob(ARGLRenderJob job) {
-        if(!renderAdding) { // if the renderer is working on the delete list, then defer add jobs until later
-            if(deferredRenderAdd.size() > 0) {
-                for(ARGLRenderJob j : deferredRenderAdd)
-                    renderAddList.add(j);
-                deferredRenderAdd.clear();
-            }
+        if(!renderAdding) // if the renderer is working on the add list, then defer add jobs until later
             renderAddList.add(job);
-        }
         else
             deferredRenderAdd.add(job);
     }
 
     public void removeJob(ARGLRenderJob job) {
-        if(!renderDelete) { // if the renderer is working on the delete list, then defer delete jobs until later
-            if(deferredRenderDel.size() > 0) {
-                for(ARGLRenderJob j : deferredRenderDel)
-                    renderDelList.add(j);
-                deferredRenderDel.clear();
-            }
+        if(!renderDelete) // if the renderer is working on the delete list, then defer delete jobs until later
             renderDelList.add(job);
-        }
         else
             deferredRenderDel.add(job);
     }
@@ -293,6 +281,12 @@ public class ARView extends FrameLayout {
             renderAddList.clear();
 
             renderAdding = false;
+
+            if(deferredRenderAdd.size() > 0) {
+                renderAddList = deferredRenderAdd;
+                deferredRenderAdd = new ArrayList<ARGLRenderJob>();
+                prepareAddList();
+            }
         }
 
         private void prepareDelList() {
@@ -303,6 +297,12 @@ public class ARView extends FrameLayout {
             renderDelList.clear();
 
             renderDelete = false;
+
+            if(deferredRenderDel.size() > 0) {
+                renderDelList = deferredRenderDel;
+                deferredRenderDel = new ArrayList<ARGLRenderJob>();
+                prepareDelList();
+            }
         }
 
         @Override
