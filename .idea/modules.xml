@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AR-Framework.iml" filepath="$PROJECT_DIR$/AR-Framework.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/arlib/arlib.iml" filepath="$PROJECT_DIR$/arlib/arlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/framework2.iml" filepath="$PROJECT_DIR$/framework2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/watertrekapp/watertrekapp.iml" filepath="$PROJECT_DIR$/watertrekapp/watertrekapp.iml" />
     </modules>
   </component>
 </project>
