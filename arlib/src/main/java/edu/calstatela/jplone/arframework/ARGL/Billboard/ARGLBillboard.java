@@ -14,10 +14,6 @@ import edu.calstatela.jplone.arframework.ARGL.Utils.ARGLBufferHelper;
 import edu.calstatela.jplone.arframework.ARGL.Utils.ARGLShaderHelper;
 import edu.calstatela.jplone.arframework.ARGL.Utils.ARGLTextureHelper;
 
-/**
- * Created by bill on 11/14/17.
- */
-
 public class ARGLBillboard {
     protected static boolean initialized = false;
     private static final String TAG = "waka_Billboard";

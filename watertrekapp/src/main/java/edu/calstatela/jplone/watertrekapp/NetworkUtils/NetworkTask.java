@@ -50,16 +50,7 @@ public class NetworkTask extends AsyncTask<String, Void, String> {
 
             urlConnection.connect();
 
-            /*
-            Log.d(TAG, urlConnection.getCipherSuite());
-
-            for(Certificate c : urlConnection.getServerCertificates()) {
-                Log.d(TAG, c.toString());
-            }
-            */
-
             String response = urlConnection.getResponseMessage();
-            //Log.d(TAG, "response: " + response);
 
             if(response.equals("OK")) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -95,11 +86,14 @@ public class NetworkTask extends AsyncTask<String, Void, String> {
         void onResult(int type, String result);
     }
 
+
+
+
+
+
     public static void updateWatertrekCredentials(Activity activity){
         watertrekUsername = getPreferenceString(activity, "watertrekUsername");
         watertrekPassword = getPreferenceString(activity, "watertrekPassword");
-
-        Log.d(TAG, "username: " + watertrekUsername + "   password: " + watertrekPassword);
     }
 
     public static String getPreferenceString(Activity activity, String key){

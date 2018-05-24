@@ -8,10 +8,6 @@ import android.opengl.Matrix;
 import edu.calstatela.jplone.arframework.ARData.ARLandmark;
 import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLPosition;
 
-/**
- * Created by bill on 11/14/17.
- */
-
 public class ARGLSizedBillboard {
     protected static boolean initialized = false;
     ARGLBillboard mBillboard = new ARGLBillboard();

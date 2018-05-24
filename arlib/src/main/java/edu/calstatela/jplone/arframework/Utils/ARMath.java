@@ -4,9 +4,6 @@ import android.hardware.SensorManager;
 import android.opengl.Matrix;
 import android.util.Log;
 
-/**
- * Created by bill on 11/2/17.
- */
 
 public class ARMath {
     private static final String TAG = "ARMath";

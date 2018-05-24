@@ -5,10 +5,6 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-/**
- * Created by bill on 11/14/17.
- */
-
 public class ARGLBufferHelper {
     private static final int BYTES_PER_FLOAT = 4;
     private static final int BYTES_PER_SHORT = 2;

@@ -17,9 +17,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 
-/**
- * Created by bill on 11/14/17.
- */
 
 public class ARLocationSensor {
     private Context arContext;

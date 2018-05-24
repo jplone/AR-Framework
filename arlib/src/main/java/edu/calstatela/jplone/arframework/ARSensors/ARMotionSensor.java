@@ -9,9 +9,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-/**
- * Created by bill on 11/2/17.
- */
 
 public class ARMotionSensor {
     public static final int ACCELEROMETER = Sensor.TYPE_ACCELEROMETER;

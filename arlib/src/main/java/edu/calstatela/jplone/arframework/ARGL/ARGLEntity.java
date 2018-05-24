@@ -5,9 +5,6 @@ import android.opengl.Matrix;
 import edu.calstatela.jplone.arframework.ARGL.Drawable.ARGLDrawable;
 import edu.calstatela.jplone.arframework.Utils.ARMath;
 
-/**
- * Created by bill on 11/2/17.
- */
 
 public class ARGLEntity {
     private float scaleX = 1, scaleY = 1, scaleZ = 1;

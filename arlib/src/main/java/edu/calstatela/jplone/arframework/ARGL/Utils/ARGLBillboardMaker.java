@@ -13,10 +13,6 @@ import java.util.ArrayList;
 import edu.calstatela.jplone.arframework.ARGL.Billboard.ARGLSizedBillboard;
 import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLPosition;
 
-/**
- * Created by bill on 11/14/17.
- */
-
 public class ARGLBillboardMaker {
     private static Context openGLContext;
 

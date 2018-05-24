@@ -2,10 +2,6 @@ package edu.calstatela.jplone.arframework.ARData;
 
 import java.util.ArrayList;
 
-/**
- * Created by bill on 11/16/17.
- */
-
 public class ARLandmarkTable extends ArrayList<ARLandmark> {
     ArrayList<Float> distances = new ArrayList<>();
 

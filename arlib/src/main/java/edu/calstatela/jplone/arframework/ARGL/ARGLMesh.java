@@ -7,9 +7,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-/**
- * Created by bill on 11/2/17.
- */
 
 public class ARGLMesh {
 

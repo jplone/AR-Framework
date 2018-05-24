@@ -4,9 +4,6 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
-/**
- * Created by bill on 11/2/17.
- */
 
 public class ARGLShaderHelper {
     private static final String TAG = "waka_ShaderBuilder";
@@ -20,13 +17,13 @@ public class ARGLShaderHelper {
         GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, status, 0);
 
         if(status[0] == 0) {
+            String shaderTypeString = (shaderType == GLES20.GL_VERTEX_SHADER ? "Vertex" : "Fragment");
             String message = GLES20.glGetShaderInfoLog(shader);
-            Log.d(TAG, "Vertex Shader Error: \n" + message);
+            Log.d(TAG, shaderTypeString + " Shader Error: \n" + message);
             GLES20.glDeleteShader(shader);
             return 0;
         }
         else{
-            Log.d(TAG, "Vertex Shader Good");
             return shader;
         }
     }
@@ -46,7 +43,6 @@ public class ARGLShaderHelper {
             return 0;
         }
         else{
-            Log.d(TAG, "Program Link Good");
             return program;
         }
     }

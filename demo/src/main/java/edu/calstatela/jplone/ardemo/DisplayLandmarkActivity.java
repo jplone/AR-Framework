@@ -11,10 +11,6 @@ import edu.calstatela.jplone.arframework.ARFragment;
 import edu.calstatela.jplone.arframework.ARGL.Billboard.ARGLSizedBillboard;
 import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
 
-/**
- * Created by bill on 11/16/17.
- */
-
 public class DisplayLandmarkActivity extends AppCompatActivity {
     ARFragment arFragment;
     ARLandmarkTable arLandmarkTable;

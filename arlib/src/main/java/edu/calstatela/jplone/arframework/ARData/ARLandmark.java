@@ -2,10 +2,6 @@ package edu.calstatela.jplone.arframework.ARData;
 
 import android.location.Location;
 
-/**
- * Created by bill on 11/16/17.
- */
-
 public class ARLandmark {
     public String title;
     public String description;

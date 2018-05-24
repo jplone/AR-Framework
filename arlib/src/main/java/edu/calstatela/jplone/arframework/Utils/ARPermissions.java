@@ -8,9 +8,6 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-/**
- * Created by bill on 11/14/17.
- */
 
 public class ARPermissions {
     public static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;

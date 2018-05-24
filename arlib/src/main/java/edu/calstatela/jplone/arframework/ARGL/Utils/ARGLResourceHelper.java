@@ -7,10 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
- * Created by bill on 11/14/17.
- */
-
 public class ARGLResourceHelper {
     public static String stringFromResource(Context context, int resourceId){
         InputStream inputStream = context.getResources().openRawResource(resourceId);

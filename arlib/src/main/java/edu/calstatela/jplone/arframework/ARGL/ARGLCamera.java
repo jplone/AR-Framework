@@ -4,10 +4,6 @@ import android.opengl.Matrix;
 
 import edu.calstatela.jplone.arframework.Utils.ARMath;
 
-/**
- * Created by bill on 11/14/17.
- */
-
 public class ARGLCamera {
     private static final String TAG = "waka_Camera3D";
 

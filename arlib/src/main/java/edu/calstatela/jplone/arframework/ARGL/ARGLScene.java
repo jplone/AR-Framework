@@ -17,9 +17,6 @@ import edu.calstatela.jplone.arframework.ARGL.Utils.ARGLBillboardMaker;
 import edu.calstatela.jplone.arframework.ARGL.Utils.ARGLTextureHelper;
 import edu.calstatela.jplone.arframework.Utils.ARMath;
 
-/**
- * Created by bill on 11/2/17.
- */
 
 public class ARGLScene {
     protected ArrayList<ARGLEntity> mEntityList = new ArrayList<>();

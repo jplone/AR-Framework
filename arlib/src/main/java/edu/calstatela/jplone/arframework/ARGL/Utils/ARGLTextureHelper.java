@@ -6,9 +6,6 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
-/**
- * Created by bill on 11/14/17.
- */
 
 public class ARGLTextureHelper {
     public static int glTextureFromResource(Context context, int resourceId){

@@ -40,9 +40,6 @@ import edu.calstatela.jplone.arframework.Utils.AREvent;
 import edu.calstatela.jplone.arframework.Utils.ARMath;
 import edu.calstatela.jplone.arframework.Utils.ARRenderCallback;
 
-/**
- * Created by bill on 11/7/17.
- */
 
 public class ARView extends FrameLayout {
     private static final String TAG = "ARView";

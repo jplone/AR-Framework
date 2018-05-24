@@ -1,8 +1,5 @@
 package edu.calstatela.jplone.arframework.ARCamera;
 
-/**
- * Created by bill on 11/7/17.
- */
 
 import android.content.Context;
 import android.hardware.Camera;
