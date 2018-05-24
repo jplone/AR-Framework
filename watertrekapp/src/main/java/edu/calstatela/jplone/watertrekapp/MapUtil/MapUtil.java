@@ -14,8 +14,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
-import edu.calstatela.jplone.arframework.ARFragment;
-import edu.calstatela.jplone.arframework.Utils.AREvent;
+import edu.calstatela.jplone.arframework.integrated.ARFragment;
+import edu.calstatela.jplone.arframework.integrated.AREvent;
 
 /**
  * Created by bill on 5/3/18.

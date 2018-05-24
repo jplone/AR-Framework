@@ -13,11 +13,11 @@ import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.Dictionary;
 
-import edu.calstatela.jplone.arframework.ARData.ARLandmark;
-import edu.calstatela.jplone.arframework.ARFragment;
-import edu.calstatela.jplone.arframework.ARGL.Billboard.ARGLSizedBillboard;
-import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
-import edu.calstatela.jplone.arframework.Utils.AREvent;
+import edu.calstatela.jplone.arframework.landmark.ARLandmark;
+import edu.calstatela.jplone.arframework.integrated.ARFragment;
+import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLSizedBillboard;
+import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
+import edu.calstatela.jplone.arframework.integrated.AREvent;
 import edu.calstatela.jplone.watertrekapp.Data.Reservoir;
 import edu.calstatela.jplone.watertrekapp.Data.SoilMoisture;
 import edu.calstatela.jplone.watertrekapp.Data.Well;

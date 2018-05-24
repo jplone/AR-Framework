@@ -1,34 +1,33 @@
 package edu.calstatela.jplone.ardemo;
 
 import android.app.FragmentTransaction;
-import android.nfc.Tag;
 import android.opengl.GLES20;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import edu.calstatela.jplone.arframework.ARData.ARGLMeshData;
-import edu.calstatela.jplone.arframework.ARFragment;
-import edu.calstatela.jplone.arframework.ARGL.ARGLCamera2;
-import edu.calstatela.jplone.arframework.ARGL.ARGLEntity;
-import edu.calstatela.jplone.arframework.ARGL.ARGLProjection;
-import edu.calstatela.jplone.arframework.ARGL.ARGLScene;
-import edu.calstatela.jplone.arframework.ARGL.Drawable.ARGLLitModel;
-import edu.calstatela.jplone.arframework.Utils.AREvent;
-import edu.calstatela.jplone.arframework.Utils.ARRenderCallback;
+import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
+import edu.calstatela.jplone.arframework.graphics3d.helper.MeshHelper;
+import edu.calstatela.jplone.arframework.integrated.ARFragment;
+import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
+import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
+import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
+import edu.calstatela.jplone.arframework.graphics3d.drawable.LitModel;
+import edu.calstatela.jplone.arframework.integrated.AREvent;
+import edu.calstatela.jplone.arframework.integrated.ARRenderCallback;
 
 public class DisplayShapeActivity extends AppCompatActivity {
     ARFragment arFragment;
 
-    private ARGLProjection projection;
-    private ARGLCamera2 camera;
+    private Projection projection;
+    private ARGLCamera camera;
 
     private float[] currentOrientation = null;
 
-    private ARGLLitModel model;
-    private ARGLEntity entity1, entity2;
+    private LitModel model;
+    private Entity entity1, entity2;
     private float angle1 = 0, angle2 = 0;
-    private ARGLScene scene;
+    private Scene scene;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,20 +74,20 @@ public class DisplayShapeActivity extends AppCompatActivity {
     }
 
     private void init() {
-        projection = new ARGLProjection();
-        camera = new ARGLCamera2();
+        projection = new Projection();
+        camera = new ARGLCamera();
         camera.setPosition(0, 0, 5);
         camera.setOrientation(0, 1, 0, 0);
 
-        model = new ARGLLitModel();
-        model.loadVertices(ARGLMeshData.pyramid());
-        model.loadNormals(ARGLMeshData.calculateNormals(ARGLMeshData.pyramid()));
+        model = new LitModel();
+        model.loadVertices(MeshHelper.pyramid());
+        model.loadNormals(MeshHelper.calculateNormals(MeshHelper.pyramid()));
 
-        float[] scale = {1, 1, 1};
-        scene = new ARGLScene();
-        entity1 = scene.addDrawable(model, scale, new float[]{1, 1, -1}, 0);
-        scale[1] = 3;
-        entity2 = scene.addDrawable(model, scale, new float[]{-1, 1, -1}, 0);
+
+        scene = new Scene();
+        entity1 = scene.addDrawable(model);
+        entity2 = scene.addDrawable(model);
+        entity2.setScale(1, 3, 1);
 
         GLES20.glClearColor(0, 0, 0, 0);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -106,8 +105,8 @@ public class DisplayShapeActivity extends AppCompatActivity {
             camera.setOrientationVector(currentOrientation, 0);
 
         /* Update Entities/Scenes */
-        entity1.setRotation(angle1);
-        entity2.setRotation(angle2);
+        entity1.setYaw(angle1);
+        entity2.setYaw(angle2);
         angle1 += 1;
         angle2 += 3;
 

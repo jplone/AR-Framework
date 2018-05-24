@@ -4,8 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import edu.calstatela.jplone.arframework.ARData.ARLandmark;
-import edu.calstatela.jplone.arframework.ARData.ARLandmarkTable;
+import edu.calstatela.jplone.arframework.landmark.ARLandmark;
+import edu.calstatela.jplone.arframework.landmark.ARLandmarkTable;
 
 public class DisplayDataActivity extends AppCompatActivity {
 

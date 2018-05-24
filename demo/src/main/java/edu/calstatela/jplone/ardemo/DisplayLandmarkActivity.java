@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import edu.calstatela.jplone.arframework.ARData.ARLandmark;
-import edu.calstatela.jplone.arframework.ARData.ARLandmarkTable;
-import edu.calstatela.jplone.arframework.ARFragment;
-import edu.calstatela.jplone.arframework.ARGL.Billboard.ARGLSizedBillboard;
-import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
+import edu.calstatela.jplone.arframework.landmark.ARLandmark;
+import edu.calstatela.jplone.arframework.landmark.ARLandmarkTable;
+import edu.calstatela.jplone.arframework.integrated.ARFragment;
+import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLSizedBillboard;
+import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
 
 public class DisplayLandmarkActivity extends AppCompatActivity {
     ARFragment arFragment;

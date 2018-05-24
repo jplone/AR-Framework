@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import edu.calstatela.jplone.arframework.ARFragment;
-import edu.calstatela.jplone.arframework.ARGL.Billboard.ARGLSizedBillboard;
-import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLPosition;
-import edu.calstatela.jplone.arframework.ARGL.Unit.ARGLRenderJob;
+import edu.calstatela.jplone.arframework.integrated.ARFragment;
+import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLSizedBillboard;
+import edu.calstatela.jplone.arframework.integrated.Unit.ARGLPosition;
+import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
 
 public class     DisplayCompassActivity extends AppCompatActivity {
     ARFragment arFragment;
@@ -44,27 +44,27 @@ public class     DisplayCompassActivity extends AppCompatActivity {
         arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, "North", "A compass direction", mNorthPos, new ARGLSizedBillboard.Listener() {
             @Override
             public void interact(ARGLSizedBillboard billboard) {
-                Log.d("CompassActivity", "You touched the Northern Billboard!");
+                Log.d("CompassActivity", "You touched the Northern ARGLBillboard!");
             }
         }));
 
         arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, "East", "A compass direction", mEastPos, new ARGLSizedBillboard.Listener() {
             @Override
             public void interact(ARGLSizedBillboard billboard) {
-                Log.d("CompassActivity", "You touched the Eastern Billboard!");
+                Log.d("CompassActivity", "You touched the Eastern ARGLBillboard!");
             }
         }));
 
         arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, "South", "A compass direction", mSouthPos, new ARGLSizedBillboard.Listener() {
             @Override
             public void interact(ARGLSizedBillboard billboard) {
-                Log.d("CompassActivity", "You touched the Southern Billboard!");
+                Log.d("CompassActivity", "You touched the Southern ARGLBillboard!");
             }
         }));
         arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, "West", "A compass direction", mWestPos, new ARGLSizedBillboard.Listener() {
             @Override
             public void interact(ARGLSizedBillboard billboard) {
-                Log.d("CompassActivity", "You touched the Western Billboard!");
+                Log.d("CompassActivity", "You touched the Western ARGLBillboard!");
             }
         }));
     }
