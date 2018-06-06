@@ -1,6 +1,6 @@
 package edu.calstatela.jplone.arframework.graphics3d.helper;
 
-import edu.calstatela.jplone.arframework.util.VectorMath;
+import edu.calstatela.jplone.arframework.util.VectorMath1;
 
 public class MeshHelper {
     public static float[] pyramid(){
@@ -57,8 +57,8 @@ public class MeshHelper {
             vec1[1] = vertexList[i + 7] - vertexList[i + 1];
             vec1[2] = vertexList[i + 8] - vertexList[i + 2];
 
-            VectorMath.crossProduct(normal, vec0, vec1);
-            VectorMath.normalizeInPlace(normal);
+            VectorMath1.crossProduct(normal, vec0, vec1);
+            VectorMath1.normalizeInPlace(normal);
 
             normals[i + 0] = normal[0];
             normals[i + 1] = normal[1];

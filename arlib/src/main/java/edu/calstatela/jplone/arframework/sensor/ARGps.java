@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -18,14 +19,15 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 
 
-public class GpsSensor {
+public class ARGps {
+    private static final String TAG = "waka-ARGPS";
     private static final int PERMISSION_REQUEST_CODE = 79;
     private Context mActivity;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private ArrayList<Listener> mListenerList = new ArrayList<Listener>();
     private boolean started = false;
 
-    public GpsSensor(Context activity){
+    public ARGps(Context activity){
         mActivity = activity;
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
     }
@@ -33,6 +35,7 @@ public class GpsSensor {
     public boolean start(){
         boolean havePermission = ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         if(havePermission){
+            Log.d(TAG, "Have Permission");
             try {
                 mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(mLocationSuccessListener);
 
@@ -50,6 +53,7 @@ public class GpsSensor {
             }
         }
         else{
+            Log.d(TAG, "No Permission");
 //            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
         }
         return false;

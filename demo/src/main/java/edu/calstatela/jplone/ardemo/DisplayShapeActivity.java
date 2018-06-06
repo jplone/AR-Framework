@@ -7,12 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 
 import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
+import edu.calstatela.jplone.arframework.graphics3d.drawable.LitModel;
 import edu.calstatela.jplone.arframework.graphics3d.helper.MeshHelper;
 import edu.calstatela.jplone.arframework.integrated.ARFragment;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
-import edu.calstatela.jplone.arframework.graphics3d.drawable.LitModel;
 import edu.calstatela.jplone.arframework.integrated.AREvent;
 import edu.calstatela.jplone.arframework.integrated.ARRenderCallback;
 

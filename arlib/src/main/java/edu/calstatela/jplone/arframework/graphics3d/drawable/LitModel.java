@@ -6,7 +6,7 @@ import java.nio.FloatBuffer;
 
 import edu.calstatela.jplone.arframework.graphics3d.helper.BufferHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.ShaderHelper;
-import edu.calstatela.jplone.arframework.util.VectorMath;
+import edu.calstatela.jplone.arframework.util.VectorMath1;
 import edu.calstatela.jplone.arframework.util.MatrixMath;
 
 public class LitModel extends Drawable {
@@ -113,7 +113,7 @@ public class LitModel extends Drawable {
     @Override
     public void setColor(float[] rgbaVec){
         if(rgbaVec != null && rgbaVec.length == 4)
-            VectorMath.copyVec(rgbaVec, mColor, 4);
+            VectorMath1.copyVec(rgbaVec, mColor, 4);
     }
 
 

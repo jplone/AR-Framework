@@ -17,8 +17,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
-import edu.calstatela.jplone.arframework.sensor.GpsSensor;
-import edu.calstatela.jplone.arframework.util.VectorMath;
+import edu.calstatela.jplone.arframework.sensor.ARGps;
+import edu.calstatela.jplone.arframework.util.VectorMath1;
 import edu.calstatela.jplone.arframework.util.Permissions;
 
 /**
@@ -33,7 +33,7 @@ public class ARFragment extends Fragment {
     private ArrayList<ARGLRenderJob> deferredRenderAddList;
     private ArrayList<ARGLRenderJob> deferredRenderDelList;
     private boolean useGPS;
-    private GpsSensor arLocationSensor;
+    private ARGps arLocationSensor;
     private Fragment arFragmentInstance;
 
     private AREvent.Callback arCallback;
@@ -78,7 +78,7 @@ public class ARFragment extends Fragment {
 
         // set up GPS
         if(useGPS) {
-            arLocationSensor = new GpsSensor(arContext);
+            arLocationSensor = new ARGps(arContext);
             arLocationSensor.addListener(mGPSListener);
         }
 
@@ -229,7 +229,7 @@ public class ARFragment extends Fragment {
     float[] mPosition = new float[3];
     float[] latLonAlt = null;
 
-    GpsSensor.Listener mGPSListener = new GpsSensor.Listener() {
+    ARGps.Listener mGPSListener = new ARGps.Listener() {
         @Override
         public void handleLocation(Location location) {
             if(mOriginalLoc == null){
@@ -242,8 +242,8 @@ public class ARFragment extends Fragment {
             float distance = location.distanceTo(mOriginalLoc);
             float bearing = location.bearingTo(mOriginalLoc);
 
-            mPosition[0] = distance * (float)Math.cos(VectorMath.degreesToRad(bearing));
-            mPosition[1] = distance * (float)Math.sin(VectorMath.degreesToRad(bearing));
+            mPosition[0] = distance * (float)Math.cos(VectorMath1.degreesToRad(bearing));
+            mPosition[1] = distance * (float)Math.sin(VectorMath1.degreesToRad(bearing));
             mPosition[2] = (float)(location.getAltitude() - mOriginalLoc.getAltitude());
 
             latLonAlt[0] = (float)location.getLatitude();

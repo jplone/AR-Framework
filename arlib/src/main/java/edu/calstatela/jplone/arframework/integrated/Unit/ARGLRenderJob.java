@@ -4,7 +4,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLBillboardMaker;
-import edu.calstatela.jplone.arframework.landmark.ARLandmark;
+import edu.calstatela.jplone.arframework.landmark.Landmark;
 import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLSizedBillboard;
 
 /**
@@ -54,13 +54,13 @@ public class ARGLRenderJob {
 
     public Object execute(float[] latLonAlt) {
         Object ret = null;
-        ARLandmark here = new ARLandmark("", "", latLonAlt[0], latLonAlt[1], 100);
+        Landmark here = new Landmark("", "", latLonAlt[0], latLonAlt[1], 100);
 
         switch(type) {
             case TYPE_BILLBOARD_LANDMARK:
                 int scale = (Integer) this.params.get("scale");
                 int iconResourceId = (Integer) this.params.get("iconResId");
-                ARLandmark current = (ARLandmark) this.params.get("landmark");
+                Landmark current = (Landmark) this.params.get("landmark");
                 ARGLSizedBillboard.Listener callback = (ARGLSizedBillboard.Listener) this.params.get("callback");
 
                 ARGLSizedBillboard billboard = ARGLBillboardMaker.make(scale, iconResourceId, current.title, current.description);
@@ -98,8 +98,8 @@ public class ARGLRenderJob {
                 break;
 
             case TYPE_BILLBOARD_LANDMARK:
-                ARLandmark self_current = (ARLandmark) this.params.get("landmark");
-                ARLandmark job_current = (ARLandmark) job.params.get("landmark");
+                Landmark self_current = (Landmark) this.params.get("landmark");
+                Landmark job_current = (Landmark) job.params.get("landmark");
 
                 if(!self_current.compare(job_current))
                     equal = false;
@@ -130,7 +130,7 @@ public class ARGLRenderJob {
         return new ARGLRenderJob(TYPE_BILLBOARD, bbParams);
     }
 
-    public static ARGLRenderJob makeBillboard(int scale, int iconResourceId, ARLandmark landmark, ARGLSizedBillboard.Listener callback) {
+    public static ARGLRenderJob makeBillboard(int scale, int iconResourceId, Landmark landmark, ARGLSizedBillboard.Listener callback) {
         Hashtable<String, Object> bbParams = new Hashtable<String, Object>();
         bbParams.put("scale", new Integer(scale));
         bbParams.put("iconResId", new Integer(iconResourceId));

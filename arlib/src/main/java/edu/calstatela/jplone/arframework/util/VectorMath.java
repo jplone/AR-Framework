@@ -1,29 +1,21 @@
 package edu.calstatela.jplone.arframework.util;
 
-import android.hardware.SensorManager;
-import android.opengl.Matrix;
-
-
 public class VectorMath {
-    private static final String TAG = "VectorMath";
-
-    public static final float[] IDENTITY_MATRIX = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-    };
+    private static final String TAG = "wakaMyMath";
 
     public static float[] crossProduct(float[] a, float[] b){
-        float[] c = new float[3];
+        float[] c = new float[a.length];
 
         c[0] = a[1] * b[2] - a[2] * b[1];
         c[1] = a[2] * b[0] - a[0] * b[2];
         c[2] = a[0] * b[1] - a[1] * b[0];
 
+        if(c.length == 4)
+            c[3] = a[3];
+
         return c;
     }
-
+    
     public static void crossProduct(float[] result, float[] a, float[] b){
 
         result[0] = a[1] * b[2] - a[2] * b[1];
@@ -44,7 +36,7 @@ public class VectorMath {
 
     public static float angle(float[] a, float[] b){
         float unitDotProduct = dotProduct(a, b) / magnitude(a) / magnitude(b);
-        float angle = (float)Math.acos(unitDotProduct);
+        float angle = (float) Math.acos(unitDotProduct);
 
         return angle;
     }
@@ -72,55 +64,46 @@ public class VectorMath {
     }
 
     public static float degreesToRad(float degrees){
-        return (float) (degrees / 360.0 * 2 * Math.PI);
+        return (float) (degrees / 360 * 2 * Math.PI);
     }
 
-    public static float[] convert3Dto2D(float width, float height, float[] point3D, float[] vpm) {
-        float[] point2D = new float[]{0, 0, 1};
+    public static String vecToString(float[] vec){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Vec: (");
+//        sb.append(String.format("% .2f", vec[0]));
+        sb.append(String.format("%f", vec[0]));
+        for(int i = 1; i < vec.length; i++){
+            sb.append(", ");
+//            sb.append(String.format("% .2f", vec[i]));
+            sb.append(String.format("%f", vec[i]));
+        }
+        sb.append(")");
+        return sb.toString();
 
-        //point3D = normalize(point3D);
-        float[] out3D = new float[]{0, 0, 0, 1};
-
-        Matrix.multiplyMV(out3D, 0, vpm, 0, point3D, 0);
-
-        // transform world to clipping coordinates
-        float[] norm3D = normalize(out3D);
-        point2D[0] = (norm3D[0]+1) * width / 2;//vpm[0] * point3D[0] + vpm[1] * point3D[1] + vpm[2] * point3D[2] + vpm[3] * point3D[3];
-        point2D[1] = (1-norm3D[1]) * height / 2;//vpm[4] * point3D[0] + vpm[5] * point3D[1] + vpm[6] * point3D[2] + vpm[7] * point3D[3];
-
-        return point2D;
     }
 
-    public static float[] convert2Dto3D(float width, float height, float[] point2D, float[] vpm) {
-        float[] point3D = new float[]{0, 0, 0, 1};
-
-        return point3D;
+    public static void copyVec(float[] src, float[] dest, int n){
+        for(int i = 0; i < n; i++)
+            dest[i] = src[i];
     }
 
-    public static float compassBearing(float[] rotationVector) {
-        float[] rotationMatrix = new float[9];
-        SensorManager.getRotationMatrixFromVector(rotationMatrix, rotationVector);
+    public static String matrixToString(float[] matrix, int m, int n){
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n======================================\n");
 
-        final int worldAxisForDeviceAxisX = SensorManager.AXIS_X;
-        final int worldAxisForDeviceAxisY = SensorManager.AXIS_Z;
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                sb.append(String.format("  % .2f  ", matrix[i * n + j]));
+            }
+            sb.append("\n");
+        }
 
-        float[] adjustedRotationMatrix = new float[9];
-        SensorManager.remapCoordinateSystem(rotationMatrix, worldAxisForDeviceAxisX,
-                worldAxisForDeviceAxisY, adjustedRotationMatrix);
+        sb.append("======================================\n");
 
-        // Transform rotation matrix into azimuth/pitch/roll
-        float[] orientation = new float[3];
-        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
-
-        // Convert radians to degrees
-        float yaw = (float)(orientation[0] * 180 / Math.PI);
-        float pitch = orientation[1] * -57;
-        float roll = orientation[2] * -57;
-
-        //Log.d("ARView", "Angles: (" + yaw + ", " + pitch + ", " + roll + ")");
-
-        return yaw;
+        return sb.toString();
     }
+
+    /****************************************************/
 
     public static float compassBearing(float[] gravityVec, float[] magnetVec, float[] cameraVec){
         // Information we have:
@@ -133,22 +116,17 @@ public class VectorMath {
         //  * Project cameraVec onto earth's xz plane -> xzCamera
         //  * Use dot product to find angle between xzMagnet and xzCamera
 
-        if(gravityVec[2] >= 9.0)
-            cameraVec = new float[]{0, 1, 0};
-        else if(gravityVec[2] <= -9.0)
-            cameraVec = new float[]{0, -1, 0};
+        float[] xzTemp = VectorMath.crossProduct(magnetVec, gravityVec);
+        float[] xzMagnet = VectorMath.crossProduct(gravityVec, xzTemp);
 
-        float[] xzTemp = crossProduct(magnetVec, gravityVec);
-        float[] xzMagnet = crossProduct(gravityVec, xzTemp);
+        xzTemp = VectorMath.crossProduct(cameraVec, gravityVec);
+        float[] xzCamera = VectorMath.crossProduct(gravityVec, xzTemp);
 
-        xzTemp = crossProduct(cameraVec, gravityVec);
-        float[] xzCamera = crossProduct(gravityVec, xzTemp);
+        float angle = VectorMath.angle(xzCamera, xzMagnet);
+        angle = VectorMath.radToDegrees(angle);
 
-        float angle = angle(xzCamera, xzMagnet);
-        angle = radToDegrees(angle);
-
-        float[] xproduct = crossProduct(xzMagnet, xzCamera);
-        float direction = dotProduct(xproduct, gravityVec);
+        float[] xproduct = VectorMath.crossProduct(xzMagnet, xzCamera);
+        float direction = VectorMath.dotProduct(xproduct, gravityVec);
 
         if(direction >=0)
             return angle;
@@ -156,38 +134,11 @@ public class VectorMath {
             return 360 - angle;
     }
 
-    public static String vec2String(float[] vec){
-        StringBuilder sb = new StringBuilder();
-        sb.append("Vec: (");
-        sb.append(vec[0]);
-        for(int i = 1; i < vec.length; i++){
-            sb.append(", ");
-            sb.append(vec[i]);
-        }
-        sb.append(")");
-        return sb.toString();
-    }
-
-    public static void copyVec(float[] src, float[] dest, int n){
-        for(int i = 0; i < n; i++)
-            dest[i] = src[i];
-    }
-
-    public static float metersPerDegreeLat = 111111;
-    public static float metersPerDegreeLon = 111111;
-    private static float[] referenceLLA = {34, -117, 0};
-
-    public static void latLonAltToXYZ(float[] latLonAlt, float[] xyz){
-        xyz[0] = (latLonAlt[1] - referenceLLA[1]) * metersPerDegreeLon;
-        xyz[1] = latLonAlt[2] - referenceLLA[2];
-        xyz[2] = (referenceLLA[0] - latLonAlt[0]) * metersPerDegreeLat;
-    }
-
-    public static float landscapeTiltAngle(float[] gravityVec, float[] phoneUpVec){
+    public static float rollAngle(float[] gravityVec, float[] phoneUpVec){
         float[] xyGravityVec = {gravityVec[0], gravityVec[1], 0};
         float[] phoneFrontVec = {0, 0, -1};
         float unitDotProduct = dotProduct(phoneUpVec, xyGravityVec) / magnitude(xyGravityVec) / magnitude(phoneUpVec);
-        float angle = (float)Math.acos(unitDotProduct);
+        float angle = (float) Math.acos(unitDotProduct);
         angle = radToDegrees(angle);
         float direction = dotProduct(crossProduct(phoneUpVec, xyGravityVec), phoneFrontVec);
 
@@ -198,41 +149,31 @@ public class VectorMath {
             return 360 - angle;
     }
 
-    public static float portraitTiltAngle(float[] gravityVec, float[] magnetVec) {
-        float[] zyGravityVec = {0, gravityVec[1], gravityVec[2]};
-        float[] phoneUpVec = {0, -1, 0};
-        float unitDotProduct = dotProduct(phoneUpVec, zyGravityVec) / magnitude(zyGravityVec) / magnitude(phoneUpVec);
-        float angle = (float)Math.acos(unitDotProduct);
-        angle = radToDegrees(angle * 2);
-        float direction = dotProduct(crossProduct(phoneUpVec, zyGravityVec), new float[]{1, 0, 0});
-
-        if(direction >= 0) {
-            return angle;
-        }
-        else
-            return 360 - angle;
+    public static float elevationAngle(float[] gravityVec, float[] vector){
+        float unitDotProduct = dotProduct(vector, gravityVec) / magnitude(gravityVec) / magnitude(vector);
+        float angle = (float) Math.acos(unitDotProduct);
+        angle = radToDegrees(angle);
+        return angle - 90;
     }
 
-    // taken from http://blog.thomnichols.org/2011/08/smoothing-sensor-data-with-a-low-pass-filter
+    public static float[] directionVector(float azimuth, float elevation){
+        azimuth = VectorMath.degreesToRad(azimuth);
+        elevation = VectorMath.degreesToRad(elevation);
 
-    /*
-    * time smoothing constant for low-pass filter
-    * 0 ≤ alpha ≤ 1 ; a smaller value basically means more smoothing
-    * See: http://en.wikipedia.org/wiki/Low-pass_filter#Discrete-time_realization
-    */
-    static final float ALPHA = 0.09f;
+        float y = (float) Math.sin(elevation);
+        float groundMagnitude = (float) Math.cos(elevation);
+        float x = groundMagnitude * (float) Math.sin(azimuth);
+        float z = - groundMagnitude * (float) Math.cos(azimuth);
 
-    /**
-     * @see http://en.wikipedia.org/wiki/Low-pass_filter#Algorithmic_implementation
-     * @see http://developer.android.com/reference/android/hardware/SensorEvent.html#values
-     */
-    public static float[] lowPass( float[] input, float[] output ) {
-        if ( output == null ) return input;
+        float[] directionVector = {x, y, z};
 
-        for ( int i=0; i<input.length; i++ ) {
-            output[i] = (float)((input[i] * ALPHA) + (output[i] * (1.0 - ALPHA)));
-        }
+        return directionVector;
+    }
 
-        return output;
+    public static float[] phoneVecToWorldVec(float[] gravityVec, float[] magnetVec, float[] phoneVec){
+        float azimuth = compassBearing(gravityVec, magnetVec, phoneVec);
+        float elevation = elevationAngle(gravityVec, phoneVec);
+        float[] directionVector = directionVector(azimuth, elevation);
+        return directionVector;
     }
 }

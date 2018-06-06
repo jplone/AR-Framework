@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.Matrix;
 
-import edu.calstatela.jplone.arframework.landmark.ARLandmark;
+import edu.calstatela.jplone.arframework.landmark.Landmark;
 import edu.calstatela.jplone.arframework.integrated.Unit.ARGLPosition;
 
 public class ARGLSizedBillboard {
@@ -13,7 +13,7 @@ public class ARGLSizedBillboard {
     float mScale = 1;
     float[] mScaleMatrix = new float[16];
     float[] mMatrix = new float[16];
-    ARLandmark landmark = null;
+    Landmark landmark = null;
     Listener callback = null;
 
     public static void init(Context context){
@@ -66,11 +66,11 @@ public class ARGLSizedBillboard {
         return mBillboard.getPosition();
     };
 
-    public void setLandmark(ARLandmark landmark) {
+    public void setLandmark(Landmark landmark) {
         this.landmark = landmark;
     }
 
-    public ARLandmark getLandmark() {
+    public Landmark getLandmark() {
         return this.landmark;
     }
 

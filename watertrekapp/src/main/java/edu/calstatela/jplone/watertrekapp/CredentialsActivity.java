@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -19,7 +20,6 @@ public class CredentialsActivity extends Activity{
     String watertrekUsernameKey = "watertrekUsername";
     String watertrekPasswordKey = "watertrekPassword";
 
-    LinearLayout layout;
     EditText username;
     EditText password;
     Button submitButton;
@@ -30,22 +30,48 @@ public class CredentialsActivity extends Activity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Get the sharedPreferences file where credentials are stored
         sharedPreferences = getDefaultSharedPreferences(this);
 
-        layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
+        // If password has already been entered, just skip directly to MainActivity
+//        if(sharedPreferences.contains(watertrekUsernameKey) && sharedPreferences.contains(watertrekPasswordKey))
+//            launchMainActivity();
 
+        // Setup Layout
+        LinearLayout verticalLayout = new LinearLayout(this);
+        verticalLayout.setOrientation(LinearLayout.VERTICAL);
+
+        TextView sectionTitleTextView = new TextView(this);
+        sectionTitleTextView.setText("Watertrek Credentials");
+
+        LinearLayout usernameLayout = new LinearLayout(this);
+        usernameLayout.setOrientation(LinearLayout.HORIZONTAL);
+        TextView usernameTextView = new TextView(this);
+        usernameTextView.setText("username: ");
         username = new EditText(this);
+        username.setMinWidth(200);
+        usernameLayout.addView(usernameTextView);
+        usernameLayout.addView(username);
+
+        LinearLayout passwordLayout = new LinearLayout(this);
+        passwordLayout.setOrientation(LinearLayout.HORIZONTAL);
+        TextView passwordTextView = new TextView(this);
+        passwordTextView.setText("password: ");
         password = new EditText(this);
+        password.setMinWidth(200);
+        passwordLayout.addView(passwordTextView);
+        passwordLayout.addView(password);
+
         submitButton = new Button(this);
         submitButton.setText("Submit");
         submitButton.setOnClickListener(buttonListener);
 
-        layout.addView(username);
-        layout.addView(password);
-        layout.addView(submitButton);
+        verticalLayout.addView(sectionTitleTextView);
+        verticalLayout.addView(usernameLayout);
+        verticalLayout.addView(passwordLayout);
+        verticalLayout.addView(submitButton);
 
-        this.setContentView(layout);
+        this.setContentView(verticalLayout);
     }
 
     Button.OnClickListener buttonListener = new Button.OnClickListener(){
@@ -60,9 +86,13 @@ public class CredentialsActivity extends Activity{
             editor.putString(watertrekPasswordKey, passwordString);
             editor.apply();
 
-            Intent intent = new Intent(CredentialsActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            launchMainActivity();
         }
     };
+
+    private void launchMainActivity(){
+        Intent intent = new Intent(CredentialsActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

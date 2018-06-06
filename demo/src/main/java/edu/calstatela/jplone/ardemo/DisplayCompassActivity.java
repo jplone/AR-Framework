@@ -10,7 +10,7 @@ import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLSizedBillb
 import edu.calstatela.jplone.arframework.integrated.Unit.ARGLPosition;
 import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
 
-public class     DisplayCompassActivity extends AppCompatActivity {
+public class DisplayCompassActivity extends AppCompatActivity {
     ARFragment arFragment;
 
     @Override

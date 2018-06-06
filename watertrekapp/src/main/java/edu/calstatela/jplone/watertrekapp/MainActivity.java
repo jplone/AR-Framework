@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.Dictionary;
 
-import edu.calstatela.jplone.arframework.landmark.ARLandmark;
+import edu.calstatela.jplone.arframework.landmark.Landmark;
 import edu.calstatela.jplone.arframework.integrated.ARFragment;
 import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLSizedBillboard;
 import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
@@ -199,12 +199,12 @@ public class MainActivity extends AppCompatActivity {
 
         for(ARGLRenderJob job : arJobs) {
             Dictionary<String, Object> params = job.getParams();
-            ARLandmark lm = (ARLandmark) params.get("landmark");
+            Landmark lm = (Landmark) params.get("landmark");
             String title = lm.title;
             String data_type = title.split(" ")[0].toLowerCase();
 
             if(data_type.equals(type)) {
-                Log.d(TAG, "removing " + ((ARLandmark)job.getParams().get("landmark")).title);
+                Log.d(TAG, "removing " + ((Landmark)job.getParams().get("landmark")).title);
                 removeList.add(job);
                 arFragment.removeJob(job);
             }
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void addData(final String type, String title, final String data, double lat, double lon, int data_icon) {
         // setup well landmark
-        ARLandmark arLandmark = new ARLandmark(title, "(" + lat + ", " + lon + ")", (float) lat, (float) lon, 100.0f);
+        Landmark arLandmark = new Landmark(title, "(" + lat + ", " + lon + ")", (float) lat, (float) lon, 100.0f);
 
         // add the landmark to the queue to be displayed
         ARGLRenderJob job = ARGLRenderJob.makeBillboard(5, data_icon, arLandmark, new ARGLSizedBillboard.Listener() {

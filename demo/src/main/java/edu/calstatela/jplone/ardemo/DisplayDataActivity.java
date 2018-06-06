@@ -4,8 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import edu.calstatela.jplone.arframework.landmark.ARLandmark;
-import edu.calstatela.jplone.arframework.landmark.ARLandmarkTable;
+import edu.calstatela.jplone.arframework.landmark.Landmark;
+import edu.calstatela.jplone.arframework.landmark.LandmarkTable;
 
 public class DisplayDataActivity extends AppCompatActivity {
 
@@ -19,7 +19,7 @@ public class DisplayDataActivity extends AppCompatActivity {
 
         String type = getIntent().getStringExtra("type");
 
-        ARLandmarkTable table = new ARLandmarkTable();
+        LandmarkTable table = new LandmarkTable();
         if(type.equals("cities"))
             table.loadCities();
         else
@@ -28,7 +28,7 @@ public class DisplayDataActivity extends AppCompatActivity {
         int billboard_id = getIntent().getIntExtra("billboard_id", -1);
 
         if(billboard_id > -1) {
-            ARLandmark landmark = table.get(billboard_id);
+            Landmark landmark = table.get(billboard_id);
 
             TextView txtTitle = findViewById(R.id.txt_title);
             txtTitle.setText("Title: " + landmark.title);

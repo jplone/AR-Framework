@@ -5,15 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import edu.calstatela.jplone.arframework.landmark.ARLandmark;
-import edu.calstatela.jplone.arframework.landmark.ARLandmarkTable;
+import edu.calstatela.jplone.arframework.landmark.Landmark;
+import edu.calstatela.jplone.arframework.landmark.LandmarkTable;
 import edu.calstatela.jplone.arframework.integrated.ARFragment;
 import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLSizedBillboard;
 import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
 
 public class DisplayLandmarkActivity extends AppCompatActivity {
     ARFragment arFragment;
-    ARLandmarkTable arLandmarkTable;
+    LandmarkTable arLandmarkTable;
     String type = "csula";
 
     @Override
@@ -35,7 +35,7 @@ public class DisplayLandmarkActivity extends AppCompatActivity {
         ft.commit();
 
         // setting up data table
-        arLandmarkTable = new ARLandmarkTable();
+        arLandmarkTable = new LandmarkTable();
         if(type.equals("cities"))
             arLandmarkTable.loadCities();
         else
@@ -49,7 +49,7 @@ public class DisplayLandmarkActivity extends AppCompatActivity {
         int ara_icon = edu.calstatela.jplone.arframework.R.drawable.ara_icon;
 
         for(int i=0; i<arLandmarkTable.size(); i++) {
-            ARLandmark current = arLandmarkTable.get(i);
+            Landmark current = arLandmarkTable.get(i);
             final int index = i;
 
             arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, current, new ARGLSizedBillboard.Listener() {

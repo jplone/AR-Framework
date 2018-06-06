@@ -2,22 +2,22 @@ package edu.calstatela.jplone.arframework.landmark;
 
 import android.location.Location;
 
-public class ARLandmark {
+public class Landmark {
     public String title;
     public String description;
     public float latitude;
     public float longitude;
-    public float elevation;
+    public float altitude;
 
-    public ARLandmark(String title, String description, float latitude, float longitude, float elevation){
+    public Landmark(String title, String description, float latitude, float longitude, float altitude){
         this.title = title;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.elevation = elevation;
+        this.altitude = altitude;
     }
 
-    public float distance(ARLandmark other){
+    public float distance(Landmark other){
         l1.setLatitude(latitude);
         l1.setLongitude(longitude);
         l2.setLatitude(other.latitude);
@@ -25,7 +25,7 @@ public class ARLandmark {
         return l1.distanceTo(l2);
     }
 
-    public float compassDirection(ARLandmark other){
+    public float compassDirection(Landmark other){
         l1.setLatitude(latitude);
         l1.setLongitude(longitude);
         l2.setLatitude(other.latitude);
@@ -33,7 +33,7 @@ public class ARLandmark {
         return l1.bearingTo(l2);
     }
 
-    public boolean compare(ARLandmark landmark) {
+    public boolean compare(Landmark landmark) {
         boolean equal = true;
 
         if(!this.title.equals(landmark.title))
@@ -44,7 +44,7 @@ public class ARLandmark {
             equal = false;
         if(Math.abs(this.longitude - landmark.longitude) < 0.0001)
             equal = false;
-        if(Math.abs(this.elevation - landmark.elevation) < 0.001)
+        if(Math.abs(this.altitude - landmark.altitude) < 0.001)
             equal = false;
 
         return equal;
