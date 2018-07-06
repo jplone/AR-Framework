@@ -31,7 +31,7 @@ import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
 import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLBillboardMaker;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
 import edu.calstatela.jplone.arframework.util.MatrixMath;
-import edu.calstatela.jplone.arframework.util.VectorMath1;
+import edu.calstatela.jplone.arframework.util.VectorMath;
 
 
 public class ARView extends FrameLayout {
@@ -394,7 +394,7 @@ public class ARView extends FrameLayout {
                 // handle touch events
                 if(touching) {
                     float[] center = position.getCenter();
-                    float[] point = VectorMath1.convert3Dto2D(s_width, s_height, center, vpm);
+                    float[] point = VectorMath.convert3Dto2D(s_width, s_height, center, vpm);
                     float dist = (float) Math.sqrt(Math.pow(point[0] - touch_x, 2) + Math.pow(point[1] - touch_y, 2));
 
                     float[] world_center = new float[4];
@@ -431,8 +431,7 @@ public class ARView extends FrameLayout {
                 while (!renderQ.isEmpty()) {
                     HashMap<String, Object> bbSet = renderQ.remove();
                     ARGLSizedBillboard billboard = (ARGLSizedBillboard) bbSet.get("billboard");
-                    billboard.draw((float[]) bbSet.get("matrix")); ///////////////////////////////////////////////////////////////////////
-                    Log.d(TAG, "weird draw call");
+                    billboard.draw((float[]) bbSet.get("matrix"));
                 }
             }
 
@@ -469,7 +468,7 @@ public class ARView extends FrameLayout {
 
 
             if(arCallback != null) {
-                double bearing = VectorMath1.compassBearing(event.values);
+                double bearing = VectorMath.compassBearingFromRotationVector(event.values);
                 if(latLonAlt != null)
                     arCallback.onAREvent(new AREvent(latLonAlt[0], latLonAlt[1], bearing));
                 arCallback.onAREvent(new AREvent(event.values));

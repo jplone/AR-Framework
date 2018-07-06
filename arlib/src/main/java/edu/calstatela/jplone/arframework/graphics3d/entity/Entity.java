@@ -5,7 +5,7 @@ import android.opengl.Matrix;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Drawable;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.arframework.util.MatrixMath;
-import edu.calstatela.jplone.arframework.util.VectorMath1;
+import edu.calstatela.jplone.arframework.util.VectorMath;
 
 
 public class Entity extends Drawable{
@@ -61,9 +61,9 @@ public class Entity extends Drawable{
     }
 
     public void slide(float dx, float dy, float dz) {
-        pos[0] += dx * Math.cos(VectorMath1.degreesToRad(yawAngle)) + dz * Math.sin(VectorMath1.degreesToRad(yawAngle));
+        pos[0] += dx * Math.cos(VectorMath.degreesToRad(yawAngle)) + dz * Math.sin(VectorMath.degreesToRad(yawAngle));
         pos[1] += dy;
-        pos[2] += dz * Math.cos(VectorMath1.degreesToRad(yawAngle)) - dx * Math.sin(VectorMath1.degreesToRad(yawAngle));
+        pos[2] += dz * Math.cos(VectorMath.degreesToRad(yawAngle)) - dx * Math.sin(VectorMath.degreesToRad(yawAngle));
         matrixIsClean = false;
         latLonAltIsClean = false;
     }
@@ -75,7 +75,7 @@ public class Entity extends Drawable{
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     public void setLatLonAlt(float[] latLonAlt) {
-        VectorMath1.copyVec(latLonAlt, this.latLonAlt, 3);
+        VectorMath.copyVec(latLonAlt, this.latLonAlt, 3);
         latLonAltIsClean = true;
         GeoMath.latLonAltToXYZ(latLonAlt, pos);
         matrixIsClean = false;
@@ -139,7 +139,7 @@ public class Entity extends Drawable{
         if (this.color == null)
             this.color = new float[4];
 
-        VectorMath1.copyVec(color, this.color, 4);
+        VectorMath.copyVec(color, this.color, 4);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////

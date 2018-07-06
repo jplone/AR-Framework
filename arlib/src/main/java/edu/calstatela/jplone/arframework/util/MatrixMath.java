@@ -25,7 +25,7 @@ public class MatrixMath {
     }
 
     public static void copy(float[] srcMat, float[] destMat){
-        VectorMath1.copyVec(srcMat, destMat, 16);
+        VectorMath.copyVec(srcMat, destMat, 16);
     }
 
     public static final float[] IDENTITY_MATRIX = {
@@ -34,4 +34,20 @@ public class MatrixMath {
             0, 0, 1, 0,
             0, 0, 0, 1
     };
+
+    public static String matrixToString(float[] matrix, int m, int n){
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n======================================\n");
+
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                sb.append(String.format("  % .2f  ", matrix[i * n + j]));
+            }
+            sb.append("\n");
+        }
+
+        sb.append("======================================\n");
+
+        return sb.toString();
+    }
 }

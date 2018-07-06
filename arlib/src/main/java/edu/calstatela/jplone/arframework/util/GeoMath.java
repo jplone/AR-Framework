@@ -123,7 +123,7 @@ public class GeoMath {
     public static float locationElevation(float[] lla1, float[] lla2){
         Location l1 = makeLocation(lla1);
         Location l2 = makeLocation(lla2);
-        return VectorMath1.radToDegrees( (float) Math.atan( (lla2[2] - lla1[2]) / locationDistance(lla1, lla2) ) );
+        return VectorMath.radToDegrees( (float) Math.atan( (lla2[2] - lla1[2]) / locationDistance(lla1, lla2) ) );
     }
 
 

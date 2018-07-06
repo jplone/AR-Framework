@@ -1,5 +1,8 @@
 package edu.calstatela.jplone.arframework.util;
 
+import android.hardware.SensorManager;
+import android.opengl.Matrix;
+
 public class VectorMath {
     private static final String TAG = "wakaMyMath";
 
@@ -67,14 +70,64 @@ public class VectorMath {
         return (float) (degrees / 360 * 2 * Math.PI);
     }
 
+    /////////////////////////////////////////////////////////////////////////
+
+    public static float[] convert3Dto2D(float width, float height, float[] point3D, float[] vpm) {
+        float[] point2D = new float[]{0, 0, 1};
+
+        //point3D = normalize(point3D);
+        float[] out3D = new float[]{0, 0, 0, 1};
+
+        Matrix.multiplyMV(out3D, 0, vpm, 0, point3D, 0);
+
+        // transform world to clipping coordinates
+        float[] norm3D = normalize(out3D);
+        point2D[0] = (norm3D[0]+1) * width / 2;//vpm[0] * point3D[0] + vpm[1] * point3D[1] + vpm[2] * point3D[2] + vpm[3] * point3D[3];
+        point2D[1] = (1-norm3D[1]) * height / 2;//vpm[4] * point3D[0] + vpm[5] * point3D[1] + vpm[6] * point3D[2] + vpm[7] * point3D[3];
+
+        return point2D;
+    }
+
+    public static float[] convert2Dto3D(float width, float height, float[] point2D, float[] vpm) {
+        float[] point3D = new float[]{0, 0, 0, 1};
+
+        return point3D;
+    }
+
+    public static float compassBearingFromRotationVector(float[] rotationVector) {
+        float[] rotationMatrix = new float[9];
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, rotationVector);
+
+        final int worldAxisForDeviceAxisX = SensorManager.AXIS_X;
+        final int worldAxisForDeviceAxisY = SensorManager.AXIS_Z;
+
+        float[] adjustedRotationMatrix = new float[9];
+        SensorManager.remapCoordinateSystem(rotationMatrix, worldAxisForDeviceAxisX,
+                worldAxisForDeviceAxisY, adjustedRotationMatrix);
+
+        // Transform rotation matrix into azimuth/pitch/roll
+        float[] orientation = new float[3];
+        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
+
+        // Convert radians to degrees
+        float yaw = (float)(orientation[0] * 180 / Math.PI);
+        float pitch = orientation[1] * -57;
+        float roll = orientation[2] * -57;
+
+        //Log.d("ARView", "Angles: (" + yaw + ", " + pitch + ", " + roll + ")");
+
+        return yaw;
+    }
+    /////////////////////////////////////////////////////////////////////////
+
+
+
     public static String vecToString(float[] vec){
         StringBuilder sb = new StringBuilder();
         sb.append("Vec: (");
-//        sb.append(String.format("% .2f", vec[0]));
         sb.append(String.format("%f", vec[0]));
         for(int i = 1; i < vec.length; i++){
             sb.append(", ");
-//            sb.append(String.format("% .2f", vec[i]));
             sb.append(String.format("%f", vec[i]));
         }
         sb.append(")");
@@ -87,21 +140,7 @@ public class VectorMath {
             dest[i] = src[i];
     }
 
-    public static String matrixToString(float[] matrix, int m, int n){
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n======================================\n");
 
-        for(int i = 0; i < m; i++){
-            for(int j = 0; j < n; j++){
-                sb.append(String.format("  % .2f  ", matrix[i * n + j]));
-            }
-            sb.append("\n");
-        }
-
-        sb.append("======================================\n");
-
-        return sb.toString();
-    }
 
     /****************************************************/
 
