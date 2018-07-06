@@ -1,5 +1,6 @@
 package edu.calstatela.jplone.arframework.integrated;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.hardware.SensorEvent;
@@ -29,7 +30,7 @@ import edu.calstatela.jplone.arframework.integrated.Unit.ARGLPosition;
 import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
 import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLBillboardMaker;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.matrix.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath1;
 
 
@@ -61,6 +62,12 @@ public class ARView extends FrameLayout {
     private int s_height = 0;
     private ARRenderCallback renderCallback = null;
 
+    private Activity parentActivity = null;
+
+    public void setParentActivity(Activity activity){
+        parentActivity = activity;
+    }
+
     public ARView(Context context, boolean hasGPS) {
         super(context);
 
@@ -70,6 +77,7 @@ public class ARView extends FrameLayout {
         renderDelList = new ArrayList<ARGLRenderJob>();
 
         glCamera = new ARGLCamera();
+        Log.d(TAG, "made new camera");
 
         arTxtView = new TextView(arContext);
         arTxtView.setText("It does not look like you have permissions enabled for our framework. Please make sure to enable permissions!");
@@ -341,7 +349,7 @@ public class ARView extends FrameLayout {
 
             Landmark here = null;
             float[] vpm = new float[16];
-            MatrixMath.multiplyMatrices(vpm, glCamera.getViewMatrix(), projection.getProjectionMatrix());
+            MatrixMath.multiply2Matrices(vpm, projection.getProjectionMatrix(), glCamera.getViewMatrix());
             int min_dim = Math.min(s_width, s_height);
             ARGLSizedBillboard touched_bb = null;
             float touched_dist = 10000.0f;
@@ -419,7 +427,7 @@ public class ARView extends FrameLayout {
                 while (!renderQ.isEmpty()) {
                     HashMap<String, Object> bbSet = renderQ.remove();
                     ARGLSizedBillboard billboard = (ARGLSizedBillboard) bbSet.get("billboard");
-                    billboard.draw((float[]) bbSet.get("matrix"));
+                    billboard.draw((float[]) bbSet.get("matrix")); ///////////////////////////////////////////////////////////////////////
                 }
             }
 
@@ -430,7 +438,7 @@ public class ARView extends FrameLayout {
             touching = false; // the touch event will only be processed once regardless of whether there was a match or not
 
             if(renderCallback != null)
-                renderCallback.onGLDraw(projection.getProjectionMatrix(), glCamera.getViewMatrix());
+                renderCallback.onGLDraw(projection.getProjectionMatrix(), glCamera.getViewMatrix());  ////////////////////////////////////////////////////////////////////
         }
     }
 
@@ -441,15 +449,20 @@ public class ARView extends FrameLayout {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     ARSensor.Listener arMotionSensorListener = new ARSensor.Listener() {
+
         @Override
         public void onSensorEvent(SensorEvent event) {
             float[] matrix = new float[16];
             //SensorManager.getRotationMatrixFromVector(matrix, event.values);
 //            portraitMatrixFromRotation(matrix, event.values);
 
-            if(glCamera != null)
-                glCamera.setOrientationVector(event.values, 0);
-//                glCamera.setByMatrix(matrix);
+            if(glCamera != null) {
+                int angle = 0;
+//                if(parentActivity != null){
+//                    angle = Orientation.getOrientationAngle(parentActivity);
+//                }
+                glCamera.setOrientationVector(event.values, angle);
+            }
 
             if(arCallback != null) {
                 double bearing = VectorMath1.compassBearing(event.values);
@@ -459,37 +472,11 @@ public class ARView extends FrameLayout {
             }
         }
 
-//        private void portraitMatrixFromRotation(float[] matrix, float[] rotation){
-//            float[] rVec = {rotation[0], rotation[1], rotation[2]};
-//            float magnitude = VectorMath1.magnitude(rVec);
-//            rVec[0] /= magnitude;
-//            rVec[1] /= magnitude;
-//            rVec[2] /= magnitude;
-//            float angle = VectorMath1.radToDegrees(2 * (float)Math.asin(magnitude));
-//
-//            Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);
-//
-//            float[] adjustMatrix = new float[16];
-//            Matrix.setRotateM(adjustMatrix, 0, 90, -1, 0, 0);
-//            Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
-//        }
-//
-//        private void landscapeMatrixFromRotation(float[] matrix, float[] rotation){
-//            float[] rVec = {rotation[0], rotation[1], rotation[2]};
-//            float magnitude = VectorMath1.magnitude(rVec);
-//            rVec[0] /= magnitude;
-//            rVec[1] /= magnitude;
-//            rVec[2] /= magnitude;
-//            float angle = VectorMath1.radToDegrees(2 * (float)Math.asin(magnitude));
-//
-//            Matrix.setRotateM(matrix, 0, angle, rVec[0], rVec[1], rVec[2]);
-//
-//            float[] adjustMatrix = new float[16];
-//            Matrix.setRotateM(adjustMatrix, 0, 90, 0, 0, 1);
-//            Matrix.rotateM(adjustMatrix, 0, 90, -1, 0, 0);
-//            Matrix.multiplyMM(matrix, 0, adjustMatrix, 0, matrix, 0);
-//        }
     };
+
+
+
+
 
     private float[] latLonAlt;
 

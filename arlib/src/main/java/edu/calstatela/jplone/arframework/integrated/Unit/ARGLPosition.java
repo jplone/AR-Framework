@@ -20,8 +20,8 @@ public class ARGLPosition {
 
     public ARGLPosition(float tx, float ty, float tz, float angle, float rx, float ry, float rz) {
         Matrix.setIdentityM(matrix, 0);
-        translate(tx, ty, tz);
         rotate(angle, rx, ry, rz);
+        translate(tx, ty, tz);
     }
 
     public boolean compare(ARGLPosition pos) {

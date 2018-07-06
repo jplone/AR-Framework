@@ -7,7 +7,7 @@ import java.nio.FloatBuffer;
 import edu.calstatela.jplone.arframework.graphics3d.helper.BufferHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.ShaderHelper;
 import edu.calstatela.jplone.arframework.util.VectorMath1;
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.matrix.MatrixMath;
 
 public class LitModel extends Drawable {
 
@@ -105,7 +105,7 @@ public class LitModel extends Drawable {
     @Override
     public void draw(float[] projectionMatrix, float[] viewMatrix, float[] modelMatrix){
         float[] tempMatrix = new float[16];
-        MatrixMath.multiplyMatrices(tempMatrix, projectionMatrix, viewMatrix, modelMatrix);
+        MatrixMath.multiply3Matrices(tempMatrix, projectionMatrix, viewMatrix, modelMatrix);
         draw(tempMatrix);
     }
 

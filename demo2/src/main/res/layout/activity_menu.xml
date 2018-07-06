@@ -38,4 +38,10 @@
         android:text="Mountain Drawing"
         android:id="@+id/btn_mountain_draw"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Graphics Test"
+        android:id="@+id/btn_graphics_test"/>
+
 </LinearLayout>

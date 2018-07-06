@@ -35,7 +35,7 @@ import edu.calstatela.jplone.arframework.util.Permissions;
 
 public class ARActivity extends AppCompatActivity {
 
-    private static final String TAG = "wakaGLCamActivity";
+    private static final String TAG = "wakaARActivity";
 
     private FrameLayout mFrameLayout;
     private GLSurfaceView mGLView;

@@ -1,5 +1,6 @@
 package edu.calstatela.jplone.arframework.integrated;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.location.Location;
@@ -29,7 +30,7 @@ public class ARFragment extends Fragment {
     public static final String TAG = "ARFragment";
     private static final int ARFRAGMENT_PERMISSION_REQUEST_CODE = 0x1234;
     private Context arContext;
-    private ARView arView;
+    private ARView arView = null;
     private ArrayList<ARGLRenderJob> deferredRenderAddList;
     private ArrayList<ARGLRenderJob> deferredRenderDelList;
     private boolean useGPS;
@@ -38,6 +39,15 @@ public class ARFragment extends Fragment {
 
     private AREvent.Callback arCallback;
     private ARRenderCallback renderCallback;
+
+    private Activity parentActivity = null;
+
+    public void setParentActivity(Activity activity){
+        parentActivity = activity;
+        if(arView != null){
+            arView.setParentActivity(activity);
+        }
+    }
 
     public ARFragment() {
         super();

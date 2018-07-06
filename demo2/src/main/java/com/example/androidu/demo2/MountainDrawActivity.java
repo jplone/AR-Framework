@@ -20,6 +20,7 @@
     import edu.calstatela.jplone.arframework.sensor.ARSensor;
     import edu.calstatela.jplone.arframework.ui.ARActivity;
     import edu.calstatela.jplone.arframework.util.GeoMath;
+    import edu.calstatela.jplone.arframework.util.Orientation;
 
 
     public class MountainDrawActivity extends ARActivity {
@@ -140,6 +141,9 @@
 
             /* Draw */
             scene.draw(projection.getProjectionMatrix(), camera.getViewMatrix());
+
+
+            Log.d(TAG, "Orientation: " + Orientation.getOrientationAngle(this));
         }
 
 

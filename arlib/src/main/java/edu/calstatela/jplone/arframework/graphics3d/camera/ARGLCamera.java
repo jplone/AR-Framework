@@ -136,6 +136,7 @@ public class ARGLCamera {
         float z = rotationQuaternion[2] / magnitude;
 
         Matrix.setRotateM(scratchMat, 0, angle, x, y, z);
+        Matrix.rotateM(scratchMat, 0, deviceRotation, 0, 0, -1);
 
         resetVectors();
 

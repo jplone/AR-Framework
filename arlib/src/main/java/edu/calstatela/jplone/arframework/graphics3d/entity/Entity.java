@@ -4,7 +4,7 @@ import android.opengl.Matrix;
 
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Drawable;
 import edu.calstatela.jplone.arframework.util.GeoMath;
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.matrix.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath1;
 
 

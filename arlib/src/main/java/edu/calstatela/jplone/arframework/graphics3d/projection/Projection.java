@@ -2,7 +2,7 @@ package edu.calstatela.jplone.arframework.graphics3d.projection;
 
 import android.opengl.Matrix;
 
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.matrix.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath1;
 
 public class Projection {

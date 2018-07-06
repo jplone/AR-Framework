@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        arFragment.setParentActivity(this);
     }
 
     public void onLeft(View view) {

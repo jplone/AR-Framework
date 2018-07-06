@@ -19,17 +19,17 @@
             android:value="@integer/google_play_services_version" />
 
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".DisplayCompassActivity" />
-        <activity android:name=".DisplayLandmarkActivity" />
-        <activity android:name=".DisplayDataActivity" />
-        <activity android:name=".DisplayShapeActivity"></activity>
+        <activity android:name=".DisplayCompassActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".DisplayLandmarkActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".DisplayDataActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".DisplayShapeActivity" android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

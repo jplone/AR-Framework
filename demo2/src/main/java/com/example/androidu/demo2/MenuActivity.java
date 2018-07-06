@@ -3,18 +3,23 @@ package com.example.androidu.demo2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import edu.calstatela.jplone.arframework.util.Orientation;
 import edu.calstatela.jplone.arframework.util.Permissions;
 
 public class MenuActivity extends AppCompatActivity {
+
+    private static final String TAG = "waka-mainAct";
 
     Button compassButton;
     Button landmarksButton;
     Button shapeDrawingButton;
     Button circleSceneButton;
     Button mountainButton;
+    Button graphicsTestButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +31,7 @@ public class MenuActivity extends AppCompatActivity {
         shapeDrawingButton = (Button)findViewById(R.id.btn_shape_draw);
         circleSceneButton = (Button)findViewById(R.id.btn_circle_scene_draw);
         mountainButton = (Button)findViewById(R.id.btn_mountain_draw);
+        graphicsTestButton = (Button)findViewById(R.id.btn_graphics_test);
 
         compassButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,9 +73,20 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+        graphicsTestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, GraphicsTestActivity.class);
+                startActivity(intent);
+            }
+        });
+
         if(!Permissions.havePermission(this, Permissions.PERMISSION_ACCESS_FINE_LOCATION)){
             Permissions.requestPermission(this, Permissions.PERMISSION_ACCESS_FINE_LOCATION);
         }
+
+
+        Log.d(TAG, "Orientation: " + Orientation.getOrientationAngle(this));
 
     }
 }

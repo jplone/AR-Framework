@@ -43,7 +43,7 @@ public class DisplayDataActivity extends AppCompatActivity {
             txtLon.setText("Longitude: " + landmark.longitude);
 
             TextView txtElev = findViewById(R.id.txt_elev);
-            txtElev.setText("Elevation: " + landmark.elevation);
+            txtElev.setText("Elevation: " + landmark.altitude);
         }
         else {
             TextView txtTitle = findViewById(R.id.txt_title);

@@ -1,6 +1,6 @@
 package edu.calstatela.jplone.arframework.graphics3d.drawable;
 
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.matrix.MatrixMath;
 
 public class Drawable {
     // TODO - Separate Color stuff into a separate class/interface. (This requires adjusting subclasses as well)
@@ -9,7 +9,7 @@ public class Drawable {
 
     public void draw(float[] projectionMatrix, float[] viewMatrix, float[] modelMatrix) {
         float[] matrix = new float[16];
-        MatrixMath.multiplyMatrices(matrix, projectionMatrix, viewMatrix, modelMatrix);
+        MatrixMath.multiply3Matrices(matrix, projectionMatrix, viewMatrix, modelMatrix);
         draw(matrix);
     }
 

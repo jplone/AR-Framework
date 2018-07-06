@@ -19,6 +19,7 @@
     import edu.calstatela.jplone.arframework.sensor.ARGps;
     import edu.calstatela.jplone.arframework.sensor.ARSensor;
     import edu.calstatela.jplone.arframework.ui.ARActivity;
+    import edu.calstatela.jplone.arframework.util.Orientation;
 
 
     public class ShapeDrawActivity extends ARActivity {
@@ -53,6 +54,7 @@
             location.addListener(locationListener);
             orientation = new ARSensor(this, ARSensor.ROTATION_VECTOR);
             orientation.addListener(orientationListener);
+
         }
 
         @Override
@@ -108,26 +110,26 @@
             scene = new Scene();
 
             entity1 = scene.addDrawable(cubeModel);
-            entity1.setPosition(-2, 3, -10);
+            entity1.setPosition(-2, 3, 10);
             entity1.setColor(new float[]{1, 0, 0, 1});
 
             entity2 = scene.addDrawable(cubeModel);
-            entity2.setPosition(0, 0, -10);
+            entity2.setPosition(0, 0, 10);
             entity2.setScale(1, 3, 1);
             entity2.setColor(new float[]{0, 0, 1, 1});
 
             entity3 = scene.addDrawable(cubeModel);
-            entity3.setPosition(2, -3, -10);
+            entity3.setPosition(2, -3, 10);
             entity3.setScale(1, 3, 1);
             entity3.setColor(new float[]{0, 1, 0, 1});
 
             entity4 = scene.addDrawable(pyramidModel);
-            entity4.setPosition(-4, 0, -10);
+            entity4.setPosition(-4, 0, 10);
             entity3.setColor(new float[]{0.7f, 0.3f, 0f});
 
-            entity5 = scene.addDrawable(wellBB); entity5.setPosition(-5, -1, -10);
-            entity6 = scene.addDrawable(mountainBB); entity6.setPosition(-5, 3, -10);
-            entity7 = scene.addDrawable(signBB); entity7.setPosition(-9, 0, -10); entity7.setScale(4, 2, 2);
+            entity5 = scene.addDrawable(wellBB); entity5.setPosition(-5, -1, 10);
+            entity6 = scene.addDrawable(mountainBB); entity6.setPosition(-5, 3, 10);
+            entity7 = scene.addDrawable(signBB); entity7.setPosition(-9, 0, 10); entity7.setScale(4, 2, 2);
 
 
             entity8 = scene.addDrawable(pyramidWireframe);
@@ -156,7 +158,7 @@
 //            if(currentOrientation != null && currentLocation != null) {
             if(currentOrientation != null) {
 
-                camera.setOrientationVector(currentOrientation, 90);
+                camera.setOrientationVector(currentOrientation, Orientation.getOrientationAngle(this));
 //                camera.setLatLonAlt(currentLocation);
 //                Log.d(TAG, "setting camera orientation");
             }
@@ -173,6 +175,7 @@
 
             /* Draw */
             scene.draw(projection.getProjectionMatrix(), camera.getViewMatrix());
+
         }
 
 
@@ -186,6 +189,9 @@
         private ARGps.Listener locationListener = new ARGps.Listener(){
             @Override
             public void handleLocation(Location location){
+                if(location == null)
+                    return;
+
                 if(currentLocation == null){
                     currentLocation = new float[3];
                 }

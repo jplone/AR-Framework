@@ -12,6 +12,8 @@ import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
 import edu.calstatela.jplone.arframework.ui.ARActivity;
+import edu.calstatela.jplone.arframework.ui.ARActivity1;
+import edu.calstatela.jplone.arframework.util.Orientation;
 
 
 public class BillboardCompassActivity extends ARActivity {
@@ -95,7 +97,7 @@ public class BillboardCompassActivity extends ARActivity {
         super.GLDraw();
 
         if(mOrientation != null)
-            mCamera.setOrientationVector(mOrientation, 0);
+            mCamera.setOrientationVector(mOrientation, Orientation.getOrientationAngle(this));
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         mScene.draw(mProjection.getProjectionMatrix(), mCamera.getViewMatrix());

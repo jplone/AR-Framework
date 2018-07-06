@@ -9,19 +9,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-        <activity android:name=".MenuActivity">
+        <activity android:name=".MenuActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".BillboardCompassActivity" />
-        <activity android:name=".BillboardLandmarksActivity" />
-        <activity android:name=".CircleSceneActivity" />
-        <activity android:name=".MountainDrawActivity" />
-        <activity android:name=".ShapeDrawActivity" />
+        <activity android:name=".BillboardCompassActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BillboardLandmarksActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".CircleSceneActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".MountainDrawActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ShapeDrawActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".GraphicsTestActivity" android:screenOrientation="portrait"/>
 
 
-    </application>>
+    </application>
+
 </manifest>
