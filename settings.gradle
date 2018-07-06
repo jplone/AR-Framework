@@ -1,1 +1,1 @@
-include ':demo', ':arlib', ':watertrekapp', ':demo2'
+include ':demo', ':arlib', ':watertrekapp', ':demo2', ':watertrekapp2'
