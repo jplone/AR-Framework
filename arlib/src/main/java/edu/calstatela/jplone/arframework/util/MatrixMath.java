@@ -1,8 +1,6 @@
-package edu.calstatela.jplone.arframework.matrix;
+package edu.calstatela.jplone.arframework.util;
 
 import android.opengl.Matrix;
-
-import edu.calstatela.jplone.arframework.util.VectorMath1;
 
 public class MatrixMath {
 

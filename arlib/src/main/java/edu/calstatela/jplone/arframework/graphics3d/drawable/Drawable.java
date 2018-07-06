@@ -1,6 +1,6 @@
 package edu.calstatela.jplone.arframework.graphics3d.drawable;
 
-import edu.calstatela.jplone.arframework.matrix.MatrixMath;
+import edu.calstatela.jplone.arframework.util.MatrixMath;
 
 public class Drawable {
     // TODO - Separate Color stuff into a separate class/interface. (This requires adjusting subclasses as well)

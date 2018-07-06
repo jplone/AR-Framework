@@ -7,7 +7,7 @@ import java.nio.FloatBuffer;
 import edu.calstatela.jplone.arframework.graphics3d.helper.BufferHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.ShaderHelper;
 import edu.calstatela.jplone.arframework.util.VectorMath1;
-import edu.calstatela.jplone.arframework.matrix.MatrixMath;
+import edu.calstatela.jplone.arframework.util.MatrixMath;
 
 public class LitModel extends Drawable {
 

@@ -30,7 +30,7 @@ import edu.calstatela.jplone.arframework.integrated.Unit.ARGLPosition;
 import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
 import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLBillboardMaker;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
-import edu.calstatela.jplone.arframework.matrix.MatrixMath;
+import edu.calstatela.jplone.arframework.util.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath1;
 
 
