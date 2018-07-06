@@ -35,7 +35,7 @@ import edu.calstatela.jplone.arframework.util.VectorMath1;
 
 
 public class ARView extends FrameLayout {
-    private static final String TAG = "ARView";
+    private static final String TAG = "waka_ARView";
     private CameraView arCameraView;
     private GLSurfaceView glSurfaceView;
 
@@ -340,6 +340,10 @@ public class ARView extends FrameLayout {
         public void onDrawFrame(GL10 gl) {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
+            if(currentOrientation != null) {
+                glCamera.setOrientationVector(currentOrientation, 0);
+            }
+
 
             // add what needs to be rendered
             prepareAddList();
@@ -428,6 +432,7 @@ public class ARView extends FrameLayout {
                     HashMap<String, Object> bbSet = renderQ.remove();
                     ARGLSizedBillboard billboard = (ARGLSizedBillboard) bbSet.get("billboard");
                     billboard.draw((float[]) bbSet.get("matrix")); ///////////////////////////////////////////////////////////////////////
+                    Log.d(TAG, "weird draw call");
                 }
             }
 
@@ -438,7 +443,7 @@ public class ARView extends FrameLayout {
             touching = false; // the touch event will only be processed once regardless of whether there was a match or not
 
             if(renderCallback != null)
-                renderCallback.onGLDraw(projection.getProjectionMatrix(), glCamera.getViewMatrix());  ////////////////////////////////////////////////////////////////////
+                renderCallback.onGLDraw(projection.getProjectionMatrix(), glCamera.getViewMatrix());
         }
     }
 
@@ -448,21 +453,20 @@ public class ARView extends FrameLayout {
     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
+    private float[] currentOrientation = null;
+
     ARSensor.Listener arMotionSensorListener = new ARSensor.Listener() {
 
         @Override
         public void onSensorEvent(SensorEvent event) {
-            float[] matrix = new float[16];
-            //SensorManager.getRotationMatrixFromVector(matrix, event.values);
-//            portraitMatrixFromRotation(matrix, event.values);
+            if(currentOrientation == null)
+                currentOrientation = new float[3];
 
-            if(glCamera != null) {
-                int angle = 0;
-//                if(parentActivity != null){
-//                    angle = Orientation.getOrientationAngle(parentActivity);
-//                }
-                glCamera.setOrientationVector(event.values, angle);
-            }
+            currentOrientation[0] = event.values[0];
+            currentOrientation[1] = event.values[1];
+            currentOrientation[2] = event.values[2];
+
+
 
             if(arCallback != null) {
                 double bearing = VectorMath1.compassBearing(event.values);
