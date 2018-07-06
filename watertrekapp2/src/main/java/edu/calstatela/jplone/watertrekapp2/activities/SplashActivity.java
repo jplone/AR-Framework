@@ -1,4 +1,4 @@
-package edu.calstatela.jplone.watertrekapp2;
+package edu.calstatela.jplone.watertrekapp2.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import edu.calstatela.jplone.watertrekapp2.R;
 
-public class Splash extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity {
 private TextView tv;
 private ImageView iv;
 

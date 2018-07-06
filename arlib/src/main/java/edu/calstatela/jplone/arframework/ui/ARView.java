@@ -2,6 +2,8 @@ package edu.calstatela.jplone.arframework.ui;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.hardware.SensorEvent;
+import android.location.Location;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,12 +12,20 @@ import android.widget.FrameLayout;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import edu.calstatela.jplone.arframework.sensor.ARGps;
+import edu.calstatela.jplone.arframework.sensor.ARSensor;
+import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.arframework.util.Permissions;
 
 public class ARView extends FrameLayout {
 
-    GLSurfaceView glSurfaceView;
-    CameraView cameraView;
+    private GLSurfaceView glSurfaceView;
+    private CameraView cameraView;
+
+    private ARSensor orientationSensor;
+    private ARGps locationSensor;
+    private float[] currentOrientation;
+    private float[] currentLocation;
 
     public ARView(Context context){
         super(context);
@@ -34,10 +44,25 @@ public class ARView extends FrameLayout {
         }
 
         setOnTouchListener(touchListener);
+
+        orientationSensor = new ARSensor(context, ARSensor.ROTATION_VECTOR);
+        orientationSensor.addListener(orientationListener);
+        locationSensor = new ARGps(context);
+        locationSensor.addListener(locationListener);
     }
 
-    public void setRenderer(GLSurfaceView.Renderer renderer){
-        glSurfaceView.setRenderer(renderer);
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Sensor Access Methods
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public float[] getOrientation(){
+        return currentOrientation;
+    }
+
+    public float[] getLocation(){
+        return currentLocation;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,23 +73,21 @@ public class ARView extends FrameLayout {
 
     public void onPause(){
         glSurfaceView.onPause();
+        orientationSensor.stop();
+        locationSensor.stop();
     }
 
     public void onResume(){
         glSurfaceView.onResume();
+        orientationSensor.start();
+        locationSensor.start();
     }
 
-    public void GLInit(){
+    public void GLInit(){ }
 
-    }
+    public void GLResize(int width, int height){ }
 
-    public void GLResize(int width, int height){
-
-    }
-
-    public void GLDraw(){
-
-    }
+    public void GLDraw(){ }
 
     public boolean onTouch(View v, MotionEvent event){
         return false;
@@ -102,6 +125,44 @@ public class ARView extends FrameLayout {
             return ARView.this.onTouch(v, event);
         }
     };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Sensor Callbacks
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private ARGps.Listener locationListener = new ARGps.Listener(){
+        @Override
+        public void handleLocation(Location location){
+            if(currentLocation == null){
+                currentLocation = new float[3];
+                currentLocation[0] = (float)location.getLatitude();
+                currentLocation[1] = (float)location.getLongitude();
+                currentLocation[2] = (float)location.getAltitude();
+                GeoMath.setReference(currentLocation);
+                return;
+            }
+
+            currentLocation[0] = (float)location.getLatitude();
+            currentLocation[1] = (float)location.getLongitude();
+            currentLocation[2] = (float)location.getAltitude();
+        }
+    };
+
+    private ARSensor.Listener orientationListener = new ARSensor.Listener(){
+        @Override
+        public void onSensorEvent(SensorEvent event){
+            if(currentOrientation == null){
+                currentOrientation = new float[3];
+            }
+
+            currentOrientation[0] = event.values[0];
+            currentOrientation[1] = event.values[1];
+            currentOrientation[2] = event.values[2];
+        }
+    };
+
 
 
 }

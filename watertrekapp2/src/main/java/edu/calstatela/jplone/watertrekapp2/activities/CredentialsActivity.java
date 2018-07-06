@@ -1,4 +1,4 @@
-package edu.calstatela.jplone.watertrekapp2;
+package edu.calstatela.jplone.watertrekapp2.activities;
 
 import android.app.Activity;
 import android.content.Intent;

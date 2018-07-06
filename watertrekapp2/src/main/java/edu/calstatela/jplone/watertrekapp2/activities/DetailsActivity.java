@@ -1,4 +1,4 @@
-package edu.calstatela.jplone.watertrekapp2;
+package edu.calstatela.jplone.watertrekapp2.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,12 +7,12 @@ import android.widget.TextView;
 
 import edu.calstatela.jplone.watertrekapp2.R;
 
-public class ViewActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view);
+        setContentView(R.layout.activity_details);
 
         String type = getIntent().getStringExtra("type");
 

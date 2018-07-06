@@ -64,24 +64,27 @@ public class BillboardCompassActivity extends ARActivity {
         GLES20.glClearColor(0, 0, 0, 0);
 
         mScene = new Scene();
+        loadCompass(mScene);
 
+        mCamera = new ARGLCamera();
+        mProjection = new Projection();
+    }
+
+    private void loadCompass(Scene scene){
         Billboard north = BillboardMaker.make(this, R.drawable.ara_icon, "North", "A compass direction");
         Billboard east = BillboardMaker.make(this, R.drawable.ara_icon, "East", "A compass direction");
         Billboard south = BillboardMaker.make(this, R.drawable.ara_icon, "South", "A compass direction");
         Billboard west = BillboardMaker.make(this, R.drawable.ara_icon, "West", "A compass direction");
 
-        Entity northBB = mScene.addDrawable(north);
-        Entity eastBB = mScene.addDrawable(east);
-        Entity southBB = mScene.addDrawable(south);
-        Entity westBB = mScene.addDrawable(west);
+        Entity northBB = scene.addDrawable(north);
+        Entity eastBB = scene.addDrawable(east);
+        Entity southBB = scene.addDrawable(south);
+        Entity westBB = scene.addDrawable(west);
 
         northBB.yaw(0); northBB.move(0, 0, -5); northBB.setScale(2, 1, 1);
         eastBB.yaw(-90); eastBB.move(5, 0, 0); eastBB.setScale(2, 1, 1);
         southBB.yaw(180); southBB.move(0, 0, 5); southBB.setScale(2, 1, 1);
         westBB.yaw(90); westBB.move(-5, 0, 0); westBB.setScale(2, 1, 1);
-
-        mCamera = new ARGLCamera();
-        mProjection = new Projection();
     }
 
     @Override

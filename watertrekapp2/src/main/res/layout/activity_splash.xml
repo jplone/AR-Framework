@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ara_background"
-    tools:context="edu.calstatela.jplone.watertrekapp2.Splash">
+    tools:context="edu.calstatela.jplone.watertrekapp2.activities.SplashActivity">
 
     <!--Image source: https://images.freeimages.com/images/large-previews/3d3/skagit-river-3-1367375.jpg-->
 
