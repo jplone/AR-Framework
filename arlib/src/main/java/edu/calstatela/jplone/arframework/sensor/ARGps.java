@@ -26,22 +26,29 @@ public class ARGps {
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private ArrayList<Listener> mListenerList = new ArrayList<Listener>();
     private boolean started = false;
+    private int delayInMilliseconds = 5000;
 
     public ARGps(Context activity){
         mActivity = activity;
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
     }
 
+    public void setDelayInMilliseconds(int delay){
+        if(delay <= 0 || delay > 100000)
+            return;
+
+        delayInMilliseconds = delay;
+    }
+
     public boolean start(){
         boolean havePermission = ContextCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         if(havePermission){
-            Log.d(TAG, "Have Permission");
             try {
                 mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(mLocationSuccessListener);
 
                 LocationRequest locationRequest = new LocationRequest();
-                locationRequest.setInterval(5000);
-                locationRequest.setFastestInterval(5000);
+                locationRequest.setInterval(delayInMilliseconds);
+                locationRequest.setFastestInterval(delayInMilliseconds);
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
                 mFusedLocationProviderClient.requestLocationUpdates(locationRequest, mLocationUpdatesCallback, null);
@@ -53,8 +60,7 @@ public class ARGps {
             }
         }
         else{
-            Log.d(TAG, "No Permission");
-//            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
+            Log.d(TAG, "You do not have permission to start GPS");
         }
         return false;
     }

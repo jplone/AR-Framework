@@ -1,8 +1,11 @@
 package edu.calstatela.jplone.arframework.graphics3d.scene;
 
 
+import android.util.Log;
+
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.util.GeoMath;
+import edu.calstatela.jplone.arframework.util.VectorMath;
 
 public class CircleScene extends Scene{
     private static final String TAG = "waka-circleScene";
@@ -37,6 +40,8 @@ public class CircleScene extends Scene{
         float scale = distance / mRadius;
         entity.setYaw(-angle);
         entity.setScale(scale, scale, scale);
+
+//        Log.d(TAG, "pos: " + VectorMath.vecToString(pos) + "    center: " + VectorMath.vecToString(mCenter) + "    angle: " + angle);
     }
 
 }

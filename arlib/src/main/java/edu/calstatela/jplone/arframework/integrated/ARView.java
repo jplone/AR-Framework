@@ -234,6 +234,7 @@ public class ARView extends FrameLayout {
     public void setCallback(AREvent.Callback arCallback) {
         this.arCallback = arCallback;
     }
+
     public void setRenderCallback(ARRenderCallback renderCallback) {
         Log.d(TAG, "setting callback for render!");
         this.renderCallback = renderCallback;

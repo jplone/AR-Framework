@@ -14,7 +14,7 @@ public class Entity extends Drawable{
     private float[] scale = {1, 1, 1};
     private float[] pos = new float[3];
     private float[] latLonAlt = new float[3];
-    private float yawAngle;
+    private float yawAngle, pitchAngle, rollAngle;
     private float[] modelMatrix = new float[16];
 
     private Drawable drawable = null;
@@ -22,6 +22,8 @@ public class Entity extends Drawable{
 
     private boolean matrixIsClean = false;
     private boolean latLonAltIsClean = false;
+
+    private static float[] tempMatrix = new float[16];
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +33,13 @@ public class Entity extends Drawable{
         yawAngle = 0;
         matrixIsClean = false;
         latLonAltIsClean = false;
+    }
+
+
+    public void setLookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
+        Matrix.setLookAtM(modelMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+//        Matrix.invertM(modelMatrix, 0, tempMatrix, 0);
+        matrixIsClean = true;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,6 +114,20 @@ public class Entity extends Drawable{
     public float getYaw() {
         return yawAngle;
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void setPitch(float angle){
+        pitchAngle = angle;
+        matrixIsClean = false;
+    }
+
+    public void pitch(float dAngle){
+        pitchAngle += dAngle;
+        matrixIsClean = false;
+    }
+
+    public float getPitch(){ return pitchAngle; }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

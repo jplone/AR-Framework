@@ -52,7 +52,7 @@ public class GeoMath {
         float opposite = xyz2[0] - xyz1[0];
         float adjacent = (xyz1[2] - xyz2[2]);
 
-        if(adjacent == 0) {
+        if(adjacent < 0.1f && adjacent > -0.1f) {
             if(opposite > 0)
                 return 90;
             else

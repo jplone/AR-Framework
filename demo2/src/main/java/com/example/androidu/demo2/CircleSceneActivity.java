@@ -17,57 +17,24 @@
     import edu.calstatela.jplone.arframework.sensor.ARGps;
     import edu.calstatela.jplone.arframework.sensor.ARSensor;
     import edu.calstatela.jplone.arframework.ui.ARActivity;
+    import edu.calstatela.jplone.arframework.ui.SensorARActivity;
     import edu.calstatela.jplone.arframework.util.GeoMath;
 
 
-    public class CircleSceneActivity extends ARActivity {
+    public class CircleSceneActivity extends SensorARActivity {
 
         private static final String TAG = "waka-mountain";
 
-        private ARGps location;
-        private float[] currentLocation = null;
-        private ARSensor orientation;
-        private float[] currentOrientation = null;
 
         private Projection projection;
         private ARGLCamera camera;
 
         private Billboard mountainBB, riverBB, wellBB;
-        private Entity riverEn1, mountainEn1, wellEn1, pyramidEn1;
         private CircleScene scene;
 
-        float moveFwd, moveRight, moveUp, turnRight, size = 1;
+        float moveFwd, moveRight, moveUp, turnRight;
 
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        //      Activity Callbacks
-        //
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            location = new ARGps(this);
-            location.addListener(locationListener);
-            orientation = new ARSensor(this, ARSensor.ROTATION_VECTOR);
-            orientation.addListener(orientationListener);
-        }
-
-        @Override
-        protected void onPause() {
-            super.onPause();
-            location.stop();
-            orientation.stop();
-        }
-
-        @Override
-        protected void onResume() {
-            super.onResume();
-            location.start();
-            orientation.start();
-        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -79,8 +46,6 @@
         public void GLInit() {
             super.GLInit();
 
-            currentLocation = null;
-            currentOrientation = null;
 
             riverBB = BillboardMaker.make(this, R.drawable.river_icon);
             wellBB = BillboardMaker.make(this, R.drawable.well_icon);
@@ -127,17 +92,14 @@
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
             /* Do camera stuff */
-            if(currentOrientation != null && currentLocation != null) {
-                camera.setOrientationVector(currentOrientation, 0);
-//                camera.setPositionLatLonAlt(currentLocation);
+            if(getOrientation() != null && getLocation() != null) {
+                camera.setOrientationVector(getOrientation(), 0);
             }
-
 
             /* Set up Entities when the conditions are right */
 
             /* Update Entities/Scenes */
-            if(currentLocation != null) {
-//                scene.setCenterLatLonAlt(currentLocation);
+            if(getLocation() != null) {
                 scene.update();
             }
 
@@ -148,95 +110,6 @@
 
 
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        //      Sensor Callbacks
-        //
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-
-        private ARGps.Listener locationListener = new ARGps.Listener(){
-            @Override
-            public void handleLocation(Location location){
-                boolean firstTime = false;
-
-                if(currentLocation == null){
-                    currentLocation = new float[3];
-                    firstTime = true;
-                }
-
-                currentLocation[0] = (float)location.getLatitude();
-                currentLocation[1] = (float)location.getLongitude();
-                currentLocation[2] = (float)location.getAltitude();
-
-                if(firstTime){
-                    GeoMath.setReference(currentLocation);
-                }
-            }
-        };
-
-        private ARSensor.Listener orientationListener = new ARSensor.Listener(){
-            @Override
-            public void onSensorEvent(SensorEvent event){
-                if(currentOrientation == null){
-                    currentOrientation = new float[3];
-                }
-
-                currentOrientation[0] = event.values[0];
-                currentOrientation[1] = event.values[1];
-                currentOrientation[2] = event.values[2];
-            }
-        };
-
-
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        //      Handling Touch Events
-        //
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            int screenWidth = v.getWidth();
-            int screenHeight = v.getHeight();
-            int x = (int)event.getX();
-            int y = (int)event.getY();
-
-            if(y < screenHeight / 4){
-                if(x < screenWidth / 2){
-                    moveFwd -= 1;
-                }
-                else{
-                    moveFwd += 1;
-                }
-            }
-            else if(y < screenHeight / 2){
-                if(x < screenWidth / 2){
-                    moveRight -= 1;
-                }
-                else{
-                    moveRight += 1;
-                }
-            }
-            else if(y < 3 * screenHeight / 4){
-                if(x < screenWidth / 2){
-                    moveUp -= 1;
-                }
-                else{
-                    moveUp += 1;
-                }
-            }
-            else {
-                if(x < screenWidth / 2){
-                    turnRight -= 1;
-                }
-                else{
-                    turnRight += 1;
-                }
-            }
-
-            return true;
-        }
 
 
 

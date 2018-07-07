@@ -82,7 +82,6 @@ public class CredentialsActivity extends Activity{
         public void onClick(View view) {
             String usernameString = usernameEditText.getText().toString();
             String passwordString = passwordEditText.getText().toString();
-            Log.d(TAG, "username: " + usernameString + "   password: " + passwordString);
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(watertrekUsernameKey, usernameString);
