@@ -2,6 +2,9 @@ package edu.calstatela.jplone.watertrekapp2.activities;
 
 import android.content.Context;
 import android.opengl.GLES20;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
 import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
@@ -20,9 +23,11 @@ public class MainARView extends ARView {
 
     private ARGLCamera mCamera;
     private Projection mProjection;
-    private Scene mScene;
     private Entity mEntity;
 
+    private float startX = 234, startY = -213, startZ = -21312;
+    private float x = 0, y = 0, z = 0, yaw;
+    private float scale = 0.2f;
 
 
     public MainARView(Context context){
@@ -36,15 +41,15 @@ public class MainARView extends ARView {
 
         GLES20.glClearColor(0, 0, 0, 0);
 
-//        mScene = new Scene();
-////        loadCompass(mScene);
 
-        Billboard bb = BillboardMaker.make(context, R.drawable.ara_icon, "XXX", "xxx");
+        Billboard bb = BillboardMaker.make(context, R.drawable.ara_icon, "BILLBOARD", "billboard");
         mEntity = new Entity();
         mEntity.setDrawable(bb);
-        mEntity.yaw(180); mEntity.setPosition(0, 0, 5); mEntity.setScale(2, 1, 1);
+//        mEntity.setLookAt(-5, -2, 2, 0, 0, 0, 0, 1, 0);
+//        mEntity.setPosition(x, y, z);
 
         mCamera = new ARGLCamera();
+        mCamera.setPosition(startX, startY, startZ);
         mProjection = new Projection();
 
 
@@ -104,13 +109,75 @@ public class MainARView extends ARView {
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-
         if(getOrientation() != null)
             mCamera.setOrientationVector(getOrientation(), 0);
 
+
+//        mEntity.setPosition(x, y, z);
+//        mEntity.setYaw(yaw);
+        mEntity.setLookAtWithConstantDistanceScale(startX + x, startY + y, startZ + z, startX, startY, startZ, 0, 1, 0, scale);
+
         mEntity.draw(mProjection.getProjectionMatrix(), mCamera.getViewMatrix(), mEntity.getModelMatrix());
-//        mScene.draw(mProjection.getProjectionMatrix(), mCamera.getViewMatrix());
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if(event.getAction() != MotionEvent.ACTION_DOWN)
+            return false;
 
+        int width = this.getWidth();
+        int height = this.getHeight();
+        int touchX = (int)event.getX();
+        int touchY = (int)event.getY();
+
+        if(touchY < height / 4){
+            if(touchX < width / 2){
+//                mEntity.slide(-1, 0, 0);
+                x -= 1;
+            }
+            else{
+//                mEntity.slide(1, 0, 0);
+                x += 1;
+            }
+            Log.d(TAG, "new x is " + x);
+        }
+        else if (touchY < height / 2){
+            if(touchX < width / 2){
+//                mEntity.slide(0, -1, 0);
+                y -= 1;
+            }
+            else{
+//                mEntity.slide(0, 1, 0);
+                y += 1;
+            }
+            Log.d(TAG, "new y is " + y);
+        }
+        else if (touchY < 3 * height / 4){
+            if(touchX < width / 2){
+//                mEntity.slide(0, 0, -1);
+                z -= 1;
+            }
+            else{
+//                mEntity.slide(0, 0, 1);
+                z += 1;
+            }
+            Log.d(TAG, "new z is " + z);
+        }
+        else{
+            if(touchX < width / 2){
+//                mEntity.yaw(-15);
+//                yaw -= 15;
+                scale -= 0.1f;
+            }
+            else{
+//                mEntity.yaw(15);
+//                yaw += 15;
+                scale += 0.1f;
+            }
+            Log.d(TAG, "new scale is " + scale);
+        }
+
+
+        return true;
+    }
 }

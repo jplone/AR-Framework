@@ -24,6 +24,7 @@ public class Entity extends Drawable{
     private boolean latLonAltIsClean = false;
 
     private static float[] tempMatrix = new float[16];
+    private static float[] tempMatrix2 = new float[16];
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,8 +38,29 @@ public class Entity extends Drawable{
 
 
     public void setLookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
-        Matrix.setLookAtM(modelMatrix, 0, eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
-//        Matrix.invertM(modelMatrix, 0, tempMatrix, 0);
+
+        Matrix.setLookAtM(tempMatrix, 0, eyeX, eyeY, eyeZ, 2 * eyeX - centerX, 2 * eyeY - centerY, 2 * eyeZ - centerZ, upX, upY, upZ);
+        Matrix.invertM(modelMatrix, 0, tempMatrix, 0);
+
+        matrixIsClean = true;
+    }
+
+    public void setLookAtWithConstantDistanceScale(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ, float scale){
+
+        float distance = (eyeX - centerX) * (eyeX - centerX) + (eyeY - centerY) * (eyeY - centerY) + (eyeZ - centerZ) * (eyeZ - centerZ);
+        float newScale = (float)Math.sqrt(distance) * scale;
+
+        setLookAtWithScale(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ, newScale);
+    }
+
+    public void setLookAtWithScale(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ, float scale){
+
+        Matrix.setLookAtM(modelMatrix, 0, eyeX, eyeY, eyeZ, 2 * eyeX - centerX, 2 * eyeY - centerY, 2 * eyeZ - centerZ, upX, upY, upZ);
+        Matrix.invertM(tempMatrix, 0, modelMatrix, 0);
+
+        Matrix.scaleM(tempMatrix2, 0, MatrixMath.IDENTITY_MATRIX, 0, scale, scale, scale);
+        MatrixMath.multiply2Matrices(modelMatrix, tempMatrix, tempMatrix2);
+
         matrixIsClean = true;
     }
 
