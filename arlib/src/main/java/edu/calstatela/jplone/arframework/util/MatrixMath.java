@@ -14,10 +14,7 @@ public class MatrixMath {
     }
 
     public static void multiplyMatrixVec(float[] resultVec, float[] matrix, float[]inputVec){
-        resultVec[0] = matrix[0] * inputVec[0] + matrix[1] * inputVec[1] + matrix[2] * inputVec[2] + matrix[3] * inputVec[3];
-        resultVec[1] = matrix[4] * inputVec[0] + matrix[5] * inputVec[1] + matrix[6] * inputVec[2] + matrix[7] * inputVec[3];
-        resultVec[2] = matrix[8] * inputVec[0] + matrix[9] * inputVec[1] + matrix[10] * inputVec[2] + matrix[11] * inputVec[3];
-        resultVec[3] = matrix[12] * inputVec[0] + matrix[13] * inputVec[1] + matrix[14] * inputVec[2] + matrix[15] * inputVec[3];
+        Matrix.multiplyMV(resultVec, 0, matrix, 0, inputVec, 0);
     }
 
     public static void setIdentity(float[] matrix){
@@ -41,7 +38,7 @@ public class MatrixMath {
 
         for(int i = 0; i < m; i++){
             for(int j = 0; j < n; j++){
-                sb.append(String.format("  % .2f  ", matrix[i * n + j]));
+                sb.append(String.format("  % .2f  ", matrix[i + j * n]));
             }
             sb.append("\n");
         }

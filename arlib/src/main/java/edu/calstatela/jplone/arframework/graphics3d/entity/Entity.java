@@ -38,6 +38,7 @@ public class Entity extends Drawable{
 
 
     public void setLookAt(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ){
+        pos[0] = eyeX; pos[1] = eyeY; pos[2] = eyeZ;
 
         Matrix.setLookAtM(tempMatrix, 0, eyeX, eyeY, eyeZ, 2 * eyeX - centerX, 2 * eyeY - centerY, 2 * eyeZ - centerZ, upX, upY, upZ);
         Matrix.invertM(modelMatrix, 0, tempMatrix, 0);
@@ -54,6 +55,7 @@ public class Entity extends Drawable{
     }
 
     public void setLookAtWithScale(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ, float scale){
+        pos[0] = eyeX; pos[1] = eyeY; pos[2] = eyeZ;
 
         Matrix.setLookAtM(modelMatrix, 0, eyeX, eyeY, eyeZ, 2 * eyeX - centerX, 2 * eyeY - centerY, 2 * eyeZ - centerZ, upX, upY, upZ);
         Matrix.invertM(tempMatrix, 0, modelMatrix, 0);

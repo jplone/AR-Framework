@@ -2,7 +2,6 @@ package edu.calstatela.jplone.watertrekapp2.activities;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.Matrix;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,7 +10,6 @@ import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
-import edu.calstatela.jplone.arframework.graphics3d.entity.ModelMatrix;
 import edu.calstatela.jplone.arframework.graphics3d.entity.ModelMatrix2;
 import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
@@ -19,18 +17,20 @@ import edu.calstatela.jplone.arframework.ui.ARView;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.watertrekapp2.R;
 
-public class MainARView extends ARView {
+public class MainARView_old1 extends ARView {
     private static final String TAG = "waka_MainARView";
 
     private Context context;
 
     private ARGLCamera mCamera;
     private Projection mProjection;
-    private Scene mScene;
+    private Billboard bb;
+    private ModelMatrix2 mModelMatrix;
+
+    private float startX = 4354, startY = -345345, startZ = -3543;
 
 
-
-    public MainARView(Context context){
+    public MainARView_old1(Context context){
         super(context);
         this.context = context;
     }
@@ -41,12 +41,19 @@ public class MainARView extends ARView {
 
         GLES20.glClearColor(0, 0, 0, 0);
 
-        mScene = new Scene();
-        loadCompass(mScene);
+
+        bb = BillboardMaker.make(context, R.drawable.ara_icon, "BILLBOARD", "billboard");
+
+        mModelMatrix = new ModelMatrix2();
+        mModelMatrix.setPosition(startX, startY, startZ);
 
 
         mCamera = new ARGLCamera();
+        mCamera.setPosition(startX, startY, startZ);
         mProjection = new Projection();
+
+
+
     }
 
     private void loadCompass(Scene scene){
@@ -105,8 +112,57 @@ public class MainARView extends ARView {
         if(getOrientation() != null)
             mCamera.setOrientationVector(getOrientation(), 0);
 
-        mScene.draw(mProjection.getProjectionMatrix(), mCamera.getViewMatrix());
+        bb.draw(mProjection.getProjectionMatrix(), mCamera.getViewMatrix(), mModelMatrix.getModelMatrix());
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if(event.getAction() != MotionEvent.ACTION_DOWN)
+            return false;
 
+        int width = this.getWidth();
+        int height = this.getHeight();
+        int touchX = (int)event.getX();
+        int touchY = (int)event.getY();
+
+        if(touchY < height / 4){
+            if(touchX < width / 2){
+                mModelMatrix.slide(0, -1, 0);
+            }
+            else{
+                mModelMatrix.slide(0, 1, 0);
+            }
+            Log.d(TAG, "slide z");
+        }
+        else if (touchY < height / 2){
+            if(touchX < width / 2){
+                mModelMatrix.pitch(-15);
+            }
+            else{
+                mModelMatrix.pitch(15);
+            }
+            Log.d(TAG, "pitch");
+        }
+        else if (touchY < 3 * height / 4){
+            if(touchX < width / 2){
+                mModelMatrix.yaw(-15);
+            }
+            else{
+                mModelMatrix.yaw(15);
+            }
+            Log.d(TAG, "yaw");
+        }
+        else{
+            if(touchX < width / 2){
+                mModelMatrix.roll(-15);
+            }
+            else{
+                mModelMatrix.roll(15);
+            }
+            Log.d(TAG, "roll");
+        }
+
+
+        return true;
+    }
 }
