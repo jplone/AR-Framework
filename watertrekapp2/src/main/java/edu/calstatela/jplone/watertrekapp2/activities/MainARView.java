@@ -2,17 +2,11 @@ package edu.calstatela.jplone.watertrekapp2.activities;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.Matrix;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 
 import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
-import edu.calstatela.jplone.arframework.graphics3d.entity.ModelMatrix;
-import edu.calstatela.jplone.arframework.graphics3d.entity.ModelMatrix2;
 import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
 import edu.calstatela.jplone.arframework.ui.ARView;

@@ -12,7 +12,6 @@ import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
 import edu.calstatela.jplone.arframework.ui.ARActivity;
-import edu.calstatela.jplone.arframework.ui.ARActivity1;
 import edu.calstatela.jplone.arframework.util.Orientation;
 
 
@@ -60,6 +59,7 @@ public class BillboardCompassActivity extends ARActivity {
     @Override
     public void GLInit() {
         super.GLInit();
+        Billboard.init();
 
         GLES20.glClearColor(0, 0, 0, 0);
 

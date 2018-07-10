@@ -38,6 +38,7 @@ public class MainARView_old1 extends ARView {
     @Override
     public void GLInit() {
         super.GLInit();
+        Billboard.init();
 
         GLES20.glClearColor(0, 0, 0, 0);
 

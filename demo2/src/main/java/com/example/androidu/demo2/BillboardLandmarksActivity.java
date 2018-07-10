@@ -1,65 +1,50 @@
 package com.example.androidu.demo2;
 
+import android.graphics.Bitmap;
 import android.hardware.SensorEvent;
 import android.location.Location;
 import android.opengl.GLES20;
+import android.opengl.GLException;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.SurfaceView;
+import android.view.View;
+
+import java.nio.IntBuffer;
 
 import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
+import edu.calstatela.jplone.arframework.graphics3d.entity.ScaleObject;
 import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.CircleScene;
+import edu.calstatela.jplone.arframework.graphics3d.scene.LandmarkScene;
+import edu.calstatela.jplone.arframework.graphics3d.scene.ScalingCircleScene;
 import edu.calstatela.jplone.arframework.landmark.Landmark;
 import edu.calstatela.jplone.arframework.landmark.LandmarkTable;
 import edu.calstatela.jplone.arframework.sensor.ARGps;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
 import edu.calstatela.jplone.arframework.ui.ARActivity;
+import edu.calstatela.jplone.arframework.ui.SensorARActivity;
 import edu.calstatela.jplone.arframework.util.GeoMath;
+import edu.calstatela.jplone.arframework.util.VectorMath;
 
 
-public class BillboardLandmarksActivity extends ARActivity {
+public class BillboardLandmarksActivity extends SensorARActivity {
     static final String TAG = "waka_BBLandmarks";
 
 
-    CircleScene mScene;
+    LandmarkScene mScene;
     ARGLCamera mCamera;
     Projection mProjection;
 
-    ARSensor mOrientationSensor;
-    ARGps mGps;
 
+    LandmarkTable landmarkTable = new LandmarkTable();
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //      Activity Callbacks
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    float x = -1, y = -1;
 
-        mOrientationSensor = new ARSensor(this, ARSensor.ROTATION_VECTOR);
-        mOrientationSensor.addListener(mOrientationListener);
-
-        mGps = new ARGps(this);
-        mGps.addListener(mGPSListener);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mOrientationSensor.stop();
-        mGps.stop();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mOrientationSensor.start();
-        mGps.start();
-    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,15 +55,17 @@ public class BillboardLandmarksActivity extends ARActivity {
     @Override
     public void GLInit() {
         super.GLInit();
+        Billboard.init();
 
         GLES20.glClearColor(0, 0, 0, 0);
 
-        mScene = new CircleScene();
-        mScene.setRadius(20);
+        mScene = new LandmarkScene();
+        mScene.setScale(0.2f);
         mCamera = new ARGLCamera();
         mProjection = new Projection();
 
-        setupBillboards();
+        landmarkTable = new LandmarkTable();
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
     }
 
     @Override
@@ -93,16 +80,35 @@ public class BillboardLandmarksActivity extends ARActivity {
     public void GLDraw() {
         super.GLDraw();
 
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-        if(latLonAlt != null && orientation != null){
-            mCamera.setPositionLatLonAlt(latLonAlt);
-            mCamera.setOrientationVector(orientation, 0);
-            mScene.setCenterLatLonAlt(latLonAlt);
+        if(mScene.isEmpty() && getLocation() != null)
+            setupBillboards();
+
+        if(getLocation() != null && getOrientation() != null){
+            mCamera.setPositionLatLonAlt(getLocation());
+            mCamera.setOrientationVector(getOrientation(), 0);
+            mScene.setCenterLatLonAlt(getLocation());
+            mScene.update();
         }
 
         mScene.draw(mProjection.getProjectionMatrix(), mCamera.getViewMatrix());
+
+        if(x >= 0){
+            float[] position = new float[4];
+            GeoMath.latLonAltToXYZ(getLocation(), position);
+            int closestIndex = mScene.findClosestEntity(x, y, getARView().getWidth(), getARView().getHeight(), 0.2f, mProjection.getProjectionMatrix(), mCamera.getViewMatrix(), position);
+
+            if(closestIndex >= 0 && closestIndex < landmarkTable.size()){
+                Landmark l = landmarkTable.get(closestIndex);
+                Log.d(TAG, l.title + "  " + l.description);
+            }
+
+            x = -1;
+            y = -1;
+        }
     }
+
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,54 +118,26 @@ public class BillboardLandmarksActivity extends ARActivity {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     private void setupBillboards(){
 
-        LandmarkTable landmarkTable = new LandmarkTable();
-        landmarkTable.loadCalstateLA();
+        landmarkTable = new LandmarkTable();
+        landmarkTable.loadCities();
 
         for(Landmark l : landmarkTable){
             Billboard bb = BillboardMaker.make(this, R.drawable.ara_icon, l.title, l.description);
-            Entity entity = mScene.addDrawable(bb);
+            ScaleObject sbb = new ScaleObject(bb, 2, 1, 1);
+            Entity entity = mScene.addDrawable(sbb);
             entity.setLatLonAlt(new float[]{l.latitude, l.longitude, l.altitude});
         }
+
+        Log.d(TAG, "Location: " + VectorMath.vecToString(getLocation()));
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //      Sensor Callbacks
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    private float[] orientation = null;
-    ARSensor.Listener mOrientationListener = new ARSensor.Listener() {
-        @Override
-        public void onSensorEvent(SensorEvent event) {
-
-            if(orientation == null)
-                orientation = new float[3];
-
-            orientation[0] = event.values[0];
-            orientation[1] = event.values[1];
-            orientation[2] = event.values[2];
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+            x = event.getX();
+            y = event.getY();
         }
-    };
 
-
-    private float[] latLonAlt = null;
-    ARGps.Listener mGPSListener = new ARGps.Listener() {
-
-        @Override
-        public void handleLocation(Location location) {
-
-            if(latLonAlt == null) {
-                latLonAlt = new float[3];
-                latLonAlt[0] = (float)location.getLatitude();
-                latLonAlt[1] = (float)location.getLongitude();
-                latLonAlt[2] = (float)location.getAltitude();
-                GeoMath.setReference(latLonAlt);
-            }
-
-            latLonAlt[0] = (float)location.getLatitude();
-            latLonAlt[1] = (float)location.getLongitude();
-            latLonAlt[2] = (float)location.getAltitude();
-        }
-    };
-
+        return true;
+    }
 }

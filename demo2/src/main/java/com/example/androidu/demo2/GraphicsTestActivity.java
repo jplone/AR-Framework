@@ -1,8 +1,6 @@
 package com.example.androidu.demo2;
 
 import android.opengl.GLES20;
-import android.os.Bundle;
-import android.util.Log;
 
 import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
@@ -35,6 +33,7 @@ public class GraphicsTestActivity extends SensorARActivity {
     @Override
     public void GLInit() {
         super.GLInit();
+        Billboard.init();
 
         GLES20.glClearColor(0, 0, 0, 0);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);

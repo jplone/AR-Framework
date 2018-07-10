@@ -18,9 +18,12 @@ package edu.calstatela.jplone.arframework.ui;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -30,6 +33,10 @@ public class ARActivity1 extends AppCompatActivity {
     private static final String TAG = "wakaARActivity1";
 
     private ARView arView;
+
+    public Bitmap getGLBitmap(){
+        return arView.getGLBitmap();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +63,8 @@ public class ARActivity1 extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         arView.onResume();
+
+
     }
 
 
@@ -71,7 +80,13 @@ public class ARActivity1 extends AppCompatActivity {
 
 
 
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
+    }
 
+    public View getARView(){
+        return arView;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -97,6 +112,11 @@ public class ARActivity1 extends AppCompatActivity {
         @Override
         public void GLDraw(){
             ARActivity1.this.GLDraw();
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return ARActivity1.this.onTouch(v, event);
         }
     }
 

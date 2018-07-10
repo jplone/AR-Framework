@@ -1,8 +1,6 @@
 package edu.calstatela.jplone.arframework.graphics3d.scene;
 
 
-import android.util.Log;
-
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
@@ -19,10 +17,21 @@ public class CircleScene extends Scene{
         mRadius = radius;
     }
 
+    public float getRadius(){
+        return mRadius;
+    }
+
     public void setCenterLatLonAlt(float[] latLonAlt){
         GeoMath.latLonAltToXYZ(latLonAlt, mCenter);
     }
 
+    public void setCenterXYZ(float[] center){
+        VectorMath.copyVec(center, mCenter, 4);
+    }
+
+    public float[] getCenter(){
+        return mCenter;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,15 +42,8 @@ public class CircleScene extends Scene{
         }
     }
 
-    private void updateEntity(Entity entity){
-        float[] pos = entity.getPosition();
-        float angle = GeoMath.xyzBearing(mCenter, pos);
-        float distance = GeoMath.xyzDistance(mCenter, pos);
-        float scale = distance / mRadius;
-        entity.setYaw(-angle);
-        entity.setScale(scale, scale, scale);
-
-//        Log.d(TAG, "pos: " + VectorMath.vecToString(pos) + "    center: " + VectorMath.vecToString(mCenter) + "    angle: " + angle);
+    protected void updateEntity(Entity entity){
+        entity.lookAtPoint(mCenter[0], mCenter[1], mCenter[2]);
     }
 
 }

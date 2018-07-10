@@ -1,10 +1,7 @@
     package com.example.androidu.demo2;
 
 
-    import android.hardware.SensorEvent;
-    import android.location.Location;
     import android.opengl.GLES20;
-    import android.os.Bundle;
     import android.util.Log;
 
     import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
@@ -16,21 +13,14 @@
     import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
     import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
     import edu.calstatela.jplone.arframework.landmark.MountainData;
-    import edu.calstatela.jplone.arframework.sensor.ARGps;
-    import edu.calstatela.jplone.arframework.sensor.ARSensor;
-    import edu.calstatela.jplone.arframework.ui.ARActivity;
-    import edu.calstatela.jplone.arframework.util.GeoMath;
+    import edu.calstatela.jplone.arframework.ui.SensorARActivity;
     import edu.calstatela.jplone.arframework.util.Orientation;
 
 
-    public class MountainDrawActivity extends ARActivity {
+    public class MountainDrawActivity extends SensorARActivity {
 
         private static final String TAG = "waka-shapes";
 
-        private ARGps location;
-        private float[] currentLocation = null;
-        private ARSensor orientation;
-        private float[] currentOrientation = null;
 
         private Projection projection;
         private ARGLCamera camera;
@@ -43,35 +33,7 @@
 
 
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        //      Activity Callbacks
-        //
-        ////////////////////////////////////////////////////////////////////////////////////////////////
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            location = new ARGps(this);
-            location.addListener(locationListener);
-            orientation = new ARSensor(this, ARSensor.ROTATION_VECTOR);
-            orientation.addListener(orientationListener);
-        }
-
-        @Override
-        protected void onPause() {
-            super.onPause();
-            location.stop();
-            orientation.stop();
-        }
-
-        @Override
-        protected void onResume() {
-            super.onResume();
-            location.start();
-            orientation.start();
-        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -82,12 +44,11 @@
         @Override
         public void GLInit() {
             super.GLInit();
+            Billboard.init();
 
             Log.d(TAG, "....... init .........");
 
             scene = null;
-            currentLocation = null;
-            currentOrientation = null;
 
             bb1 = bb2 = bb3 = bb4 = bb5 = null;
 
@@ -121,14 +82,14 @@
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
             /* Do camera stuff */
-            if(currentOrientation != null && currentLocation != null) {
-                camera.setOrientationVector(currentOrientation, 0);
-                camera.setPositionLatLonAlt(currentLocation);
+            if(getOrientation() != null && getLocation() != null) {
+                camera.setOrientationVector(getOrientation(), 0);
+                camera.setPositionLatLonAlt(getLocation());
             }
 
 
             /* Update Entities/Scenes */
-            if(bb1 == null && currentLocation != null){
+            if(bb1 == null && getLocation() != null){
                 setup();
             }
             if(bb1 != null) {
@@ -203,42 +164,6 @@
             bb5.setScale(2000, 2000, 2000);
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        //
-        //      Sensor Callbacks
-        //
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-
-        private ARGps.Listener locationListener = new ARGps.Listener(){
-            @Override
-            public void handleLocation(Location location){
-                if(currentLocation == null){
-                    currentLocation = new float[3];
-                    currentLocation[0] = (float)location.getLatitude();
-                    currentLocation[1] = (float)location.getLongitude();
-                    currentLocation[2] = (float)location.getAltitude();
-                    GeoMath.setReference(currentLocation);
-                    return;
-                }
-
-                currentLocation[0] = (float)location.getLatitude();
-                currentLocation[1] = (float)location.getLongitude();
-                currentLocation[2] = (float)location.getAltitude();
-            }
-        };
-
-        private ARSensor.Listener orientationListener = new ARSensor.Listener(){
-            @Override
-            public void onSensorEvent(SensorEvent event){
-                if(currentOrientation == null){
-                    currentOrientation = new float[3];
-                }
-
-                currentOrientation[0] = event.values[0];
-                currentOrientation[1] = event.values[1];
-                currentOrientation[2] = event.values[2];
-            }
-        };
 
 
 

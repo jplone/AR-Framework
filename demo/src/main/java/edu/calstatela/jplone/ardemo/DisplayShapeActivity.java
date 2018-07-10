@@ -10,7 +10,6 @@ import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.LitModel;
 import edu.calstatela.jplone.arframework.graphics3d.helper.MeshHelper;
 import edu.calstatela.jplone.arframework.integrated.ARFragment;
-import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
 import edu.calstatela.jplone.arframework.integrated.AREvent;
@@ -25,7 +24,7 @@ public class DisplayShapeActivity extends AppCompatActivity {
     private float[] currentOrientation = null;
 
     private LitModel model;
-    private Entity entity1, entity2;
+    private Entity___old entity1, entity2;
     private float angle1 = 0, angle2 = 0;
     private Scene scene;
 

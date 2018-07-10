@@ -5,11 +5,12 @@ import android.opengl.GLES20;
 import java.nio.FloatBuffer;
 
 import edu.calstatela.jplone.arframework.graphics3d.helper.BufferHelper;
+import edu.calstatela.jplone.arframework.graphics3d.helper.MeshHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.ShaderHelper;
 import edu.calstatela.jplone.arframework.util.VectorMath;
 import edu.calstatela.jplone.arframework.util.MatrixMath;
 
-public class LitModel extends Drawable {
+public class LitModel implements Drawable, Colorable{
 
     private static final String TAG = "waka-litmodel";
 
@@ -61,14 +62,14 @@ public class LitModel extends Drawable {
     }
 
 
-    public void setGLDrawingMode(int glDrawingMode){
-        mDrawingMode = glDrawingMode;
+    public void setDrawingModeLineStrip(){
+        mDrawingMode = GLES20.GL_LINE_STRIP;
     }
 
-
-    public void draw(){
-        draw(MatrixMath.IDENTITY_MATRIX);
+    public void setDrawingModeTriangles(){
+        mDrawingMode = GLES20.GL_TRIANGLES;
     }
+
 
 
     @Override
@@ -116,6 +117,11 @@ public class LitModel extends Drawable {
             VectorMath.copyVec(rgbaVec, mColor, 4);
     }
 
+    @Override
+    public void getColor(float[] color) {
+        VectorMath.copyVec(mColor, color, 4);
+    }
+
 
     public void loadVertices(float[] vertexList){
         mNumVertices = vertexList.length / FLOATS_PER_VERTEX;
@@ -125,4 +131,23 @@ public class LitModel extends Drawable {
     public void loadNormals(float[] normalList){
         mNormalBuffer = BufferHelper.arrayToBuffer(normalList);
     }
+
+
+
+
+
+    public static LitModel modelFromVertices(float[] vertices){
+        LitModel model = new LitModel();
+        model.loadVertices(vertices);
+        model.loadNormals(MeshHelper.calculateNormals(vertices));
+        return model;
+    }
+
+    public static LitModel cube(){
+        return modelFromVertices(MeshHelper.cube());
+    }
+    public static LitModel pyramid(){
+        return modelFromVertices(MeshHelper.pyramid());
+    }
+
 }

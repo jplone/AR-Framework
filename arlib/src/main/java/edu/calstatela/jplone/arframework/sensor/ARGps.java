@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 public class ARGps {
     private static final String TAG = "waka-ARGPS";
-    private static final int PERMISSION_REQUEST_CODE = 79;
     private Context mActivity;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private ArrayList<Listener> mListenerList = new ArrayList<Listener>();
@@ -77,7 +76,7 @@ public class ARGps {
     }
 
     public interface Listener{
-        public void handleLocation(Location location);
+        void handleLocation(Location location);
     }
 
 

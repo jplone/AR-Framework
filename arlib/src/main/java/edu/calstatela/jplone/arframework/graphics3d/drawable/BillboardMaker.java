@@ -32,6 +32,10 @@ public class BillboardMaker {
         paint.setTextSize(20);
         canvas.drawText(text, 120, 120, paint);
 
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(2);
+        canvas.drawRect(0, 0, 400, 200, paint);
+
         billboard.setBitmap(bitmap);
         bitmap.recycle();
         icon.recycle();

@@ -44,7 +44,7 @@ public class ARSensor {
     }
 
     public interface Listener{
-        public void onSensorEvent(SensorEvent event);
+        void onSensorEvent(SensorEvent event);
     }
 
 

@@ -1,5 +1,6 @@
 package edu.calstatela.jplone.arframework.ui;
 
+import android.graphics.Bitmap;
 import android.hardware.SensorEvent;
 import android.location.Location;
 import android.os.Bundle;
@@ -8,7 +9,7 @@ import edu.calstatela.jplone.arframework.sensor.ARGps;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 
-public class SensorARActivity extends ARActivity {
+public class SensorARActivity extends ARActivity1 {
 
     private ARSensor orientationSensor;
     private ARGps locationSensor;
@@ -97,4 +98,6 @@ public class SensorARActivity extends ARActivity {
     public float[] getLocation(){
         return currentLocation;
     }
+
+
 }

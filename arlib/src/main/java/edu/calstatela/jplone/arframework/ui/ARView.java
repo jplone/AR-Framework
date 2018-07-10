@@ -1,6 +1,8 @@
 package edu.calstatela.jplone.arframework.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.hardware.SensorEvent;
 import android.location.Location;
@@ -63,6 +65,31 @@ public class ARView extends FrameLayout {
 
     public float[] getLocation(){
         return currentLocation;
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Utility Methods
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private Bitmap viewToBitmap(View v){
+        Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmp);
+        v.draw(c);
+        return bmp;
+    }
+
+
+
+    public View getGLView(){
+        return glSurfaceView;
+    }
+
+    public Bitmap getGLBitmap(){
+        return viewToBitmap(getGLView());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -11,7 +11,7 @@ public class ModelMatrix {
     //      Private Member Variables
     //
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    private float[] position = new float[3];
+    private float[] position = new float[4];
     private float[] mMatrixArray = new float[16];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,11 @@ public class ModelMatrix {
         w[0] = centerX - eyeX;
         w[1] = centerY - eyeY;
         w[2] = centerZ - eyeZ;
-        VectorMath.normalizeInPlace(w);
+
+        if(w[0] == 0 && w[1] == 0 && w[2] == 0)
+            w[1] = 1;
+        else
+            VectorMath.normalizeInPlace(w);
 
         up[0] = upX;
         up[1] = upY;

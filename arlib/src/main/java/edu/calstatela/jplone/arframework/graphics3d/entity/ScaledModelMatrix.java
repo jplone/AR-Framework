@@ -3,9 +3,10 @@ package edu.calstatela.jplone.arframework.graphics3d.entity;
 import edu.calstatela.jplone.arframework.util.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
 
-public class ModelMatrix2 {
+public class ScaledModelMatrix extends ModelMatrix2{
     private static final String TAG = "waka-ModelMatrix";
 
+    private float[] mScale = {1, 1, 1};
     private float[] mMatrixArray = new float[16];
     private boolean matrixIsClean = false;
 
@@ -18,6 +19,20 @@ public class ModelMatrix2 {
     // Temporary vectors for matrix calculations
     private static float[] up = new float[3];
     private static float[] t = new float[3];
+
+    ////////////////////////////////////////////////////
+    //
+    //      Public Methods added for ScaledModelMatrix
+    //
+    ////////////////////////////////////////////////////
+
+    public void setScale(float x, float y, float z){
+        mScale[0] = x; mScale[1] = y; mScale[2] = z;
+    }
+
+    public void setScale(float scale){
+        setScale(scale, scale, scale);
+    }
 
     ////////////////////////////////////////////////////
     //
@@ -80,10 +95,10 @@ public class ModelMatrix2 {
     }
 
     private void cleanMatrix(){
-        mMatrixArray[0] = u[0];   mMatrixArray[4] = v[0];   mMatrixArray[8] = w[0];   mMatrixArray[12] = position[0];
-        mMatrixArray[1] = u[1];   mMatrixArray[5] = v[1];   mMatrixArray[9] = w[1];   mMatrixArray[13] = position[1];
-        mMatrixArray[2] = u[2];   mMatrixArray[6] = v[2];   mMatrixArray[10] = w[2];  mMatrixArray[14] = position[2];
-        mMatrixArray[3] = 0;      mMatrixArray[7] = 0;      mMatrixArray[11] = 0;     mMatrixArray[15] = 1;
+        mMatrixArray[0] = mScale[0] * u[0];   mMatrixArray[4] = mScale[1] * v[0];   mMatrixArray[8] = mScale[2] * w[0];   mMatrixArray[12] = position[0];
+        mMatrixArray[1] = mScale[0] * u[1];   mMatrixArray[5] = mScale[1] * v[1];   mMatrixArray[9] = mScale[2] * w[1];   mMatrixArray[13] = position[1];
+        mMatrixArray[2] = mScale[0] * u[2];   mMatrixArray[6] = mScale[1] * v[2];   mMatrixArray[10] = mScale[2] * w[2];  mMatrixArray[14] = position[2];
+        mMatrixArray[3] = 0;                  mMatrixArray[7] = 0;                  mMatrixArray[11] = 0;                 mMatrixArray[15] = 1;
 
         matrixIsClean = true;
     }

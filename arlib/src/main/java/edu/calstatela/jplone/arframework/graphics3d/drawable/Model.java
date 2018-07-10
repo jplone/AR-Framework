@@ -12,7 +12,7 @@ import edu.calstatela.jplone.arframework.util.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
 
 
-public class Model extends Drawable {
+public class Model implements Drawable, Colorable{
 
     private FloatBuffer mBuffer = null;
     private float[] mColor = {0.0f, 0.8f, 0.0f, 0.1f};
@@ -44,17 +44,17 @@ public class Model extends Drawable {
 
 
     public Model(){
+        // find a way to only make this happen once
         mShaderProgram = ShaderHelper.buildShaderProgram(vertexShaderCode, fragmentShaderCode);
     }
 
 
-    public void setGLDrawingMode(int glDrawingMode){
-        mDrawingMode = glDrawingMode;
+    public void setDrawingModeLineStrip(){
+        mDrawingMode = GLES20.GL_LINE_STRIP;
     }
 
-
-    public void draw(){
-        draw(MatrixMath.IDENTITY_MATRIX);
+    public void setDrawingModeTriangles(){
+        mDrawingMode = GLES20.GL_TRIANGLES;
     }
 
 
@@ -94,6 +94,10 @@ public class Model extends Drawable {
             VectorMath.copyVec(rgbaVec, mColor, 4);
     }
 
+    @Override
+    public void getColor(float[] color) {
+        VectorMath.copyVec(mColor, color, 4);
+    }
 
     public void loadVertices(float[] vertexList){
         mNumVertices = vertexList.length / FLOATS_PER_VERTEX;

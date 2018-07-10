@@ -11,8 +11,9 @@ import java.nio.FloatBuffer;
 import edu.calstatela.jplone.arframework.graphics3d.helper.BufferHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.ShaderHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.TextureHelper;
+import edu.calstatela.jplone.arframework.util.MatrixMath;
 
-public class Billboard extends Drawable{
+public class Billboard implements Drawable {
     private static final String TAG = "waka_Billboard";
 
     private static final int BYTES_PER_FLOAT = 4;
@@ -27,21 +28,14 @@ public class Billboard extends Drawable{
 
     private int mGLTextureId = 0;
 
-
-    private float[] mMatrix = new float[16];
+    private static float[] tempDrawMatrix = new float[16];
 
     public Billboard(){
-        init();
     }
 
-    private static void init(){
-        // Make sure shader is only loaded once
-        if(!GLES20.glIsProgram(sGLProgramId))
-            sGLProgramId = ShaderHelper.buildShaderProgram(vertexShaderSource, fragmentShaderSource);
-
-        // Make sure that buffers are only filled once
-        if(sVertexBuffer == null)
-            fillBuffers();
+    public static void init(){
+        sGLProgramId = ShaderHelper.buildShaderProgram(vertexShaderSource, fragmentShaderSource);
+        fillBuffers();
     }
 
     public void setTexture(int glTextureId){
@@ -68,7 +62,6 @@ public class Billboard extends Drawable{
             Log.d(TAG, "Billboard.draw() being called with improper mMatrix");
             return;
         }
-
 
         GLES20.glUseProgram(sGLProgramId);
 
@@ -98,6 +91,13 @@ public class Billboard extends Drawable{
         GLES20.glDisableVertexAttribArray(positionAttribute);
         GLES20.glDisableVertexAttribArray(colorAttribute);
         GLES20.glDisableVertexAttribArray(texCoordAttribute);
+    }
+
+    @Override
+    public void draw(float[] projectionMatrix, float[] viewMatrix, float[] modelMatrix){
+        tempDrawMatrix = new float[16];
+        MatrixMath.multiply3Matrices(tempDrawMatrix, projectionMatrix, viewMatrix, modelMatrix);
+        draw(tempDrawMatrix);
     }
 
 
