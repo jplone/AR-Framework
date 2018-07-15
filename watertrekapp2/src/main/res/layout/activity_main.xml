@@ -192,7 +192,7 @@
             android:layout_marginTop="250dp"
             android:text="Wells                "
             android:onClick="toggleWell"
-            android:checked="true"
+            android:checked="false"
             android:textColor="@color/white"/>
 
         <Switch

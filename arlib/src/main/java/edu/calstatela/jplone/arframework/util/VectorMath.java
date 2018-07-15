@@ -34,7 +34,20 @@ public class VectorMath {
     }
 
     public static float magnitude(float[] vec){
-        return (float) Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
+        float sum = 0;
+        for(int i = 0; i < vec.length; i++){
+            sum += vec[i] * vec[i];
+        }
+        return (float) Math.sqrt(sum);
+    }
+
+    public static float distance(float[] v1, float[] v2){
+        float sum = 0;
+        for(int i = 0; i < v1.length; i++){
+            float diff = v1[i] - v2[i];
+            sum += diff * diff;
+        }
+        return (float)Math.sqrt(sum);
     }
 
     public static float angle(float[] a, float[] b){

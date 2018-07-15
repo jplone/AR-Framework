@@ -3,6 +3,7 @@ package edu.calstatela.jplone.arframework.ui;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -55,16 +56,19 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         mCamera.stopPreview();
         mCamera.release();
         mCamera = null;
+        Log.d(TAG, "Released Camera");
     }
 
 
     private void fixRotation(){
+        // See the following reference to see a description of why this fixRotation() method is
+        // necessary.
         // Reference: https://www.captechconsulting.com/blogs/android-camera-orientation-made-simple
 
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
         int cameraOrientation = info.orientation;
-        boolean isFrontFacing = info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT;
+        boolean isFrontFacing = (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
 //        Log.d(TAG, "Camera Orientation: " + cameraOrientation);
 
 

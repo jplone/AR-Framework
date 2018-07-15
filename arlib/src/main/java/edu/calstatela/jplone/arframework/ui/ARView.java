@@ -19,6 +19,10 @@ import edu.calstatela.jplone.arframework.sensor.ARSensor;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.arframework.util.Permissions;
 
+
+// TODO: Create ways to customize ARVIEW (buffer depth, gl version, etc)
+// TODO: Make it so that camera view is released in onPause() and reconnected in onResume()
+
 public class ARView extends FrameLayout {
 
     private GLSurfaceView glSurfaceView;
@@ -33,7 +37,7 @@ public class ARView extends FrameLayout {
         super(context);
 
         glSurfaceView = new GLSurfaceView(context);
-        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 24, 0);
         glSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(renderer);

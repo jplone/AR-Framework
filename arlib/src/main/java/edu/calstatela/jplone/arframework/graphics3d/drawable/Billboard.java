@@ -54,7 +54,9 @@ public class Billboard implements Drawable {
         mGLTextureId = TextureHelper.glTextureFromBitmap(bitmap);
     }
 
-
+    public void delete(){
+        TextureHelper.deleteGlTexture(mGLTextureId);
+    }
 
     @Override
     public void draw(float[] matrix){

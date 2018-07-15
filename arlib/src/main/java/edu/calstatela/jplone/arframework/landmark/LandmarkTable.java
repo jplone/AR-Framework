@@ -38,12 +38,13 @@ public class LandmarkTable extends ArrayList<Landmark> {
     }
 
     public void loadCities(){
+        add(new Landmark("Malibu", "City", 34.031258f, -118.777980f, 100.0f));
         add(new Landmark("South Pasadena", "City", 34.117817f, -118.159151f, 100.0f));
         add(new Landmark("Alhambra", "City", 34.096963f, -118.128171f, 100.0f));
         add(new Landmark("CalstateLA", "University", 34.066223f, -118.166367f, 100.0f));
         add(new Landmark("San Diego", "City", 32.704840f, -117.151137f, 100.0f));
-        add(new Landmark("Malibu", "City", 34.024068f, -118.779106f, 100.0f));
         add(new Landmark("Hollywood", "City", 34.096703f, -118.330328f, 100.0f));
+//        34.111035, -117.805072
         add(new Landmark("San Dimas", "City", 34.110945f, -117.816446f, 100.0f));
         add(new Landmark("Tijuana", "City", 32.518761f, -117.039820f, 100.0f));
         add(new Landmark("Santa Monica", "City", 34.014880f, -118.495709f, 100.0f));

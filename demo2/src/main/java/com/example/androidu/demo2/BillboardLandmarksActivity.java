@@ -1,17 +1,9 @@
 package com.example.androidu.demo2;
 
-import android.graphics.Bitmap;
-import android.hardware.SensorEvent;
-import android.location.Location;
 import android.opengl.GLES20;
-import android.opengl.GLException;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.View;
-
-import java.nio.IntBuffer;
 
 import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
@@ -19,14 +11,9 @@ import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.entity.ScaleObject;
 import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
-import edu.calstatela.jplone.arframework.graphics3d.scene.CircleScene;
-import edu.calstatela.jplone.arframework.graphics3d.scene.LandmarkScene;
-import edu.calstatela.jplone.arframework.graphics3d.scene.ScalingCircleScene;
+import edu.calstatela.jplone.arframework.graphics3d.scene.TouchScene;
 import edu.calstatela.jplone.arframework.landmark.Landmark;
 import edu.calstatela.jplone.arframework.landmark.LandmarkTable;
-import edu.calstatela.jplone.arframework.sensor.ARGps;
-import edu.calstatela.jplone.arframework.sensor.ARSensor;
-import edu.calstatela.jplone.arframework.ui.ARActivity;
 import edu.calstatela.jplone.arframework.ui.SensorARActivity;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
@@ -36,7 +23,7 @@ public class BillboardLandmarksActivity extends SensorARActivity {
     static final String TAG = "waka_BBLandmarks";
 
 
-    LandmarkScene mScene;
+    TouchScene mScene;
     ARGLCamera mCamera;
     Projection mProjection;
 
@@ -59,7 +46,7 @@ public class BillboardLandmarksActivity extends SensorARActivity {
 
         GLES20.glClearColor(0, 0, 0, 0);
 
-        mScene = new LandmarkScene();
+        mScene = new TouchScene();
         mScene.setScale(0.2f);
         mCamera = new ARGLCamera();
         mProjection = new Projection();
@@ -107,6 +94,7 @@ public class BillboardLandmarksActivity extends SensorARActivity {
             x = -1;
             y = -1;
         }
+
     }
 
 

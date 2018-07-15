@@ -27,7 +27,7 @@ import edu.calstatela.jplone.watertrekapp.DataService.WellService;
 import edu.calstatela.jplone.watertrekapp.NetworkUtils.NetworkTask;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     RelativeLayout leftRL;
     DrawerLayout drawerLayout;
@@ -236,4 +236,5 @@ public class MainActivity extends AppCompatActivity {
         arJobs.add(job);
         arFragment.addJob(job);
     }
+
 }

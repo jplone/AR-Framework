@@ -85,8 +85,15 @@ public class Entity extends ScaledModelMatrix implements Drawable {
 
         point[0] /= point[3];
         point[1] /= point[3];
+        point[2] /= point[3];
 
-        xy[0] = (point[0] + 1) / 2 * s_width;
-        xy[1] = (-point[1] + 1) / 2 * s_height;
+        if(point[0] < -1 || point[0] > 1 || point[1] < -1 || point[1] > 1 || point[2] < -1 || point[2] > 1){
+            xy[0] = -1;
+            xy[1] = -1;
+        }
+        else {
+            xy[0] = (point[0] + 1) / 2 * s_width;
+            xy[1] = (-point[1] + 1) / 2 * s_height;
+        }
     }
 }

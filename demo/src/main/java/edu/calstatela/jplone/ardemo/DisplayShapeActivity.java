@@ -8,6 +8,7 @@ import android.util.Log;
 
 import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.LitModel;
+import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.helper.MeshHelper;
 import edu.calstatela.jplone.arframework.integrated.ARFragment;
 import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
@@ -24,7 +25,7 @@ public class DisplayShapeActivity extends AppCompatActivity {
     private float[] currentOrientation = null;
 
     private LitModel model;
-    private Entity___old entity1, entity2;
+    private Entity entity1, entity2;
     private float angle1 = 0, angle2 = 0;
     private Scene scene;
 
@@ -104,8 +105,8 @@ public class DisplayShapeActivity extends AppCompatActivity {
             camera.setOrientationVector(currentOrientation, 0);
 
         /* Update Entities/Scenes */
-        entity1.setYaw(angle1);
-        entity2.setYaw(angle2);
+        entity1.yaw(1);
+        entity2.yaw(3);
         angle1 += 1;
         angle2 += 3;
 

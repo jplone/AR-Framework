@@ -3,33 +3,38 @@ package edu.calstatela.jplone.watertrekapp2.activities;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.Toast;
 
-import edu.calstatela.jplone.arframework.ui.ARView;
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.calstatela.jplone.watertrekapp2.Data.Well;
+import edu.calstatela.jplone.watertrekapp2.DataService.WellService;
 import edu.calstatela.jplone.watertrekapp2.NetworkUtils.NetworkTask;
 import edu.calstatela.jplone.watertrekapp2.R;
 
 
-public class MainActivity extends AppCompatActivity {
-
-
-
-    private static final String TAG = "MainActivity";
-
+public class MainActivity extends AppCompatActivity implements BillboardView.TouchCallback{
+    private static final String TAG = "waka-MainActivity";
 
     private RelativeLayout drawerContentsLayout;
     private DrawerLayout mainDrawerLayout;
+    private BillboardView arview;
+    private SeekBar radiusSeekBar;
 
     private boolean tMountain = false;
     private boolean tReservoir = false;
-    private boolean tWell = true;
+    private boolean tWell = false;
     private boolean tRiver = false;
     private boolean tSoil = false;
+    private int radius = 20;
 
-
-    private MainARView arview;
+    private ArrayList<Well> wellList = new ArrayList<>();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -46,12 +51,14 @@ public class MainActivity extends AppCompatActivity {
 
         drawerContentsLayout = (RelativeLayout)findViewById(R.id.whatYouWantInLeftDrawer);
         mainDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        radiusSeekBar = findViewById(R.id.seekBar);
+        radiusSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
 
-        arview = new MainARView(this);
+        arview = new BillboardView(this);
+        arview.setTouchCallback(this);
 
         FrameLayout mainLayout = (FrameLayout)findViewById(R.id.ar_view_container);
         mainLayout.addView(arview);
-
     }
 
     @Override
@@ -89,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
     public void toggleWell(View v) {
         tWell = !tWell;
 
+        if(tWell)
+            addWells();
+        else
+            removeWells();
     }
 
     public void toggleRiver(View v) {
@@ -98,7 +109,77 @@ public class MainActivity extends AppCompatActivity {
 
     public void toggleSoil(View v) {
         tSoil = !tSoil;
-
     }
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void addWells(){
+        float[] loc = arview.getLocation();
+        WellService.getWells(wellNetworkCallback, loc[0], loc[1], radius);
+    }
+
+    private void removeWells(){
+        for(Well well : wellList){
+            int id = Integer.parseInt(well.getMasterSiteId());
+            arview.removeBillboard(id);
+        }
+        wellList.clear();
+    }
+
+    NetworkTask.NetworkCallback wellNetworkCallback = new NetworkTask.NetworkCallback() {
+        @Override
+        public void onResult(int type, String result) {
+            List<Well> lWellList = WellService.parseWells(result);
+            for(Well well : lWellList){
+                wellList.add(well);
+                arview.addBillboard(
+                        Integer.parseInt(well.getMasterSiteId()),
+                        R.drawable.well_bb_icon,
+                        "Well #" + well.getMasterSiteId(),
+                        " " + well.getAvg(),
+                        Float.parseFloat(well.getLat()), Float.parseFloat(well.getLon()), 0
+                );
+            }
+        }
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            radius = 5 + i * 5;
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onTouch(int id) {
+        Log.d(TAG, "Clicked billboard id: " + id);
+//        arview.removeBillboard(id);
+
+        Well well = null;
+        for(Well w : wellList){
+            int wId = Integer.parseInt(w.getMasterSiteId());
+            if(wId == id) {
+                well = w;
+                break;
+            }
+        }
+
+        if(well != null)
+            DetailsActivity.launchDetailsActivity(this, "well", well.toString());
+    }
 }

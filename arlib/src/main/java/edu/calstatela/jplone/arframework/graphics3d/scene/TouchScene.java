@@ -2,17 +2,19 @@ package edu.calstatela.jplone.arframework.graphics3d.scene;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.entity.ScaleObject;
 
-public class LandmarkScene extends ScalingCircleScene{
+public class TouchScene extends ScalingCircleScene{
 
-    public void addLandmark(Context context, int iconResourceId, String title, String description){
-        Billboard bb = BillboardMaker.make(context, iconResourceId, title, description);
-        ScaleObject scaleBB = new ScaleObject(bb, 2, 1, 1);
-        super.addDrawable(scaleBB);
+    ArrayList<Integer> idList = new ArrayList<>();
+
+    public void addId(int id){
+        idList.add(id);
     }
 
     public int findClosestEntity(float targetX, float targetY, float screenWidth, float screenHeight, float percentSlop, float[] projectionMatrix, float[] viewMatrix, float[] position3d){
@@ -37,7 +39,10 @@ public class LandmarkScene extends ScalingCircleScene{
             }
         }
 
-        return bestIndex;
+        if(bestIndex == -1)
+            return bestIndex;
+        else
+            return idList.get(bestIndex);
     }
 
     private float distance(float x1, float y1, float x2, float y2){
@@ -60,4 +65,15 @@ public class LandmarkScene extends ScalingCircleScene{
         return (float)Math.sqrt(sum);
     }
 
+    public int remove(int id){
+        for(int i = 0; i < idList.size(); i++){
+            if(idList.get(i) == id){
+                idList.remove(i);
+                mEntityList.remove(i);
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }

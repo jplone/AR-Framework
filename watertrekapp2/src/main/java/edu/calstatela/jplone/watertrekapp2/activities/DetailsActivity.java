@@ -1,5 +1,7 @@
 package edu.calstatela.jplone.watertrekapp2.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
@@ -26,5 +28,12 @@ public class DetailsActivity extends AppCompatActivity {
 
         TextView txtData = findViewById(R.id.txt_data);
         txtData.setText(getIntent().getStringExtra("data"));
+    }
+
+    public static void launchDetailsActivity(Activity currentActivity, String type, String data){
+        Intent intent = new Intent(currentActivity, DetailsActivity.class);
+        intent.putExtra("type", type);
+        intent.putExtra("data", data);
+        currentActivity.startActivity(intent);
     }
 }
