@@ -13,6 +13,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.calstatela.jplone.arframework.landmark.Landmark;
+import edu.calstatela.jplone.arframework.landmark.LandmarkTable;
 import edu.calstatela.jplone.watertrekapp2.Data.Well;
 import edu.calstatela.jplone.watertrekapp2.DataService.WellService;
 import edu.calstatela.jplone.watertrekapp2.NetworkUtils.NetworkTask;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
     private int radius = 20;
 
     private ArrayList<Well> wellList = new ArrayList<>();
+    private LandmarkTable mountainList = new LandmarkTable();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -59,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
 
         FrameLayout mainLayout = (FrameLayout)findViewById(R.id.ar_view_container);
         mainLayout.addView(arview);
+
+        mountainList.loadMountains();
     }
 
     @Override
@@ -85,6 +90,11 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
 
     public void toggleMountain(View v) {
         tMountain = !tMountain;
+
+        if(tMountain)
+            addMountains();
+        else
+            removeMountains();
 
     }
 
@@ -113,6 +123,30 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Mountain Data Methods
+    //
+    //////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void addMountains(){
+        for(int i = 0; i < mountainList.size(); i++){
+            Landmark l = mountainList.get(i);
+            arview.addBillboard(2000000000+i, R.drawable.mtn_res_ico_clr, l.title, l.description, l.latitude, l.longitude, l.altitude);
+        }
+    }
+
+    private void removeMountains(){
+        for(int i = 0; i < mountainList.size(); i++){
+            Landmark l = mountainList.get(i);
+            arview.removeBillboard(2000000000+i);
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Well Data Methods
+    //
+    //////////////////////////////////////////////////////////////////////////////////////////////
 
     private void addWells(){
         float[] loc = arview.getLocation();
@@ -137,12 +171,14 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
                         Integer.parseInt(well.getMasterSiteId()),
                         R.drawable.well_bb_icon,
                         "Well #" + well.getMasterSiteId(),
-                        " " + well.getAvg(),
+                        "Lat: " + well.getLat() + "   Lon: " + well.getLon(),
                         Float.parseFloat(well.getLat()), Float.parseFloat(well.getLon()), 0
                 );
             }
         }
     };
+
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////
 

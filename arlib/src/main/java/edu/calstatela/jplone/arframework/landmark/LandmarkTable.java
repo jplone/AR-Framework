@@ -52,6 +52,9 @@ public class LandmarkTable extends ArrayList<Landmark> {
     }
 
     public void loadMountains(){
-
+        add(new Landmark("Mt. Wilson", "Mountain with an observatory", 34.224770353682786f, -118.05668717979921f, 1733.442f));
+        add(new Landmark("San Gabriel Peak", "Regular Mountain", 34.24340686131956f, -118.09707311231966f, 1826.785f));
+        add(new Landmark("Mt. Lukens", "Regular Mountain", 34.26899177233548f, -118.23898315429688f, 1547.361f));
+        add(new Landmark("Hoyt Mountain", "Kinda Special Mountain", 34.27196702744981f, -118.17869480013769f, 1152.849f));
     }
 }

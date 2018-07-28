@@ -24,11 +24,9 @@ public class BillboardView extends ARView{
     public BillboardView(Context context){
         super(context);
         mContext = context;
-//        Log.d(TAG, "BillboardView.BillboardView(...)");
     }
 
     public void addBillboard(int id, int iconResource, String title, String text, float lat, float lon, float alt){
-//        Log.d(TAG, "BillboardView.addBillboard( " + id + " )");
         BillboardInfo info = new BillboardInfo(id, iconResource, title, text, lat, lon, alt);
         synchronized(mAddList) {
             mAddList.add(info);
@@ -36,7 +34,6 @@ public class BillboardView extends ARView{
     }
 
     public void removeBillboard(int id){
-//        Log.d(TAG, "BillboardView.removeBillboard( " + id + " )");
         synchronized(mRemoveList) {
             mRemoveList.add(id);
         }
@@ -100,8 +97,6 @@ public class BillboardView extends ARView{
                 for (BillboardInfo info : mAddList) {
                     mCurrentInfos.add(info);
                     newEntity(info);
-
-                    Log.d(TAG, "adding billboards: " + mEntityList.size());
                 }
                 mAddList.clear();
             }
@@ -140,7 +135,6 @@ public class BillboardView extends ARView{
             }
         }
 
-        Log.d(TAG, "Num Entities: " + mEntityList.size() + "     Num Infos: " + mCurrentInfos.size() + "     Add List: " + mAddList.size());
 
     }
 
@@ -200,7 +194,6 @@ public class BillboardView extends ARView{
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
     private void newEntity(BillboardInfo info){
-//        Log.d(TAG, "BillboardView.newEntity( " + info.id + " )");
         Billboard bb = BillboardMaker.make(mContext, info.iconResource, info.title, info.text);
         ScaleObject sbb = new ScaleObject(bb, 2, 1, 1);
         Entity e = new Entity();

@@ -40,11 +40,11 @@ public class Landmark {
             equal = false;
         if(!this.description.equals(landmark.description))
             equal = false;
-        if(Math.abs(this.latitude - landmark.latitude) < 0.0001)
+        if(Math.abs(this.latitude - landmark.latitude) > 0.0001)
             equal = false;
-        if(Math.abs(this.longitude - landmark.longitude) < 0.0001)
+        if(Math.abs(this.longitude - landmark.longitude) > 0.0001)
             equal = false;
-        if(Math.abs(this.altitude - landmark.altitude) < 0.001)
+        if(Math.abs(this.altitude - landmark.altitude) > 0.001)
             equal = false;
 
         return equal;
