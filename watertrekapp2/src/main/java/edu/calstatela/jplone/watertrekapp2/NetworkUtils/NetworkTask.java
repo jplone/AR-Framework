@@ -37,7 +37,7 @@ public class NetworkTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        if(params.length == 0) // if there is no socket factory being passed in
+        if(params.length == 0) // expecting a URL String
             return null;
         try {
             URL url = new URL(params[0]);
@@ -88,10 +88,10 @@ public class NetworkTask extends AsyncTask<String, Void, String> {
         void onResult(int type, String result);
     }
 
-    public static void updateWatertrekCredentials(Activity activity){
-        WatertrekCredentials credentials = new WatertrekCredentials(activity);
-        watertrekUsername = credentials.getUsername();
-        watertrekPassword = credentials.getPassword();
+
+    public static void updateWatertrekCredentials(String username, String password){
+        watertrekUsername = username;
+        watertrekPassword = password;
     }
 
 }

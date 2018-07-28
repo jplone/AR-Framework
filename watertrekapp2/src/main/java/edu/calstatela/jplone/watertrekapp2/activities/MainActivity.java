@@ -1,5 +1,6 @@
 package edu.calstatela.jplone.watertrekapp2.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +20,12 @@ import edu.calstatela.jplone.watertrekapp2.Data.Well;
 import edu.calstatela.jplone.watertrekapp2.DataService.WellService;
 import edu.calstatela.jplone.watertrekapp2.NetworkUtils.NetworkTask;
 import edu.calstatela.jplone.watertrekapp2.R;
+import edu.calstatela.jplone.watertrekapp2.WatertrekCredentials;
 
 
 public class MainActivity extends AppCompatActivity implements BillboardView.TouchCallback{
     private static final String TAG = "waka-MainActivity";
+    private static final int CREDENTIALS_ACTIVITY_REQUEST_CODE = 5;
 
     private RelativeLayout drawerContentsLayout;
     private DrawerLayout mainDrawerLayout;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
     private ArrayList<Well> wellList = new ArrayList<>();
     private LandmarkTable mountainList = new LandmarkTable();
 
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
     //      Activity Lifecycle
@@ -50,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        NetworkTask.updateWatertrekCredentials(this);
+        WatertrekCredentials credentials = new WatertrekCredentials(this);
+        NetworkTask.updateWatertrekCredentials(credentials.getUsername(), credentials.getPassword());
 
         drawerContentsLayout = (RelativeLayout)findViewById(R.id.whatYouWantInLeftDrawer);
         mainDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
@@ -95,12 +100,10 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
             addMountains();
         else
             removeMountains();
-
     }
 
     public void toggleReservoir(View v) {
         tReservoir = !tReservoir;
-
     }
 
     public void toggleWell(View v) {
@@ -114,17 +117,34 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
 
     public void toggleRiver(View v) {
         tRiver = !tRiver;
-
     }
 
     public void toggleSoil(View v) {
         tSoil = !tSoil;
     }
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Credentials Methods
+    //
+    //////////////////////////////////////////////////////////////////////////////////////////////
     public void launchWatertrekCredentials(View v){
-        Log.d(TAG, "Launch Watertrek Credentials");
+        WatertrekCredentials credentials = new WatertrekCredentials(this);
+        CredentialsActivity.launch(this, credentials.getUsername(), credentials.getPassword(), CREDENTIALS_ACTIVITY_REQUEST_CODE);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == CREDENTIALS_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
+            String newUsername = data.getStringExtra("username");
+            String newPassword = data.getStringExtra("password");
+            WatertrekCredentials credentials = new WatertrekCredentials(this);
+            credentials.setUsername(newUsername);
+            credentials.setPassword(newPassword);
+            NetworkTask.updateWatertrekCredentials(newUsername, newPassword);
+        }
+    }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //

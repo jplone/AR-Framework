@@ -19,14 +19,11 @@ public class CredentialsActivity extends Activity{
     EditText passwordEditText;
     Button submitButton;
 
-    WatertrekCredentials credentials;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        credentials = new WatertrekCredentials(this);
-
 
         // Setup Layout
         LinearLayout verticalLayout = new LinearLayout(this);
@@ -64,9 +61,16 @@ public class CredentialsActivity extends Activity{
 
         this.setContentView(verticalLayout);
 
-        // If username and password have already been entered, fill in fields
-        usernameEditText.setText(credentials.getUsername());
-        passwordEditText.setText(credentials.getPassword());
+        // If default username and password have been provided in the intent, fill in fields
+        String currentUsername = getIntent().getStringExtra("username");
+        if(currentUsername == null)
+            currentUsername = "";
+        usernameEditText.setText(currentUsername);
+
+        String currentPassword = getIntent().getStringExtra("password");
+        if(currentPassword == null)
+            currentPassword = "";
+        passwordEditText.setText(currentPassword);
     }
 
     Button.OnClickListener buttonListener = new Button.OnClickListener(){
@@ -75,16 +79,20 @@ public class CredentialsActivity extends Activity{
             String usernameString = usernameEditText.getText().toString();
             String passwordString = passwordEditText.getText().toString();
 
-            credentials.setUsername(usernameString);
-            credentials.setPassword(passwordString);
+            Intent intent = new Intent();
+            intent.putExtra("username", usernameString);
+            intent.putExtra("password", passwordString);
+            setResult(RESULT_OK, intent);
 
-            launchMainActivity();
+            finish();
         }
     };
 
-    private void launchMainActivity(){
-        Intent intent = new Intent(CredentialsActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
+    public static void launch(Activity currentActivity, String defaultUsername, String defaultPassword, int requestCode){
+        Intent intent = new Intent(currentActivity, CredentialsActivity.class);
+        intent.putExtra("username", defaultUsername);
+        intent.putExtra("password", defaultPassword);
+        currentActivity.startActivityForResult(intent, requestCode);
     }
+
 }

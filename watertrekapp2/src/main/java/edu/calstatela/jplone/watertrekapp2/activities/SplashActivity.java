@@ -30,7 +30,7 @@ private ImageView iv;
         Animation myanim = AnimationUtils.loadAnimation(this, R.anim.mytransition);
         tv.startAnimation(myanim);
         iv.startAnimation(myanim);
-        final Intent i = new Intent(this, CredentialsActivity.class);
+        final Intent i = new Intent(this, MainActivity.class);
         Thread timer = new Thread(){
             public void run (){
                 try {
