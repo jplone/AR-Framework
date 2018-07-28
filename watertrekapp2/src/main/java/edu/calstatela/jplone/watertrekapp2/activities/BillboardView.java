@@ -24,19 +24,22 @@ public class BillboardView extends ARView{
     public BillboardView(Context context){
         super(context);
         mContext = context;
+//        Log.d(TAG, "BillboardView.BillboardView(...)");
     }
 
     public void addBillboard(int id, int iconResource, String title, String text, float lat, float lon, float alt){
-        adding = true;
+//        Log.d(TAG, "BillboardView.addBillboard( " + id + " )");
         BillboardInfo info = new BillboardInfo(id, iconResource, title, text, lat, lon, alt);
-        mAddList.add(info);
-        adding = false;
+        synchronized(mAddList) {
+            mAddList.add(info);
+        }
     }
 
     public void removeBillboard(int id){
-        removing = true;
-        mRemoveList.add(id);
-        removing = false;
+//        Log.d(TAG, "BillboardView.removeBillboard( " + id + " )");
+        synchronized(mRemoveList) {
+            mRemoveList.add(id);
+        }
     }
 
     public interface TouchCallback{
@@ -92,23 +95,30 @@ public class BillboardView extends ARView{
         }
 
         // If new Billboards need to be added... add them
-        if(!mAddList.isEmpty() && getLocation() != null && !adding){
-            for(BillboardInfo info : mAddList){
-                mCurrentInfos.add(info);
-                newEntity(info);
+        synchronized(mAddList) {
+            if (!mAddList.isEmpty() && getLocation() != null) {
+                for (BillboardInfo info : mAddList) {
+                    mCurrentInfos.add(info);
+                    newEntity(info);
+
+                    Log.d(TAG, "adding billboards: " + mEntityList.size());
+                }
+                mAddList.clear();
             }
-            mAddList.clear();
         }
 
         // If billboard need to be removed... remove
-        if(!mRemoveList.isEmpty() && !removing){
-            for(Integer id : mRemoveList){
-                for(int i = 0; i < mCurrentInfos.size(); i++){
-                    if(mCurrentInfos.get(i).id == id){
-                        mCurrentInfos.remove(i);
-                        mEntityList.remove(i);
+        synchronized(mRemoveList) {
+            if (!mRemoveList.isEmpty()) {
+                for (Integer id : mRemoveList) {
+                    for (int i = 0; i < mCurrentInfos.size(); i++) {
+                        if (mCurrentInfos.get(i).id == id) {
+                            mCurrentInfos.remove(i);
+                            mEntityList.remove(i);
+                        }
                     }
                 }
+                mRemoveList.clear();
             }
         }
 
@@ -130,6 +140,7 @@ public class BillboardView extends ARView{
             }
         }
 
+        Log.d(TAG, "Num Entities: " + mEntityList.size() + "     Num Infos: " + mCurrentInfos.size() + "     Add List: " + mAddList.size());
 
     }
 
@@ -189,6 +200,7 @@ public class BillboardView extends ARView{
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
     private void newEntity(BillboardInfo info){
+//        Log.d(TAG, "BillboardView.newEntity( " + info.id + " )");
         Billboard bb = BillboardMaker.make(mContext, info.iconResource, info.title, info.text);
         ScaleObject sbb = new ScaleObject(bb, 2, 1, 1);
         Entity e = new Entity();
@@ -215,8 +227,6 @@ public class BillboardView extends ARView{
 
     private Projection mProjection;
     private ARGLCamera mCamera;
-
-    private boolean adding = false, removing = false;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
