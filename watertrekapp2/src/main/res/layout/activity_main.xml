@@ -287,8 +287,24 @@
 
             </LinearLayout>
 
+
+
         </LinearLayout>
+
         <!-- you can have many more widgets here like buttons or labels -->
+
+        <Button
+            android:id="@+id/watertrek_credentials_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="500dp"
+            android:text="Watertrek Credentials"
+            android:onClick="launchWatertrekCredentials"
+            android:textColor="@color/white"/>
+
     </RelativeLayout>
 
 </android.support.v4.widget.DrawerLayout>

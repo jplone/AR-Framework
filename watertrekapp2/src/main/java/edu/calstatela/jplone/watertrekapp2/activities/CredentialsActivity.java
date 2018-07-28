@@ -2,36 +2,30 @@ package edu.calstatela.jplone.watertrekapp2.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import edu.calstatela.jplone.watertrekapp2.WatertrekCredentials;
 
 public class CredentialsActivity extends Activity{
     private static final String TAG = "waka-credentials";
-
-    String watertrekUsernameKey = "watertrekUsername";
-    String watertrekPasswordKey = "watertrekPassword";
 
     EditText usernameEditText;
     EditText passwordEditText;
     Button submitButton;
 
-    SharedPreferences sharedPreferences;
+    WatertrekCredentials credentials;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get the sharedPreferences file where credentials are stored
-        sharedPreferences = getDefaultSharedPreferences(this);
+        credentials = new WatertrekCredentials(this);
 
 
         // Setup Layout
@@ -71,10 +65,8 @@ public class CredentialsActivity extends Activity{
         this.setContentView(verticalLayout);
 
         // If username and password have already been entered, fill in fields
-        String usernameFromPreferences = sharedPreferences.getString(watertrekUsernameKey, "");
-        usernameEditText.setText(usernameFromPreferences);
-        String passwordFromPreferences = sharedPreferences.getString(watertrekPasswordKey, "");
-        passwordEditText.setText(passwordFromPreferences);
+        usernameEditText.setText(credentials.getUsername());
+        passwordEditText.setText(credentials.getPassword());
     }
 
     Button.OnClickListener buttonListener = new Button.OnClickListener(){
@@ -83,10 +75,8 @@ public class CredentialsActivity extends Activity{
             String usernameString = usernameEditText.getText().toString();
             String passwordString = passwordEditText.getText().toString();
 
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(watertrekUsernameKey, usernameString);
-            editor.putString(watertrekPasswordKey, passwordString);
-            editor.apply();
+            credentials.setUsername(usernameString);
+            credentials.setPassword(passwordString);
 
             launchMainActivity();
         }

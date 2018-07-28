@@ -121,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
         tSoil = !tSoil;
     }
 
+    public void launchWatertrekCredentials(View v){
+        Log.d(TAG, "Launch Watertrek Credentials");
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //
