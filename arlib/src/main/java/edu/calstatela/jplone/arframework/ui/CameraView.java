@@ -15,11 +15,9 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     private static final String TAG = "waka_CameraView";
 
     private Camera mCamera;
-    private Context mContext;
 
     public CameraView(Context context) {
         super(context);
-        mContext = context;
         getHolder().addCallback(this);
         getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
@@ -40,7 +38,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         mCamera.stopPreview();
 
         fixRotation();
-        fixSize();
 
         try {
             mCamera.setPreviewDisplay(holder);
@@ -56,9 +53,13 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         mCamera.stopPreview();
         mCamera.release();
         mCamera = null;
-        Log.d(TAG, "Released Camera");
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Helper Functions
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void fixRotation(){
         // See the following reference to see a description of why this fixRotation() method is
@@ -69,7 +70,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         Camera.getCameraInfo(0, info);
         int cameraOrientation = info.orientation;
         boolean isFrontFacing = (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
-//        Log.d(TAG, "Camera Orientation: " + cameraOrientation);
 
 
         int deviceRotationCode = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE))
@@ -84,7 +84,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
             case Surface.ROTATION_180:  deviceRotationAngle = 180;  break;
             case Surface.ROTATION_270:  deviceRotationAngle = 270;  break;
         }
-//        Log.d(TAG, "Device Rotation Angle: " + deviceRotationAngle);
 
 
         int newRotation;
@@ -95,7 +94,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         else{
             newRotation = (cameraOrientation - deviceRotationAngle + 360) % 360;
         }
-//        Log.d(TAG, "New Rotation: " + newRotation);
 
 
         mCamera.setDisplayOrientation(newRotation);
@@ -104,14 +102,12 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         mCamera.setParameters(params);
     }
 
-    private void fixSize(){
-
-    }
 }
 
 //  Issues:
-//      + Need to add ability for this view to scale to different sizes (the fixSize() function)
-//      + Need to address using various cameras (not just Camera[0])
+//      + Need to test whether this view scales properly when Activity/View size are changed. If not
+//          add ability for this view to scale to different sizes.
+//      + Might want to address using various cameras (not just Camera[0] - the rear facing camera)
 //      + May need to make onPause and onResume methods to allow open() and release() of camera
 //          when the parent Activity pauses and resumes
 //      + Need to test if the camera has correct orientation on all devices (especially Nexus5x and
