@@ -17,29 +17,26 @@
 package edu.calstatela.jplone.arframework.ui;
 
 
-import android.graphics.PixelFormat;
-import android.opengl.GLSurfaceView;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
-import edu.calstatela.jplone.arframework.util.Permissions;
 
 
 public class ARActivity extends AppCompatActivity {
 
-    private static final String TAG = "wakaARActivity";
+    private static final String TAG = "wakaARActivity1";
 
-    private FrameLayout mFrameLayout;
-    private GLSurfaceView mGLView;
-    private CameraView mCameraView;
+    private ARView arView;
+
+    public Bitmap getGLBitmap(){
+        return arView.getGLBitmap();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,72 +48,45 @@ public class ARActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-        mFrameLayout = new FrameLayout(this);
-        setContentView(mFrameLayout);
-
-
-        mGLView = new GLSurfaceView(this);
-        mGLView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        mGLView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        mGLView.setEGLContextClientVersion(2);
-        mGLView.setRenderer(new BlankGLRenderer());
-        mGLView.setOnTouchListener(touchListener);
-        mFrameLayout.addView(mGLView);
-
-
-        if(Permissions.havePermission(this, Permissions.PERMISSION_CAMERA)){
-            mCameraView = new CameraView(this);
-            mFrameLayout.addView(mCameraView);
-        }
-        else{
-            Permissions.requestPermission(this, Permissions.PERMISSION_CAMERA);
-        }
-
-
-        mGLView.setZOrderMediaOverlay(true); // Ensures that mGLView shows up on top of mCameraView
+        arView = new MyARView(this);
+        setContentView(arView);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mGLView.onPause();
+        arView.onPause();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        mGLView.onResume();
+        arView.onResume();
+
+
     }
 
 
-    public void setRenderer(GLSurfaceView.Renderer renderer){
-        mGLView.setRenderer(renderer);
+    public void GLInit(){
+
     }
 
-    public FrameLayout getTopFrameLayout(){
-        return mFrameLayout;
+    public void GLResize(int width, int height){
+        Log.d(TAG, "width: " + width + "  height: " + height);
     }
-
-    public void GLInit(){}
-
-    public void GLResize(int width, int height){}
 
     public void GLDraw(){}
 
 
 
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
+    }
 
-
-    public boolean onTouch(View v, MotionEvent event){return false;}
-
-    View.OnTouchListener touchListener = new View.OnTouchListener(){
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            return ARActivity.this.onTouch(v, event);
-        }
-    };
+    public View getARView(){
+        return arView;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -124,23 +94,33 @@ public class ARActivity extends AppCompatActivity {
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public class BlankGLRenderer implements GLSurfaceView.Renderer {
-
-        @Override
-        public void onDrawFrame(GL10 gl) {
-            GLDraw();
+    private class MyARView extends ARView {
+        public MyARView(Context context){
+            super(context);
         }
 
         @Override
-        public void onSurfaceChanged(GL10 gl, int width, int height) {
-            GLResize(width, height);
+        public void GLInit(){
+            ARActivity.this.GLInit();
         }
 
         @Override
-        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            GLInit();
+        public void GLResize(int width, int height){
+            ARActivity.this.GLResize(width, height);
+        }
+
+        @Override
+        public void GLDraw(){
+            ARActivity.this.GLDraw();
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return ARActivity.this.onTouch(v, event);
         }
     }
+
+
 }
 
 //  Issues:

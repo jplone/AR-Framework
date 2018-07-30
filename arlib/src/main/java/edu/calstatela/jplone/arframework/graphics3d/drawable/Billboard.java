@@ -11,7 +11,7 @@ import java.nio.FloatBuffer;
 import edu.calstatela.jplone.arframework.graphics3d.helper.BufferHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.ShaderHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.TextureHelper;
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.MatrixMath;
 
 public class Billboard implements Drawable {
     private static final String TAG = "waka_Billboard";

@@ -2,13 +2,13 @@ package com.example.androidu.demo2;
 
 import android.opengl.GLES20;
 
-import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
+import edu.calstatela.jplone.arframework.graphics3d.camera.Camera3D;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.LitModel;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.helper.MeshHelper;
-import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
 import edu.calstatela.jplone.arframework.ui.SensorARActivity;
 import edu.calstatela.jplone.arframework.util.Orientation;
@@ -17,7 +17,7 @@ public class GraphicsTestActivity extends SensorARActivity {
     private static final String TAG = "waka_graphics_test";
 
 
-    private ARGLCamera mCamera;
+    private Camera3D mCamera;
     private Projection mProjection;
     private Scene mScene;
     private Scene mCompassScene;
@@ -44,7 +44,7 @@ public class GraphicsTestActivity extends SensorARActivity {
         //setupScene();
         setupCompassScene();
 
-        mCamera = new ARGLCamera();
+        mCamera = new Camera3D();
         mCamera.move(0, 0, -3);
         mProjection = new Projection();
     }
@@ -88,7 +88,7 @@ public class GraphicsTestActivity extends SensorARActivity {
         super.GLDraw();
 
         if(getOrientation() != null)
-            mCamera.setOrientationVector(getOrientation(), Orientation.getOrientationAngle(this));
+            mCamera.setOrientationQuaternion(getOrientation(), Orientation.getOrientationAngle(this));
 
 //        mCube.yaw(1);
 

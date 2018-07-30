@@ -21,8 +21,8 @@ import java.util.PriorityQueue;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
-import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
+import edu.calstatela.jplone.arframework.graphics3d.camera.Camera3D;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.Projection;
 import edu.calstatela.jplone.arframework.ui.CameraView;
 import edu.calstatela.jplone.arframework.landmark.Landmark;
 import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLSizedBillboard;
@@ -30,7 +30,7 @@ import edu.calstatela.jplone.arframework.integrated.Unit.ARGLPosition;
 import edu.calstatela.jplone.arframework.integrated.Unit.ARGLRenderJob;
 import edu.calstatela.jplone.arframework.integrated.ARGLBillboard.ARGLBillboardMaker;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
 
 
@@ -45,7 +45,7 @@ public class ARView extends FrameLayout {
 
     private TextView arTxtView;
     private Context arContext;
-    private ARGLCamera glCamera;
+    private Camera3D glCamera;
     private Projection projection;
     private boolean activated;
     private boolean initialized;
@@ -76,7 +76,7 @@ public class ARView extends FrameLayout {
         renderAddList = new ArrayList<ARGLRenderJob>();
         renderDelList = new ArrayList<ARGLRenderJob>();
 
-        glCamera = new ARGLCamera();
+        glCamera = new Camera3D();
         Log.d(TAG, "made new camera");
 
         arTxtView = new TextView(arContext);
@@ -342,7 +342,7 @@ public class ARView extends FrameLayout {
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
             if(currentOrientation != null) {
-                glCamera.setOrientationVector(currentOrientation, 0);
+                glCamera.setOrientationQuaternion(currentOrientation, 0);
             }
 
 

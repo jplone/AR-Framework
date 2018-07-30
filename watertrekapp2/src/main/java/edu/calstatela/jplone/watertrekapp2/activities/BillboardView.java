@@ -1,23 +1,20 @@
 package edu.calstatela.jplone.watertrekapp2.activities;
 
 import android.content.Context;
-import android.opengl.GLES20;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
 
-import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
+import edu.calstatela.jplone.arframework.graphics3d.camera.Camera3D;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.entity.ScaleObject;
-import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
 import edu.calstatela.jplone.arframework.ui.ARView;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
-import edu.calstatela.jplone.watertrekapp2.R;
 
 public class BillboardView extends ARView{
 
@@ -47,6 +44,18 @@ public class BillboardView extends ARView{
         mTouchCallback = callback;
     }
 
+    public void setDeviceOrientation(int deviceOrientation){
+        switch(deviceOrientation){
+            case 0:
+            case 90:
+            case 180:
+            case 270:
+                this.deviceOrientation = deviceOrientation;
+                break;
+        }
+        Log.d(TAG, "deviceOrientation: " + deviceOrientation);
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
     //      GL callbacks
@@ -57,11 +66,10 @@ public class BillboardView extends ARView{
     public void GLInit() {
         super.GLInit();
         Billboard.init();
-        GLES20.glClearColor(0, 0, 0, 0);
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
-        mProjection = new Projection();
-        mCamera = new ARGLCamera();
+        mCamera = new Camera3D();
+        mCamera.setClearColor(0, 0, 0, 0);
+        mCamera.setDepthTestEnabled(true);
 
         mEntityList = new ArrayList<>();
     }
@@ -69,20 +77,20 @@ public class BillboardView extends ARView{
     @Override
     public void GLResize(int width, int height) {
         super.GLResize(width, height);
-        GLES20.glViewport(0, 0, width, height);
-        mProjection.setPerspective(60, (float)width / height, 0.1f, 100000f);
+        mCamera.setViewport(0, 0, width, height);
+        mCamera.setPerspective(60, (float)width / height, 0.1f, 100000f);
     }
 
     @Override
     public void GLDraw() {
         super.GLDraw();
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        mCamera.clear();
 
         // update camera
         if(getLocation() != null)
             mCamera.setPositionLatLonAlt(getLocation());
         if(getOrientation() != null)
-            mCamera.setOrientationVector(getOrientation(), 0);
+            mCamera.setOrientationQuaternion(getOrientation(), deviceOrientation);
 
         // If existing Billboards need to be re-added due to new GLContext, re-add them
         if(mEntityList.isEmpty() && !mCurrentInfos.isEmpty() && this.getLocation() != null){
@@ -131,7 +139,7 @@ public class BillboardView extends ARView{
         // Draw billboards
         if(getLocation() != null) {
             for (Entity e : mEntityList) {
-                e.draw(mProjection.getProjectionMatrix(), mCamera.getViewMatrix(), e.getModelMatrix());
+                e.draw(mCamera.getProjectionMatrix(), mCamera.getViewMatrix(), e.getModelMatrix());
             }
         }
 
@@ -159,7 +167,7 @@ public class BillboardView extends ARView{
 
         for(int i = 0; i < mEntityList.size(); i++){
             Entity e = mEntityList.get(i);
-            e.getScreenPosition(xy2, mProjection.getProjectionMatrix(), mCamera.getViewMatrix(), e.getModelMatrix(), v.getWidth(), v.getHeight());
+            e.getScreenPosition(xy2, mCamera.getProjectionMatrix(), mCamera.getViewMatrix(), e.getModelMatrix(), v.getWidth(), v.getHeight());
             if(xy2[0] < 0)
                 continue;
             float[] ePos = e.getPosition();
@@ -211,6 +219,7 @@ public class BillboardView extends ARView{
     private TouchCallback mTouchCallback = null;
 
     private Context mContext;
+    private int deviceOrientation = 0;
 
     private ArrayList<BillboardInfo> mAddList = new ArrayList<>();
     private ArrayList<Integer> mRemoveList = new ArrayList<>();
@@ -218,8 +227,7 @@ public class BillboardView extends ARView{
     private ArrayList<BillboardInfo> mCurrentInfos = new ArrayList<>();
     private ArrayList<Entity> mEntityList;
 
-    private Projection mProjection;
-    private ARGLCamera mCamera;
+    private Camera3D mCamera;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

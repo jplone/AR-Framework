@@ -16,6 +16,7 @@ import java.util.List;
 
 import edu.calstatela.jplone.arframework.landmark.Landmark;
 import edu.calstatela.jplone.arframework.landmark.LandmarkTable;
+import edu.calstatela.jplone.arframework.util.Orientation;
 import edu.calstatela.jplone.watertrekapp2.Data.Well;
 import edu.calstatela.jplone.watertrekapp2.DataService.WellService;
 import edu.calstatela.jplone.watertrekapp2.NetworkUtils.NetworkTask;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
 
         arview = new BillboardView(this);
         arview.setTouchCallback(this);
+        arview.setDeviceOrientation(Orientation.getOrientationAngle(this));
 
         FrameLayout mainLayout = (FrameLayout)findViewById(R.id.ar_view_container);
         mainLayout.addView(arview);

@@ -8,7 +8,7 @@ import edu.calstatela.jplone.arframework.graphics3d.helper.BufferHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.MeshHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.ShaderHelper;
 import edu.calstatela.jplone.arframework.util.VectorMath;
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.MatrixMath;
 
 public class LitModel implements Drawable, Colorable{
 

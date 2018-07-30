@@ -1,12 +1,9 @@
 package edu.calstatela.jplone.arframework.graphics3d.entity;
 
-import android.opengl.Matrix;
-import android.util.Log;
-
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Drawable;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.ScaledModelMatrix;
 import edu.calstatela.jplone.arframework.util.GeoMath;
-import edu.calstatela.jplone.arframework.util.MatrixMath;
-import edu.calstatela.jplone.arframework.util.VectorMath;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.MatrixMath;
 
 
 public class Entity extends ScaledModelMatrix implements Drawable {

@@ -5,12 +5,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
+import edu.calstatela.jplone.arframework.graphics3d.camera.Camera3D;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.entity.ScaleObject;
-import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.TouchScene;
 import edu.calstatela.jplone.arframework.landmark.Landmark;
 import edu.calstatela.jplone.arframework.landmark.LandmarkTable;
@@ -24,7 +24,7 @@ public class BillboardLandmarksActivity extends SensorARActivity {
 
 
     TouchScene mScene;
-    ARGLCamera mCamera;
+    Camera3D mCamera;
     Projection mProjection;
 
 
@@ -48,7 +48,7 @@ public class BillboardLandmarksActivity extends SensorARActivity {
 
         mScene = new TouchScene();
         mScene.setScale(0.2f);
-        mCamera = new ARGLCamera();
+        mCamera = new Camera3D();
         mProjection = new Projection();
 
         landmarkTable = new LandmarkTable();
@@ -74,7 +74,7 @@ public class BillboardLandmarksActivity extends SensorARActivity {
 
         if(getLocation() != null && getOrientation() != null){
             mCamera.setPositionLatLonAlt(getLocation());
-            mCamera.setOrientationVector(getOrientation(), 0);
+            mCamera.setOrientationQuaternion(getOrientation(), 0);
             mScene.setCenterLatLonAlt(getLocation());
             mScene.update();
         }

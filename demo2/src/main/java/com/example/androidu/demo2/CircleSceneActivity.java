@@ -2,18 +2,14 @@
 
 
     import android.opengl.GLES20;
-    import android.util.Log;
-    import android.view.MotionEvent;
-    import android.view.View;
 
-    import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
+    import edu.calstatela.jplone.arframework.graphics3d.camera.Camera3D;
     import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
     import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
     import edu.calstatela.jplone.arframework.graphics3d.drawable.ColorHolder;
     import edu.calstatela.jplone.arframework.graphics3d.drawable.LitModel;
     import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
-    import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
-    import edu.calstatela.jplone.arframework.graphics3d.scene.CircleScene;
+    import edu.calstatela.jplone.arframework.graphics3d.matrix.Projection;
     import edu.calstatela.jplone.arframework.graphics3d.scene.ScalingCircleScene;
     import edu.calstatela.jplone.arframework.ui.SensorARActivity;
     import edu.calstatela.jplone.arframework.util.GeoMath;
@@ -25,7 +21,7 @@
 
 
         private Projection projection;
-        private ARGLCamera camera;
+        private Camera3D camera;
         private ScalingCircleScene scene;
         private Entity centerCube;
 
@@ -49,7 +45,7 @@
             centerCube = new Entity();
 
             projection = new Projection();
-            camera = new ARGLCamera();
+            camera = new Camera3D();
 
             GLES20.glClearColor(0, 0, 0, 0);
             GLES20.glEnable(GLES20.GL_DEPTH_TEST);
@@ -86,7 +82,7 @@
 
             /* Do camera stuff */
             if(getOrientation() != null && getLocation() != null) {
-                camera.setOrientationVector(getOrientation(), 0);
+                camera.setOrientationQuaternion(getOrientation(), 0);
                 camera.setPositionLatLonAlt(getLocation());
             }
 

@@ -1,9 +1,10 @@
-package edu.calstatela.jplone.arframework.graphics3d.entity;
+package edu.calstatela.jplone.arframework.graphics3d.matrix;
 
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.ImprovedModelMatrix;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
 
-public class ScaledModelMatrix extends ModelMatrix2{
+public class ScaledModelMatrix extends ImprovedModelMatrix {
     private static final String TAG = "waka-ModelMatrix";
 
     private float[] mScale = {1, 1, 1};
@@ -105,7 +106,7 @@ public class ScaledModelMatrix extends ModelMatrix2{
 
     ////////////////////////////////////////////////////
     //
-    //      Public Methods added for ModelMatrix2
+    //      Public Methods added for ImprovedModelMatrix
     //
     ////////////////////////////////////////////////////
 

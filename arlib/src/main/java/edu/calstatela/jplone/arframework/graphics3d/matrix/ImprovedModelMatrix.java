@@ -1,9 +1,9 @@
-package edu.calstatela.jplone.arframework.graphics3d.entity;
+package edu.calstatela.jplone.arframework.graphics3d.matrix;
 
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
 
-public class ModelMatrix2 {
+public class ImprovedModelMatrix {
     private static final String TAG = "waka-ModelMatrix";
 
     private float[] mMatrixArray = new float[16];
@@ -90,7 +90,7 @@ public class ModelMatrix2 {
 
     ////////////////////////////////////////////////////
     //
-    //      Public Methods added for ModelMatrix2
+    //      Public Methods added for ImprovedModelMatrix
     //
     ////////////////////////////////////////////////////
 

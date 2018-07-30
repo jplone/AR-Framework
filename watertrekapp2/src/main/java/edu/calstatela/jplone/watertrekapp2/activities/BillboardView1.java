@@ -8,23 +8,22 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
+import edu.calstatela.jplone.arframework.graphics3d.camera.Camera3D;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.entity.ScaleObject;
-import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.TouchScene;
 import edu.calstatela.jplone.arframework.ui.ARView;
 import edu.calstatela.jplone.arframework.util.GeoMath;
-import edu.calstatela.jplone.arframework.util.VectorMath;
 
 public class BillboardView1 extends ARView {
     private static final String TAG = "waka_MainARView";
 
     private Context mContext;
 
-    private ARGLCamera mCamera;
+    private Camera3D mCamera;
     private Projection mProjection;
     private TouchScene mScene;
 
@@ -50,7 +49,7 @@ public class BillboardView1 extends ARView {
         mScene = new TouchScene();
         mScene.setScale(0.2f);
 
-        mCamera = new ARGLCamera();
+        mCamera = new Camera3D();
         mProjection = new Projection();
 
         GLES20.glClearColor(0, 0, 0, 0);
@@ -86,7 +85,7 @@ public class BillboardView1 extends ARView {
         }
 
         if(getOrientation() != null)
-            mCamera.setOrientationVector(getOrientation(), 0);
+            mCamera.setOrientationQuaternion(getOrientation(), 0);
 
         if(getLocation() != null) {
             mCamera.setPositionLatLonAlt(getLocation());

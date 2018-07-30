@@ -4,11 +4,11 @@ import android.hardware.SensorEvent;
 import android.opengl.GLES20;
 import android.os.Bundle;
 
-import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
+import edu.calstatela.jplone.arframework.graphics3d.camera.Camera3D;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
 import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
-import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
 import edu.calstatela.jplone.arframework.ui.ARActivity;
@@ -19,7 +19,7 @@ public class BillboardCompassActivity extends ARActivity {
     static final String TAG = "waka_BBCompass";
 
     private Scene mScene;
-    private ARGLCamera mCamera;
+    private Camera3D mCamera;
     private Projection mProjection;
 
     private ARSensor mOrientationSensor;
@@ -66,7 +66,7 @@ public class BillboardCompassActivity extends ARActivity {
         mScene = new Scene();
         loadCompass(mScene);
 
-        mCamera = new ARGLCamera();
+        mCamera = new Camera3D();
         mProjection = new Projection();
     }
 
@@ -100,7 +100,7 @@ public class BillboardCompassActivity extends ARActivity {
         super.GLDraw();
 
         if(mOrientation != null)
-            mCamera.setOrientationVector(mOrientation, Orientation.getOrientationAngle(this));
+            mCamera.setOrientationQuaternion(mOrientation, Orientation.getOrientationAngle(this));
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         mScene.draw(mProjection.getProjectionMatrix(), mCamera.getViewMatrix());

@@ -1,13 +1,9 @@
     package com.example.androidu.demo2;
 
 
-    import android.hardware.SensorEvent;
-    import android.location.Location;
     import android.opengl.GLES20;
-    import android.os.Bundle;
-    import android.util.Log;
 
-    import edu.calstatela.jplone.arframework.graphics3d.camera.ARGLCamera;
+    import edu.calstatela.jplone.arframework.graphics3d.camera.Camera3D;
     import edu.calstatela.jplone.arframework.graphics3d.drawable.Billboard;
     import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
     import edu.calstatela.jplone.arframework.graphics3d.drawable.ColorHolder;
@@ -15,11 +11,8 @@
     import edu.calstatela.jplone.arframework.graphics3d.drawable.Model;
     import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
     import edu.calstatela.jplone.arframework.graphics3d.helper.MeshHelper;
-    import edu.calstatela.jplone.arframework.graphics3d.projection.Projection;
+    import edu.calstatela.jplone.arframework.graphics3d.matrix.Projection;
     import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
-    import edu.calstatela.jplone.arframework.sensor.ARGps;
-    import edu.calstatela.jplone.arframework.sensor.ARSensor;
-    import edu.calstatela.jplone.arframework.ui.ARActivity;
     import edu.calstatela.jplone.arframework.ui.SensorARActivity;
     import edu.calstatela.jplone.arframework.util.Orientation;
 
@@ -30,7 +23,7 @@
 
 
         private Projection projection;
-        private ARGLCamera camera;
+        private Camera3D camera;
 
 
         private Entity entity1, entity2, entity3, entity4, entity5, entity6, entity7, entity8;
@@ -56,7 +49,7 @@
             scene = new Scene();
 
             projection = new Projection();
-            camera = new ARGLCamera();
+            camera = new Camera3D();
 
             setupScene();
 
@@ -131,7 +124,7 @@
 //            if(currentOrientation != null && currentLocation != null) {
             if(getOrientation() != null) {
 
-                camera.setOrientationVector(getOrientation(), Orientation.getOrientationAngle(this));
+                camera.setOrientationQuaternion(getOrientation(), Orientation.getOrientationAngle(this));
 //                camera.setLatLonAlt(currentLocation);
 //                Log.d(TAG, "setting camera orientation");
             }

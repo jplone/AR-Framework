@@ -1,8 +1,6 @@
-package edu.calstatela.jplone.arframework.graphics3d.projection;
+package edu.calstatela.jplone.arframework.graphics3d.matrix;
 
 import android.opengl.Matrix;
-
-import edu.calstatela.jplone.arframework.util.MatrixMath;
 
 public class Projection {
 

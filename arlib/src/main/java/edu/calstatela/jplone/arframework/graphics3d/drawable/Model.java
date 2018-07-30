@@ -8,7 +8,7 @@ import java.nio.FloatBuffer;
 
 import edu.calstatela.jplone.arframework.graphics3d.helper.BufferHelper;
 import edu.calstatela.jplone.arframework.graphics3d.helper.ShaderHelper;
-import edu.calstatela.jplone.arframework.util.MatrixMath;
+import edu.calstatela.jplone.arframework.graphics3d.matrix.MatrixMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
 
 
