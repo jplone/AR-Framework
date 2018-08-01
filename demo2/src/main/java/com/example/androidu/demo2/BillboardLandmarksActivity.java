@@ -116,7 +116,6 @@ public class BillboardLandmarksActivity extends SensorARActivity {
             entity.setLatLonAlt(new float[]{l.latitude, l.longitude, l.altitude});
         }
 
-        Log.d(TAG, "Location: " + VectorMath.vecToString(getLocation()));
     }
 
     @Override

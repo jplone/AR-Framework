@@ -13,10 +13,11 @@ import edu.calstatela.jplone.arframework.graphics3d.drawable.BillboardMaker;
 import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
 import edu.calstatela.jplone.arframework.graphics3d.entity.ScaleObject;
 import edu.calstatela.jplone.arframework.ui.ARView;
+import edu.calstatela.jplone.arframework.ui.SensorARView;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
 
-public class BillboardView extends ARView{
+public class BillboardView extends SensorARView{
 
     public BillboardView(Context context){
         super(context);

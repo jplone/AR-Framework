@@ -16,9 +16,10 @@ import edu.calstatela.jplone.arframework.graphics3d.entity.ScaleObject;
 import edu.calstatela.jplone.arframework.graphics3d.matrix.Projection;
 import edu.calstatela.jplone.arframework.graphics3d.scene.TouchScene;
 import edu.calstatela.jplone.arframework.ui.ARView;
+import edu.calstatela.jplone.arframework.ui.SensorARView;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 
-public class BillboardView1 extends ARView {
+public class BillboardView1 extends SensorARView {
     private static final String TAG = "waka_MainARView";
 
     private Context mContext;

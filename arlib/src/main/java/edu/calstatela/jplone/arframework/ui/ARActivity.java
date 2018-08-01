@@ -30,13 +30,9 @@ import android.view.WindowManager;
 
 public class ARActivity extends AppCompatActivity {
 
-    private static final String TAG = "wakaARActivity1";
-
+    private static final String TAG = "waka-ARActivity";
     private ARView arView;
 
-    public Bitmap getGLBitmap(){
-        return arView.getGLBitmap();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +47,7 @@ public class ARActivity extends AppCompatActivity {
         arView = new MyARView(this);
         setContentView(arView);
     }
+
 
     @Override
     protected void onPause() {
@@ -68,21 +65,13 @@ public class ARActivity extends AppCompatActivity {
     }
 
 
-    public void GLInit(){
+    public void GLInit(){ }
 
-    }
+    public void GLResize(int width, int height){ }
 
-    public void GLResize(int width, int height){
-        Log.d(TAG, "width: " + width + "  height: " + height);
-    }
-
-    public void GLDraw(){}
+    public void GLDraw(){ }
 
 
-
-    public boolean onTouch(View v, MotionEvent event) {
-        return false;
-    }
 
     public View getARView(){
         return arView;
@@ -101,23 +90,23 @@ public class ARActivity extends AppCompatActivity {
 
         @Override
         public void GLInit(){
+            super.GLInit();
             ARActivity.this.GLInit();
         }
 
         @Override
         public void GLResize(int width, int height){
+            super.GLResize(width, height);
             ARActivity.this.GLResize(width, height);
         }
 
         @Override
         public void GLDraw(){
+            super.GLDraw();
             ARActivity.this.GLDraw();
         }
 
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            return ARActivity.this.onTouch(v, event);
-        }
+
     }
 
 

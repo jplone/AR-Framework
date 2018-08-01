@@ -1,49 +1,74 @@
 package edu.calstatela.jplone.arframework.ui;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
 import android.hardware.SensorEvent;
 import android.location.Location;
-import android.os.Bundle;
+import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 import edu.calstatela.jplone.arframework.sensor.ARGps;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
 import edu.calstatela.jplone.arframework.util.GeoMath;
+import edu.calstatela.jplone.arframework.util.Permissions;
 
-public class SensorARActivity extends ARActivity {
+
+public class SensorARView extends ARView {
+
 
     private ARSensor orientationSensor;
     private ARGps locationSensor;
-    private float[] currentOrientation = null;
-    private float[] currentLocation = null;
+    private float[] currentOrientation;
+    private float[] currentLocation;
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //      Activity Callbacks
-    //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    public SensorARView(Context context){
+        super(context);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        setOnTouchListener(touchListener);
 
-        orientationSensor = new ARSensor(this, ARSensor.ROTATION_VECTOR);
+        orientationSensor = new ARSensor(context, ARSensor.ROTATION_VECTOR);
         orientationSensor.addListener(orientationListener);
-        locationSensor = new ARGps(this);
+        locationSensor = new ARGps(context);
         locationSensor.addListener(locationListener);
-
-        getARView().setOnTouchListener(touchListener);
     }
 
-    @Override
-    protected void onPause() {
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Sensor Access Methods
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public float[] getOrientation(){
+        return currentOrientation;
+    }
+
+    public float[] getLocation(){
+        return currentLocation;
+    }
+
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //      Overridable Methods
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void onPause(){
         super.onPause();
         orientationSensor.stop();
         locationSensor.stop();
     }
 
-    @Override
-    protected void onResume() {
+    public void onResume(){
         super.onResume();
         orientationSensor.start();
         locationSensor.start();
@@ -60,14 +85,13 @@ public class SensorARActivity extends ARActivity {
     //
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private View.OnTouchListener touchListener = new View.OnTouchListener(){
+    private OnTouchListener touchListener = new OnTouchListener(){
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            return SensorARActivity.this.onTouch(v, event);
+            return SensorARView.this.onTouch(v, event);
         }
     };
-
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -106,24 +130,4 @@ public class SensorARActivity extends ARActivity {
         }
     };
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //      Sensor Access Methods
-    //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public float[] getOrientation(){
-        return currentOrientation;
-    }
-
-    public float[] getLocation(){
-        return currentLocation;
-    }
-
-
 }
-
-// Issues
-//  * This class repeats code (all the sensor and onTouch code is the same as the sensor and onTouch
-//      code in SensorARView). Should find a way to remove the duplicate code.
