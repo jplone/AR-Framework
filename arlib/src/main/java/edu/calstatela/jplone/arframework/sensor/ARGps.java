@@ -25,7 +25,7 @@ public class ARGps {
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private ArrayList<Listener> mListenerList = new ArrayList<Listener>();
     private boolean started = false;
-    private int delayInMilliseconds = 5000;
+    private int delayInMilliseconds = 10;
 
     public ARGps(Context activity){
         mActivity = activity;

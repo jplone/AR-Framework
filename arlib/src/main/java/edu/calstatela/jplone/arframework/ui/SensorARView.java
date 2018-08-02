@@ -7,6 +7,7 @@ import android.graphics.PixelFormat;
 import android.hardware.SensorEvent;
 import android.location.Location;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -18,10 +19,11 @@ import edu.calstatela.jplone.arframework.sensor.ARGps;
 import edu.calstatela.jplone.arframework.sensor.ARSensor;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.arframework.util.Permissions;
+import edu.calstatela.jplone.arframework.util.VectorMath;
 
 
 public class SensorARView extends ARView {
-
+    private static final String TAG = "waka-SensorARView";
 
     private ARSensor orientationSensor;
     private ARGps locationSensor;
@@ -114,6 +116,8 @@ public class SensorARView extends ARView {
             currentLocation[0] = (float)location.getLatitude();
             currentLocation[1] = (float)location.getLongitude();
             currentLocation[2] = (float)location.getAltitude();
+
+            Log.d(TAG, "Location: " + VectorMath.vecToString(currentLocation));
         }
     };
 
@@ -127,6 +131,7 @@ public class SensorARView extends ARView {
             currentOrientation[0] = event.values[0];
             currentOrientation[1] = event.values[1];
             currentOrientation[2] = event.values[2];
+
         }
     };
 

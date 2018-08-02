@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +23,13 @@ import edu.calstatela.jplone.watertrekapp2.R;
 import edu.calstatela.jplone.watertrekapp2.WatertrekCredentials;
 
 
-public class MainActivity extends AppCompatActivity implements BillboardView.TouchCallback{
+public class MainActivity extends AppCompatActivity implements BillboardView_sorting.TouchCallback{
     private static final String TAG = "waka-MainActivity";
     private static final int CREDENTIALS_ACTIVITY_REQUEST_CODE = 5;
 
     private RelativeLayout drawerContentsLayout;
     private DrawerLayout mainDrawerLayout;
-    private BillboardView arview;
+    private BillboardView_sorting arview;
     private SeekBar radiusSeekBar;
 
     private boolean tMountain = false;
@@ -42,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
 
     private ArrayList<Well> wellList = new ArrayList<>();
     private LandmarkTable mountainList = new LandmarkTable();
+    int mountainPrefix = 2000000000;
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,14 +63,14 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
         radiusSeekBar = findViewById(R.id.seekBar);
         radiusSeekBar.setOnSeekBarChangeListener(seekBarChangeListener);
 
-        arview = new BillboardView(this);
+        arview = new BillboardView_sorting(this);
         arview.setTouchCallback(this);
         arview.setDeviceOrientation(Orientation.getOrientationAngle(this));
 
         FrameLayout mainLayout = (FrameLayout)findViewById(R.id.ar_view_container);
         mainLayout.addView(arview);
 
-        mountainList.loadMountains();
+        mountainList.loadCities();
     }
 
     @Override
@@ -157,14 +157,14 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
     private void addMountains(){
         for(int i = 0; i < mountainList.size(); i++){
             Landmark l = mountainList.get(i);
-            arview.addBillboard(2000000000+i, R.drawable.mtn_res_ico_clr, l.title, l.description, l.latitude, l.longitude, l.altitude);
+            arview.addBillboard(mountainPrefix+i, R.drawable.mtn_res_ico_clr, l.title, l.description, l.latitude, l.longitude, l.altitude);
         }
     }
 
     private void removeMountains(){
         for(int i = 0; i < mountainList.size(); i++){
             Landmark l = mountainList.get(i);
-            arview.removeBillboard(2000000000+i);
+            arview.removeBillboard(mountainPrefix+i);
         }
     }
 
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
                         Integer.parseInt(well.getMasterSiteId()),
                         R.drawable.well_bb_icon,
                         "Well #" + well.getMasterSiteId(),
-                        "Lat: " + well.getLat() + "   Lon: " + well.getLon(),
+                        "(" + well.getLat() + ", " + well.getLon() + ")",
                         Float.parseFloat(well.getLat()), Float.parseFloat(well.getLon()), 0
                 );
             }
@@ -240,8 +240,23 @@ public class MainActivity extends AppCompatActivity implements BillboardView.Tou
                 break;
             }
         }
-
-        if(well != null)
+        if(well != null) {
             DetailsActivity.launchDetailsActivity(this, "well", well.toString());
+            return;
+        }
+
+
+        Landmark landmark = null;
+        for(int i = 0; i < mountainList.size(); i++){
+            Landmark l = mountainList.get(i);
+            if(id == i + mountainPrefix){
+                landmark = l;
+                break;
+            }
+        }
+        if(landmark != null){
+            DetailsActivity.launchDetailsActivity(this, "well", landmark.title + "\n" + landmark.description);
+        }
+
     }
 }
