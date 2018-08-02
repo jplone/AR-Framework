@@ -4,10 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/arlib/arlib.iml" filepath="$PROJECT_DIR$/arlib/arlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/demo2/demo2.iml" filepath="$PROJECT_DIR$/demo2/demo2.iml" />
       <module fileurl="file://$PROJECT_DIR$/framework.iml" filepath="$PROJECT_DIR$/framework.iml" />
       <module fileurl="file://$PROJECT_DIR$/watertrekapp/watertrekapp.iml" filepath="$PROJECT_DIR$/watertrekapp/watertrekapp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/watertrekapp2/watertrekapp2.iml" filepath="$PROJECT_DIR$/watertrekapp2/watertrekapp2.iml" />
     </modules>
   </component>
 </project>

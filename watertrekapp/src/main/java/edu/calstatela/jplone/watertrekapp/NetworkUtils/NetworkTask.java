@@ -13,6 +13,8 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import edu.calstatela.jplone.watertrekapp.WatertrekCredentials;
+
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
@@ -35,7 +37,7 @@ public class NetworkTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        if(params.length == 0) // if there is no socket factory being passed in
+        if(params.length == 0) // expecting a URL String
             return null;
         try {
             URL url = new URL(params[0]);
@@ -87,20 +89,9 @@ public class NetworkTask extends AsyncTask<String, Void, String> {
     }
 
 
-
-
-
-
-    public static void updateWatertrekCredentials(Activity activity){
-        watertrekUsername = getPreferenceString(activity, "watertrekUsername");
-        watertrekPassword = getPreferenceString(activity, "watertrekPassword");
+    public static void updateWatertrekCredentials(String username, String password){
+        watertrekUsername = username;
+        watertrekPassword = password;
     }
-
-    public static String getPreferenceString(Activity activity, String key){
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(activity);
-        String value = sharedPreferences.getString(key, "not found");
-        return value;
-    }
-
 
 }

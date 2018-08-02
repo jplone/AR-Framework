@@ -3,7 +3,6 @@ package edu.calstatela.jplone.watertrekapp.DataService;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
