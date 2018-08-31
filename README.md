@@ -1,81 +1,45 @@
-## AR-Framework
-Augmented Reality framework to visualize scientific data with longitude and latitude
+## Augmented Reality for Hydrology
+The purpose of this project is to:
+1) Provide an Augmented Reality Android App that displays Hydrology Data from JPL's Watertrek database.
+2) Extract generally useful and reusable components from the app, and place them in a framework.
 
-### Dependency
+### Modules
+The android project consists of 3 modules:
+1) 'arlib' - The Augmented Reality Framework
+2) 'demo' - A Demo App (to demonstrate the framework's capabilities in a simple manner).
+3) 'watertrekapp' - The Main App (which actually displays live data from JPL's Watertrek database using the framework).
 
-In order to use our framework in your project, please add the following dependency to your `build.gradle` files:
+### What is Augmented Reality (AR)
+Augmented Reality is the ability to seemingly place computer generated objects in the real world. This is done by superimposing computer graphics on top of the user's view of the world. This can be done, for example, by drawing 3D graphics on top of a camera preview.
 
-In Project `build.gradle` file:
-```javascript
-allprojects {
-    repositories {
-        ...
-        maven { url 'https://jitpack.io' }
-    }
-}
-```
+### The two approaches to Augmented Reality
+There are basically two approaches to Augmented Reality:
 
-In Module `build.gradle` file:
-```javascript
-dependencies {
-    compile 'com.github.jplone:AR-Framework:v0.1e'
-}
-```
+1) Use Computer Vision Techniques to tell how the device is moving, detect real world object in the real world that can be seen by the user, and line up computer graphics with real world objects
+2) Use the device's sensors to obtain the device's position and orientation. Use this information with the rendered object's known position to correctly place the computer graphics on top of the camera preview.
 
-### Quickstart
+An AR Framework can use one or a combination of these approaches. There are advantages and drawbacks for each. One drawback of using sensors to detect device position in the world is that GPS readings are typically not very precise (can be off by average of 20 meters in our experience). This can make rendered objects jump when the GPS readings update and not line up well. Computer Vision techniques are good at detecting exactly where on the camera preview an object is located, and thus allowing us to line up computer graphics with the real world objects. But the algorithms are complicated, potentially slow, and can only detect certain types of real world objects (like QR codes or corners of the room). They also will not do well when the view becomes obstructed. For example, Computer Vision is useless in telling us the correct position of a nearby building when we are inside another building, or a tree is in the way. In these kinds of cases, it is more useful to use sensors and the known positions of objects to correctly line up computer graphics with the real world.
 
-You can take a look at the accompanying ARDemo app to see how to use the framework with your project.
+In this project, we are currently using the second approach, since our purpose is to show the location of distant Hydrological/Geological features that are likely to be obstructed. But, later on, the first approach may be utilized as well in order to provide more accurate positioning and tracking.
 
-Alternatively, we have handled a lot of the niggles with permission and OpenGL context handling in our framework, so you can just simply add our ARFragment to your activity to get started:
 
-Here's a sample code on how to create a new instance of the Fragment and add it to your Activity:
-```java
-  // setting up fragment
-  FragmentTransaction ft = getFragmentManager().beginTransaction();
+### Functionality Provided by the framework
+In order to provide AR functionality, the following 3 things must be provided.
+1) A surface that allows displaying the device's camera output, with 3D computer graphics drawn on top.
+2) Access to the device's sensors (e.g. GPS, Accelerometer, Gyroscope, Magnetic Field, etc)
+3) A simple 3D rendering framework.
+If you have these three things you can draw 3D graphics on top of the 'real world'/camera preview, and properly line up these graphics with the rest of the world; even as the device is moved and rotated. These functionalities are provided by classes in the 'ui', 'sensor', and 'graphics3d' packages of the project.
 
-  ARFragment arFragment = ARFragment.newGPSInstance();
-  ft.add(R.id.ar_view_container, arFragment);
+In addition, the classes are provided to make certain specific tasks easier:
+4) Convert between X, Y, Z coordinates and Latitude, Longitude, Altitude coordinates
+5) Check for and Request Permissions on the Android Device for things like Location, Internet Access, External Storage
+6) Performing Vector Math Operations
+These classes are provided in the 'util' package
 
-  ft.commit();
-```
+### Brief description of Framework classes
 
-You will need to have a FrameLayout or LinearLayout inside your activity's layout configuration (XML file) in order to "contain" the Fragment. For example, you should be able to put this in your `layout.xml` file:
+### Sample usage of framework
 
-```
-  <FrameLayout
-    android:id="@+id/ar_view_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
-```
+### Screenshots and Links to Videos
 
-We have built a powerful render job pipeline and Landmark class that you can use to get started on displaying information:
 
-```java
-  // get the default icon we have included in the framework
-  int ara_icon = edu.calstatela.jplone.arframework.R.drawable.ara_icon;
-
-  // set up ARLandmark for Cal State LA
-  // parameters are: name, type, latitude, longitude, elevation
-  ARLandmark arLandmarkCS = new ARLandmark("Cal State LA", "City", 34.066223f, -118.166367f, 100.0f);
-  
-  // add the landmark to the queue to be displayed
-  arFragment.addJob(ARGLRenderJob.makeBillboard(5, ara_icon, arLandmarkCS));
-```
-
-Additionally, there are callbacks available so you will not have to set up the sensors again. Callbacks will return the current longitude and latitude, as well as the current bearing (yaw angle) of the user:
-
-```java
-  arFragment.setCallback(new AREvent.Callback() {
-    @Override
-    public void onAREvent(AREvent arEvent) {
-      //currentLocation = new LatLng(arEvent.latitude, arEvent.longitude);
-      //bearing = arEvent.bearing;
-    }
-  });
-```
-
-### Documentation
-
-Please check back later as we continue to build on the framework and improve on our documentation
-
-[![](https://jitpack.io/v/jplone/AR-Framework.svg)](https://jitpack.io/#jplone/AR-Framework)
