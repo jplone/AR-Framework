@@ -6,7 +6,7 @@ import android.util.Log;
 
 
 public class ShaderHelper {
-    private static final String TAG = "waka_ShaderBuilder";
+    private static final String TAG = "waka_ShaderHelper";
 
     public static int compileShader(int shaderType, String shaderSource){
         int[] status = {0};

@@ -155,7 +155,7 @@ public class VectorMath {
 
 
 
-    /****************************************************/
+    /*  **************************************************  */
 
     public static float compassBearing(float[] gravityVec, float[] magnetVec, float[] cameraVec){
         // Information we have:

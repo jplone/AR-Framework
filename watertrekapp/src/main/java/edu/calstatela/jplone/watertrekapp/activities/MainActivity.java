@@ -21,6 +21,7 @@ import edu.calstatela.jplone.watertrekapp.DataService.WellService;
 import edu.calstatela.jplone.watertrekapp.NetworkUtils.NetworkTask;
 import edu.calstatela.jplone.watertrekapp.R;
 import edu.calstatela.jplone.watertrekapp.WatertrekCredentials;
+import edu.calstatela.jplone.watertrekapp.billboardview.BillboardView_sorting;
 
 
 public class MainActivity extends AppCompatActivity implements BillboardView_sorting.TouchCallback{
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements BillboardView_sor
         FrameLayout mainLayout = (FrameLayout)findViewById(R.id.ar_view_container);
         mainLayout.addView(arview);
 
-        mountainList.loadCities();
+        mountainList.loadMountains();
     }
 
     @Override

@@ -1,7 +1,6 @@
     package edu.calstatela.jplone.demo;
 
 
-    import android.opengl.GLES20;
     import android.util.Log;
 
     import edu.calstatela.jplone.arframework.graphics3d.camera.Camera3D;
@@ -10,7 +9,6 @@
     import edu.calstatela.jplone.arframework.graphics3d.drawable.LitModel;
     import edu.calstatela.jplone.arframework.graphics3d.entity.Entity;
     import edu.calstatela.jplone.arframework.graphics3d.helper.MeshHelper;
-    import edu.calstatela.jplone.arframework.graphics3d.matrix.Projection;
     import edu.calstatela.jplone.arframework.graphics3d.scene.Scene;
     import edu.calstatela.jplone.arframework.landmark.MountainData;
     import edu.calstatela.jplone.arframework.ui.SensorARActivity;

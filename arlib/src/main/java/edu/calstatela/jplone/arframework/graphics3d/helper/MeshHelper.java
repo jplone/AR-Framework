@@ -38,10 +38,6 @@ public class MeshHelper {
     public static float[] calculateNormals(float[] vertexList){
         float[] normals = new float[vertexList.length];
 
-        float[] vertex0 = new float[3];
-        float[] vertex1 = new float[3];
-        float[] vertex2 = new float[3];
-
         float[] vec0 = new float[3];
         float[] vec1 = new float[3];
 
@@ -78,9 +74,9 @@ public class MeshHelper {
 
     public static float[] triangle(){
         float[] vertices = {
-                -0.1f, -0.8f, 0f,
-                0.1f, -0.8f, 0f,
-                0f, 0.5f, 0f
+                -0.5f, -0.8f, 0f,
+                0.5f, -0.8f, 0f,
+                0f, 0.8f, 0f
         };
         return vertices;
     }
@@ -101,6 +97,7 @@ public class MeshHelper {
 
     public static float[] cube(){
         float[] vertices = {
+                // Front Face
                 -0.5f, -0.5f, 0.5f,
                 0.5f, -0.5f, 0.5f,
                 0.5f, 0.5f, 0.5f,
@@ -108,7 +105,8 @@ public class MeshHelper {
                 -0.5f, -0.5f, 0.5f,
                 0.5f, 0.5f, 0.5f,
                 -0.5f, 0.5f, 0.5f,
-////////////////////////////
+
+                // Back Face
                 -0.5f, -0.5f, -0.5f,
                 0.5f, 0.5f, -0.5f,
                 0.5f, -0.5f, -0.5f,
@@ -116,7 +114,8 @@ public class MeshHelper {
                 -0.5f, -0.5f, -0.5f,
                 -0.5f, 0.5f, -0.5f,
                 0.5f, 0.5f, -0.5f,
-////////////////////////////
+
+                // Bottom Face
                 -0.5f, -0.5f, -0.5f,
                 0.5f, -0.5f, -0.5f,
                 0.5f, -0.5f, 0.5f,
@@ -124,23 +123,26 @@ public class MeshHelper {
                 -0.5f, -0.5f, -0.5f,
                 0.5f, -0.5f, 0.5f,
                 -0.5f, -0.5f, 0.5f,
-////////////////////////////
+
+                // Top Face
                 -0.5f, 0.5f, -0.5f,
                 0.5f, 0.5f, 0.5f,
                 0.5f, 0.5f, -0.5f,
 
                 -0.5f, 0.5f, -0.5f,
+                -0.5f, 0.5f, 0.5f,
                 0.5f, 0.5f, 0.5f,
-                -0.5f, 0.5f, 0.5f,
-////////////////////////////
+
+                // Left Face
                 -0.5f, 0.5f, -0.5f,
-                -0.5f, 0.5f, 0.5f,
                 -0.5f, -0.5f, -0.5f,
+                -0.5f, 0.5f, 0.5f,
 
                 -0.5f, 0.5f, 0.5f,
-                -0.5f, -0.5f, 0.5f,
                 -0.5f, -0.5f, -0.5f,
-////////////////////////////
+                -0.5f, -0.5f, 0.5f,
+
+                // Right Face
                 0.5f, 0.5f, -0.5f,
                 0.5f, 0.5f, 0.5f,
                 0.5f, -0.5f, -0.5f,

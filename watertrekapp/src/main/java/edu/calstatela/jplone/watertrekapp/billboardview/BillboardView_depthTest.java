@@ -1,4 +1,4 @@
-package edu.calstatela.jplone.watertrekapp.activities;
+package edu.calstatela.jplone.watertrekapp.billboardview;
 
 import android.content.Context;
 import android.util.Log;
@@ -16,9 +16,9 @@ import edu.calstatela.jplone.arframework.ui.SensorARView;
 import edu.calstatela.jplone.arframework.util.GeoMath;
 import edu.calstatela.jplone.arframework.util.VectorMath;
 
-public class BillboardView_sorting extends SensorARView{
+public class BillboardView_depthTest extends SensorARView{
 
-    public BillboardView_sorting(Context context){
+    public BillboardView_depthTest(Context context){
         super(context);
         mContext = context;
     }
@@ -40,7 +40,7 @@ public class BillboardView_sorting extends SensorARView{
         void onTouch(int id);
     }
 
-    public void setTouchCallback(BillboardView_sorting.TouchCallback callback){
+    public void setTouchCallback(BillboardView_depthTest.TouchCallback callback){
         mTouchCallback = callback;
     }
 
@@ -69,7 +69,7 @@ public class BillboardView_sorting extends SensorARView{
 
         mCamera = new Camera3D();
         mCamera.setClearColor(0, 0, 0, 0);
-        mCamera.setDepthTestEnabled(false);
+        mCamera.setDepthTestEnabled(true);
 
         mEntityList = new ArrayList<>();
     }
@@ -78,7 +78,7 @@ public class BillboardView_sorting extends SensorARView{
     public void GLResize(int width, int height) {
         super.GLResize(width, height);
         mCamera.setViewport(0, 0, width, height);
-        mCamera.setPerspective(60, (float)width / height, 0.1f, 1000000f);
+        mCamera.setPerspective(60, (float)width / height, 0.1f, 100000f);
     }
 
     @Override
@@ -140,29 +140,6 @@ public class BillboardView_sorting extends SensorARView{
         if(getLocation() != null) {
             for (Entity e : mEntityList) {
                 e.draw(mCamera.getProjectionMatrix(), mCamera.getViewMatrix(), e.getModelMatrix());
-            }
-        }
-
-
-        // Maintain Billboards sorted based on distance from location
-        if(getLocation() != null) {
-            float[] loc = getLocation();
-            float[] xyz = new float[3];
-            GeoMath.latLonAltToXYZ(loc, xyz);
-
-            float prevDistance = 0;
-            for (int i = 0; i < mEntityList.size(); i++) {
-                Entity e = mEntityList.get(i);
-                float[] pos = e.getPosition();
-                float distance = VectorMath.distance(xyz, pos);
-                if(distance > prevDistance && i > 0){
-                    mEntityList.set(i, mEntityList.get(i-1));
-                    mEntityList.set(i-1, e);
-                    BillboardInfo temp = mCurrentInfos.get(i);
-                    mCurrentInfos.set(i, mCurrentInfos.get(i-1));
-                    mCurrentInfos.set(i-1, temp);
-                }
-                prevDistance = distance;
             }
         }
 

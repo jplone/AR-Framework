@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import edu.calstatela.jplone.arframework.util.Permissions;
 import edu.calstatela.jplone.watertrekapp.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -27,6 +28,21 @@ private ImageView iv;
         setContentView(R.layout.activity_splash);
         tv = (TextView) findViewById(R.id.proj_ara);
         iv = (ImageView) findViewById(R.id.ara_ico);
+
+
+        boolean havePermissions = true;
+        if(!Permissions.havePermission(this, Permissions.PERMISSION_ACCESS_FINE_LOCATION)){
+            Permissions.requestPermission(this, Permissions.PERMISSION_ACCESS_FINE_LOCATION);
+            havePermissions = false;
+        }
+        if(!Permissions.havePermission(this, Permissions.PERMISSION_CAMERA)){
+            Permissions.requestPermission(this, Permissions.PERMISSION_CAMERA);
+            havePermissions = false;
+        }
+        if(!havePermissions)
+            return;
+
+
         Animation myanim = AnimationUtils.loadAnimation(this, R.anim.mytransition);
         tv.startAnimation(myanim);
         iv.startAnimation(myanim);
